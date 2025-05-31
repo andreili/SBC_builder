@@ -1,0 +1,14 @@
+[Unit]
+Description=KlipperScreen
+After=moonraker.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=biqu
+ExecStart=startx
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+[Unit]
+Description=API Server for Klipper SV1
+Requires=network-online.target
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=biqu
+SupplementaryGroups=moonraker-admin
+RemainAfterExit=yes
+WorkingDirectory=/home/biqu/moonraker
+EnvironmentFile=/home/biqu/printer_data/systemd/moonraker.env
+ExecStart=/home/biqu/venv/bin/python $MOONRAKER_ARGS
+Restart=always
+RestartSec=10

@@ -1,0 +1,25 @@
+[
+    {
+        "atf":
+        {
+            "url": "https://github.com/ARM-software/arm-trusted-firmware.git",
+            "config": false
+        }
+    },
+    {
+        "uboot":
+        {
+            "url": "https://github.com/u-boot/u-boot.git",
+            "config": true,
+            "config_target": "menuconfig"
+        }
+    },
+    {
+        "kernel":
+        {
+            "url": "https://github.com/torvalds/linux.git",
+            "config": true,
+            "config_target": "menuconfig"
+        }
+    }
+]
