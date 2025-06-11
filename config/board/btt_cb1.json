@@ -5,8 +5,9 @@
     ],
     "variables":
     [
-        "CROSS_C:aarch64-unknown-linux-gnu-",
-        "ATF_PLATFORM:sun50i_h616"
+        "CROSS_C:aarch64-linux-gnu-",
+        "ATF_PLATFORM:sun50i_h616",
+        "ARCH:aarch64"
     ],
     "targets":
     [
@@ -21,7 +22,7 @@
             [
                 {
                     "file": "build/%{ATF_PLATFORM}%/release/bl31.bin",
-                    "store_type": "file"
+                    "store_type": "temp"
                 }
             ]
         },
@@ -50,7 +51,7 @@
             "version": "v6.14-rc7",
             "version_type": "tag",
             "patch_dir": "kernel/sunxi-6.14",
-            "target": [ "olddefconfig", "Image", "dtbs" ],
+            "target": [ "Image", "modules", "dtbs" ],
             "artifacts":
             [
                 {
@@ -69,6 +70,20 @@
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64"
+        },
+        {
+            "parent": "buildroot",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "buildroot/sunxi",
+            "target": [],
+            "artifacts": []
         }
-    ]
+    ],
+    "install":
+    {
+        "target": "image",
+        "block_size": "1k",
+        "image_size": "2g"
+    }
 }

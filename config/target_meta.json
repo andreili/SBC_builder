@@ -21,5 +21,13 @@
             "config": true,
             "config_target": "menuconfig"
         }
+    },
+    {
+        "buildroot":
+        {
+            "url": "https://github.com/buildroot/buildroot.git",
+            "config": true,
+            "config_target": "menuconfig"
+        }
     }
 ]

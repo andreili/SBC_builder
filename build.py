@@ -3,10 +3,14 @@
 import argparse, json
 from scripts import *
 
+os = OS()
+os_actions = ",".join(os.actions_list())
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--board', type=str, default='', help='Select board to build')
-parser.add_argument('--target', type=str, default='all', help='Target to build, default "%(default)s"')
+parser.add_argument('--target', type=str, default='', help='Target to build, default "%(default)s"')
 parser.add_argument('--sync', action='store_true', help='Sync all source with latest')
+parser.add_argument('--os_act', type=str, default='', help=f'Actions to OS ({os_actions}), comma separated list')
 args = parser.parse_args()
 
 if (args.board == ''):
@@ -15,8 +19,14 @@ if (args.board == ''):
 
 targets_meta = Target.load_meta(f"config/target_meta.json")
 target_board = Board(args.board, f"config/board/{args.board}.json", targets_meta)
+os.set_board(target_board)
 
 if (args.sync):
     target_board.sync()
-else:
+elif (args.target != ""):
     target_board.build(args.target)
+
+if (args.os_act != ""):
+    acts = args.os_act.split(",")
+    for act in acts:
+        os.action(act)

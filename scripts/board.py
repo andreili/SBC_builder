@@ -1,7 +1,6 @@
 import json, os
 from pathlib import Path
-
-ROOT_DIR = Path(os.path.abspath(__file__)).parent.parent
+from . import *
 
 class Board:
     def __init__(self, name, js_fn, targets_meta):
@@ -18,7 +17,7 @@ class Board:
             t = self.__find_meta(targets_meta, target["parent"])
             if (t == 0):
                 Logger.error("Unable to find parent for package!")
-            t.load_detail(self.name, target, self.variables)
+            t.load_detail(self.name, target, self.parse_variables)
             self.targets.append(t)
         self.__scan_deps()
 
@@ -50,6 +49,12 @@ class Board:
             self.variables.append(var_def.split(":"))
         self.variables.append(["out_dir", self.out_dir])
 
+    def parse_variables(self, string):
+        for var_d in self.variables:
+            string = string.replace("%{"+var_d[0]+"}%", var_d[1])
+        #out_dir
+        return string
+
     def sync(self):
         for target in self.targets:
             target.source_sync()
@@ -63,12 +68,16 @@ class Board:
             target_list = [ targets[0] ]
             if (len(targets) > 1):
                 sub_target = targets[1]
+        is_finded = False
         for t_name in target_list:
             for target in self.targets:
                 if (t_name == target.name):
+                    is_finded = True
                     for dep in target.depends:
                         if (sub_target == ""):
                             #when run sub-target - not need to check a deps
                             dep.build("", self.out_dir)
                     target.build(sub_target, self.out_dir)
                     break
+        if (not is_finded):
+            Logger.error("Don't find target!")

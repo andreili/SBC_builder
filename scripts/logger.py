@@ -11,3 +11,6 @@ class Logger:
 
     def git(msg):
         print(f"[📦] {msg}")
+
+    def os(msg):
+        print(f"[🖥] {msg}")

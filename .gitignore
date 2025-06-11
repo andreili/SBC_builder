@@ -1,4 +1,6 @@
 git_bare
-out*
+out/*
 build
 *.pyc
+*.bak
+root*

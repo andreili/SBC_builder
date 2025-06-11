@@ -1,9 +1,6 @@
 import json, os
 from pathlib import Path
-from .sources import Sources
-from .logger import Logger
-
-ROOT_DIR = Path(os.path.abspath(__file__)).parent.parent
+from . import *
 
 class Target:
     def __init__(self, meta_js):
@@ -29,19 +26,15 @@ class Target:
             res.append(t)
         return res
 
-    def __parse_variables(self, string, variables):
-        for var_d in variables:
-            string = string.replace("%{"+var_d[0]+"}%", var_d[1])
-        #out_dir
-        return string
-
-    def load_detail(self, board_name, detail_js, variables):
+    def load_detail(self, board_name, detail_js, parse_variables):
         self.board_name = board_name
         self.sources.init_source_path(board_name)
         self.sources.set_git_params(detail_js["version"], detail_js["version_type"])
         self.target = detail_js["target"]
         self.version = detail_js["version"]
-        self.config_name = f"{ROOT_DIR}/cfg/{board_name}/{self.name}_{self.version}"
+        self.config_name = f"{ROOT_DIR}/cfg/{board_name}/{self.name}"
+        if (self.version != "") and (self.version != "@"):
+            self.config_name += f"_{self.version}"
         if ("patch_dir" in detail_js):
             self.patch_dir = detail_js["patch_dir"]
         else:
@@ -51,13 +44,13 @@ class Target:
         else:
             self.dep_names = []
         if ("makeopts" in detail_js):
-            self.makeopts = self.__parse_variables(detail_js["makeopts"], variables)
+            self.makeopts = parse_variables(detail_js["makeopts"])
         else:
             self.makeopts = ""
         _artifacts = detail_js["artifacts"]
         self.artifacts = []
         for art in _artifacts:
-            art["file"] = self.__parse_variables(art["file"], variables)
+            art["file"] = parse_variables(art["file"])
             self.artifacts.append(art)
     
     def source_sync(self):

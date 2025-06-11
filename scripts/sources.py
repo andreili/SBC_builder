@@ -1,9 +1,7 @@
 from pathlib import Path
 import shutil, git, os, subprocess, glob
 from rich import console, progress
-from .logger import Logger
-
-ROOT_DIR = Path(os.path.abspath(__file__)).parent.parent
+from . import *
 
 class GitRemoteProgress(git.RemoteProgress):
     OP_CODES = [
@@ -140,11 +138,12 @@ class Sources:
 
     def git_work_get_hash_remote(self):
         if (self.type == "branch"):
-            exit(1)
+            Logger.error("Unsupported source type!")
         elif (self.type == "head"):
-            exit(1)
+            tags = self.repo_bare.git.ls_remote("origin", "HEAD")
+            return tags.split('\t')[0]
         elif (self.type == "commit"):
-            exit(1)
+            Logger.error("Unsupported source type!")
         elif (self.type == "tag"):
             tags = self.repo_bare.git.ls_remote("--tags", "origin", f"tags/{self.version}")
             return tags.split('\t')[0]
@@ -205,12 +204,12 @@ class Sources:
         Logger.build(f"Compile...")
         work_cfg_name = f"{self.work_dir}/.config"
         cfg_or = Path(cfg_name)
-        cfg_wr = Path(cfg_name)
+        cfg_wr = Path(work_cfg_name)
         if (cfg_or.is_file()):
             # copy configuration, if exists
             shutil.copyfile(cfg_name, work_cfg_name)
         opts.insert(0, "make")
-        opts.append("-j16")
+        opts.append("-j8")
         p = subprocess.Popen(opts, cwd=self.work_dir)
         p.wait()
         if (p.returncode != 0):
