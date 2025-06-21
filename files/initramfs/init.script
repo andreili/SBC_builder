@@ -1,0 +1,178 @@
+is_quiet() {
+    return ${QUIET}
+}
+
+log_msg() {
+    if [ ! -f "${INIT_LOG}" ]
+    then
+        touch "${INIT_LOG}" 2>/dev/null || return
+    fi
+    local msg=${1}
+    LANG=C echo "] ${msg}" | sed \
+        -e "s,[^[:print:]],,g" \
+        -e 's,\(\\033\)\?\[[0-9;]\+m,,g' \
+        | ts '[ %Y-%m-%d %H:%M:%.S' >> "${INIT_LOG}"
+}
+
+is_true() {
+    case "${1}" in
+        1)
+            return 0
+        ;;
+        [Tt][Rr][Uu][Ee])
+            return 0
+        ;;
+        [Tt])
+            return 0
+        ;;
+        [Yy][Ee][Ss])
+            return 0
+        ;;
+        [Yy])
+            return 0
+        ;;
+    esac
+    return 1
+}
+
+good_msg() {
+    local msg_string=${1}
+    msg_string="${msg_string:-...}"
+    log_msg "[OK] ${msg_string}"
+    is_true "${2-${QUIET}}" || printf "%b\n" "${GOOD}>>${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
+}
+
+good_msg_n() {
+    local msg_string=${1}
+    msg_string="${msg_string:-...}"
+    log_msg "[OK] ${msg_string}"
+    is_true "${2-${QUIET}}" || printf "%b" "${GOOD}>>${NORMAL}${BOLD} ${msg_string}"
+}
+
+bad_msg() {
+    local msg_string=${1}
+    msg_string="${msg_string:-...}"
+    log_msg "[!!] ${msg_string}"
+    splash 'verbose' >/dev/null &
+    printf "%b\n" "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
+}
+
+warn_msg() {
+    local msg_string=${1}
+    msg_string="${msg_string:-...}"
+    log_msg "[**] ${msg_string}"
+    is_true "${2-${QUIET}}" || printf "%b\n" "${WARN}**${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
+}
+
+warn_msg_n() {
+    local msg_string=${1}
+    msg_string="${msg_string:-...}"
+    log_msg "[**] ${msg_string}"
+    is_true "${2-${QUIET}}" || printf "%b" "${WARN}**${NORMAL}${BOLD} ${msg_string}"
+}
+
+str_starts() {
+    if [ "${1#"${2}"*}" != "${1}" ]
+    then
+        return 0
+    fi
+    return 1
+}
+
+run() {
+    local retval
+    if "$@"; then
+        retval=$?
+        log_msg "Executed: '$*'"
+    else
+        retval=$?
+        log_msg "Failed (${retval}): '$*'"
+    fi
+    return ${retval}
+}
+
+devicelist() {
+    # Locate the cdrom device with our media on it.
+    # USB Keychain/Storage
+    DEVICES="${DEVICES} /dev/sd*"
+    # IDE devices
+    DEVICES="${DEVICES} /dev/hd*"
+    # USB using the USB Block Driver
+    DEVICES="${DEVICES} /dev/ubd* /dev/ubd/*"
+    # iSeries devices
+    DEVICES="${DEVICES} /dev/iseries/vcd*"
+    # builtin mmc/sd card reader devices
+    DEVICES="${DEVICES} /dev/mmcblk* /dev/mmcblk*/*"
+    # fallback scanning, this might scan something twice, but it's better than
+    # failing to boot.
+    [ -e /proc/partitions ] && DEVICES="${DEVICES} $(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' /proc/partitions)"
+    echo ${DEVICES}
+}
+
+determine_fs() {
+    local _dev="${1}"
+    local _orig="${2:-auto}"
+    local _fs line
+    _fs=$(udevadm info --query=env --name="$_dev" 2>/dev/null | \
+        while read line || [ -n "${line}" ]
+        do
+            if str_starts ${line} "ID_FS_TYPE="
+            then
+                echo ${line#ID_FS_TYPE=}
+                break
+            fi
+        done
+    )
+    _fs=${_fs:-auto}
+    if [ "${_fs}" = "auto" ]
+    then
+        _fs="${_orig}"
+    fi
+    echo "${_fs}"
+}
+
+findmediamount() {
+    # $1 = mount dir name / media name
+    # $2 = recognition file
+    # $3 = variable to have the device path
+    # $4 = actual mount dir path (full path)
+    # args remaining are possible devices
+
+    local media=$1 recon=$2 vrbl=$3 mntdir=$4
+    shift 4
+    good_msg "Looking for the ${media}"
+    if [ "$#" -gt "0" ]
+    then
+        [ ! -d "${mntdir}" ] && mkdir -p ${mntdir} >/dev/null 2>&1
+        mntcddir="${mntdir}"
+        for x in $*
+        do
+            # Check for a block device to mount
+            if [ -b "${x}" ]
+            then
+                good_msg "Attempting to mount media: ${x}"
+                CDROOT_TYPE=$(determine_fs "${x}" "${CDROOT_TYPE}")
+                run mount -t ${CDROOT_TYPE} -o defaults ${x} ${mntcddir} >/dev/null 2>&1
+                if [ $? -eq 0 ]
+                then
+                    # Check for the media
+                    if [ -f "${mntdir}/${recon}" ]
+                    then
+                        #set REAL_ROOT, CRYPT_ROOT_KEYDEV or whatever ${vrbl} is
+                        eval ${vrbl}'='"${x}"
+                        good_msg "Run FS check on ${x}..."
+                        run umount ${mntcddir}
+                        run e2fsck -p ${x}
+                        run mount -t ${CDROOT_TYPE} -o defaults ${x} ${mntcddir} >/dev/null 2>&1
+                        good_msg "Media found on ${x}"
+                        break
+                    else
+                        run umount ${mntcddir}
+                    fi
+                fi
+            fi
+        done
+    fi
+    eval local result='$'${vrbl}
+    [ -n "${result}" ] || bad_msg "Media not found"
+}

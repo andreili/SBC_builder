@@ -29,5 +29,13 @@
             "config": true,
             "config_target": "menuconfig"
         }
+    },
+    {
+        "busybox":
+        {
+            "url": "https://git.busybox.net/busybox",
+            "config": true,
+            "config_target": "menuconfig"
+        }
     }
 ]

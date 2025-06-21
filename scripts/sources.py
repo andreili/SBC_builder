@@ -199,27 +199,36 @@ class Sources:
             for patch_file in Path(dir_p).glob('*.patch'):
                 self.__patch_apply(patch_file, self.work_dir)
 
+    def configure(self, opts):
+        opts.insert(0, "./configure")
+        p = subprocess.Popen(opts, cwd=self.work_dir)
+        p.wait()
+        if (p.returncode != 0):
+            Logger.error("Failed to configure!")
+
     def compile(self, opts, cfg_name):
         #print(f"opts:{opts} target:{target}")
         Logger.build(f"Compile...")
-        work_cfg_name = f"{self.work_dir}/.config"
-        cfg_or = Path(cfg_name)
-        cfg_wr = Path(work_cfg_name)
-        if (cfg_or.is_file()):
-            # copy configuration, if exists
-            shutil.copyfile(cfg_name, work_cfg_name)
+        if (cfg_name != ""):
+            work_cfg_name = f"{self.work_dir}/.config"
+            cfg_or = Path(cfg_name)
+            cfg_wr = Path(work_cfg_name)
+            if (cfg_or.is_file()):
+                # copy configuration, if exists
+                shutil.copyfile(cfg_name, work_cfg_name)
         opts.insert(0, "make")
         opts.append("-j8")
         p = subprocess.Popen(opts, cwd=self.work_dir)
         p.wait()
         if (p.returncode != 0):
             Logger.error("Failed to compile!")
-        if (cfg_or.is_file()):
-            # backup old configuration
-            shutil.copyfile(cfg_name, f"{cfg_name}.bak")
-        if (cfg_wr.is_file()):
-            # copy new configurtion, if exists
-            shutil.copyfile(work_cfg_name, cfg_name)
+        if (cfg_name != ""):
+            if (cfg_or.is_file()):
+                # backup old configuration
+                shutil.copyfile(cfg_name, f"{cfg_name}.bak")
+            if (cfg_wr.is_file()):
+                # copy new configurtion, if exists
+                shutil.copyfile(work_cfg_name, cfg_name)
 
     def copy_artifacts(self, artifacts, out_dir):
         for art in artifacts:

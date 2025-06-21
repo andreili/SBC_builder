@@ -6,6 +6,7 @@ class Board:
     def __init__(self, name, js_fn, targets_meta):
         self.name = name
         self.out_dir = f"{ROOT_DIR}/out/{name}"
+        self.out_sh = f"{ROOT_DIR}/out"
         with open(js_fn) as json_data:
             self.json = json.load(json_data)
             json_data.close()
@@ -48,6 +49,7 @@ class Board:
         for var_def in self.json["variables"]:
             self.variables.append(var_def.split(":"))
         self.variables.append(["out_dir", self.out_dir])
+        self.variables.append(["out_sh", self.out_sh])
 
     def parse_variables(self, string):
         for var_d in self.variables:

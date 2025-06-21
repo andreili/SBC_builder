@@ -42,6 +42,16 @@ class OS:
         Logger.os(f"Start chroot'ed command: '{command}'")
         self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", self.root_dir, command])
 
+    def umount_safe(self):
+        self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])
+
+    def bind(self, dir, path):
+        self.__sudo(["mkdir", "-p", f"{self.root_dir}/{path}"])
+        self.__sudo(["mount", "--bind", dir, f"{self.root_dir}/{path}"])
+
+    def unbind(self, path):
+        self.__sudo(["umount", f"{self.root_dir}/{path}"])
+
     def chroot(self):
         self.__chroot("")
 
@@ -49,22 +59,25 @@ class OS:
         self.__chroot("eix-sync -v")
 
     def update_all(self):
-        self.__chroot("emerge -avuDN1b world -j2 && ldconfig")
+        self.__chroot("emerge -avuDN1b world -j2 && emerge -ac")
+        self.__chroot("ldconfig")
 
     def rebuild_all(self):
-        self.__chroot("emerge -av1be world -j2 && ldconfig")
+        self.__chroot("emerge -av1be world -j2")
+        self.__chroot("ldconfig")
+
+    def custom(self, command):
+        self.__chroot(command)
 
     def __do_archive(self, excl_list, name):
         Logger.os(f"Create '{name}' archive...")
         my_env = os.environ.copy()
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        arch_path = self.board.parse_variables("%{out_dir}%/back_" + name + "_" + date + ".tar.xz")
+        arch_path = self.board.parse_variables("%{out_sh}%/back_" + name + "_" + date + ".tar.xz")
         self.__sudo(["tar", "-cJpf", arch_path,
             f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
             cwd=self.root_dir, env=my_env)
-        if (p.wait() != 0):
-            Logger.error("Archive command finished with error code!")
         return arch_path
 
     def pack(self):
@@ -96,11 +109,12 @@ class OS:
 
     def sqh(self):
         self.__fix_xorg()
+        date = datetime.datetime.today().strftime('%Y_%m_%d')
         arch_path = self.__do_archive("excl", "OS")
-        temp_dir = f"{ROOT_DIR}/out/tmp"
+        temp_dir = f"{ROOT_DIR}/build/tmp"
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
-        self.__make_sqh(temp_dir, f"{ROOT_DIR}/out/root.sqh")
+        self.__make_sqh(temp_dir, f"{ROOT_DIR}/out/root_" + date + ".sqh")
 
     def action(self, action):
         for act in self.actions:
@@ -118,7 +132,7 @@ if __name__ == '__main__':
     else:
         print("Invalid arguments!")
         exit(1)
-    _REGISTER_FORMAT = b":%(name)s:M::%(magic)s:%(mask)s:%(interp)s:%(flags)s"
+    _REGISTER_FORMAT = b":qemu-%(name)s:M::%(magic)s:%(mask)s:%(interp)s:%(flags)s"
     s = _REGISTER_FORMAT % {
         b"name": name.encode("utf-8"),
         b"magic": magic,

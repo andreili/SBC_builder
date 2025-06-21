@@ -4,6 +4,7 @@ import argparse, json
 from scripts import *
 
 os = OS()
+#os.umount_safe()
 os_actions = ",".join(os.actions_list())
 
 parser = argparse.ArgumentParser()
@@ -24,7 +25,11 @@ os.set_board(target_board)
 if (args.sync):
     target_board.sync()
 elif (args.target != ""):
-    target_board.build(args.target)
+    if (args.target == "initramfs"):
+        init = Initramfs()
+        init.build(os)
+    else:
+        target_board.build(args.target)
 
 if (args.os_act != ""):
     acts = args.os_act.split(",")

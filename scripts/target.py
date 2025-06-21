@@ -47,6 +47,10 @@ class Target:
             self.makeopts = parse_variables(detail_js["makeopts"])
         else:
             self.makeopts = ""
+        if ("config_def" in detail_js):
+            self.defconfig = detail_js["config_def"]
+        else:
+            self.defconfig = ""
         _artifacts = detail_js["artifacts"]
         self.artifacts = []
         for art in _artifacts:
@@ -61,12 +65,15 @@ class Target:
     def build(self, sub_target, out_dir):
         self.source_sync()
         opts = self.makeopts.split(" ")
+        config = ""
         if (sub_target == "") or (not self.have_config):
             opts += self.target
         else:
             if (sub_target == "config"):
+                opts.append(self.defconfig)
                 opts.append(self.config_target)
             else:
                 Logger.error("Invalid sub-target!")
         self.sources.compile(opts, self.config_name)
-        self.sources.copy_artifacts(self.artifacts, out_dir)
+        if (sub_target != "config"):
+            self.sources.copy_artifacts(self.artifacts, out_dir)

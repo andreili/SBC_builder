@@ -1,0 +1,90 @@
+{
+    "build":
+    [
+        "initramfs", "uboot", "kernel"
+    ],
+    "variables":
+    [
+        "CROSS_C:aarch64-linux-gnu-",
+        "ATF_PLATFORM:sun50i_h616",
+        "ARCH:aarch64"
+    ],
+    "targets":
+    [
+        {
+            "parent": "atf",
+            "version": "lts-v2.12.1",
+            "version_type": "tag",
+            "patch_dir": "atf/sunxi64",
+            "target": [ "bl31" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0",
+            "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/bl31.bin",
+                    "store_type": "temp"
+                }
+            ]
+        },
+        {
+            "parent": "uboot",
+            "version": "v2024.01",
+            "version_type": "tag",
+            "patch_dir": "uboot/sunxi",
+            "deps":
+            [
+                "atf"
+            ],
+            "artifacts":
+            [
+                {
+                    "file": "u-boot-sunxi-with-spl.bin",
+                    "store_type": "dd",
+                    "img_offset": 8
+                }
+            ],
+            "target": [ "" ],
+            "config_def": "orangepi_zero2_defconfig",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
+        },
+        {
+            "parent": "kernel",
+            "version": "v6.14-rc7",
+            "version_type": "tag",
+            "patch_dir": "kernel/sunxi-6.14",
+            "target": [ "Image", "modules", "dtbs" ],
+            "artifacts":
+            [
+                {
+                    "file": "arch/arm64/boot/Image",
+                    "store_type": "boot"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
+                    "store_type": "boot",
+                    "subdir": "dts/allwiner"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
+                    "store_type": "boot",
+                    "subdir": "dts/allwiner/overlay"
+                }
+            ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64"
+        },
+        {
+            "parent": "buildroot",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "buildroot/sunxi",
+            "target": [],
+            "artifacts": []
+        }
+    ],
+    "install":
+    {
+        "target": "image",
+        "block_size": "1k",
+        "image_size": "2g"
+    }
+}

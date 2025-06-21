@@ -1,0 +1,191 @@
+#!/bin/busybox sh
+
+. /etc/init.def
+. /etc/init.script
+
+run mount -t sysfs sysfs /sys -o noexec,nosuid,nodev >/dev/null
+run mount -t devtmpfs -o exec,nosuid,mode=0755,size=10M udev /dev
+run mkdir -m 0755 /dev/pts
+run mount -t devpts -o gid=5,mode=0620 devpts /dev/pts
+run mkdir -m 1777 /dev/shm
+run mount -t tmpfs -o mode=1777,nosuid,nodev,strictatime tmpfs /dev/shm
+
+mount -t proc -o noexec,nosuid,nodev proc /proc >/dev/null 2>&1
+mount -o remount,rw / >/dev/null 2>&1
+mount -t tmpfs -o rw,nosuid,nodev,relatime,mode=755 none /run 2>&1
+mkdir /run/initramfs
+
+if [ ! -s /etc/ld.so.cache ]
+then
+    # Looks like we were unable to run ldconfig during initramfs generation
+    hash ldconfig >/dev/null 2>&1 && run ldconfig
+fi
+
+# Set up symlinks
+run busybox --install -s
+
+# Handle kernel command-line parameters
+CMDLINE=$(cat /proc/cmdline 2>/dev/null)
+for x in ${CMDLINE}
+do
+    case "${x}" in
+        subdir=*)
+            SUBDIR=${x#*=}
+            ;;
+        real_init=*)
+            REAL_INIT=${x#*=}
+            ;;
+        init=*)
+            FAKE_INIT=${x#*=}
+            ;;
+        quiet|quiet_genkernel)
+            QUIET=1
+            ;;
+        # Scan delay options
+        scandelay=*)
+            SDELAY=${x#*=}
+            ;;
+        scandelay)
+            SDELAY=3
+            ;;
+        rootdelay=*|rootwait=*)
+            ROOTDELAY=${x#*=}
+            ;;
+        rootdelay|rootwait)
+            ROOTDELAY=5
+            ;;
+    esac
+done
+
+if ! is_quiet
+then
+    # Prevent superfluous printks from being printed to the console
+    echo ${CONSOLE_LOGLEVEL} > /proc/sys/kernel/printk
+fi
+
+NEW_ROOT='/newroot'
+CDROOT_PATH="/mnt/cdrom"
+RW_MNT="/mnt/rw_part"
+STATIC="/mnt/livecd"
+OVERLAY="/mnt/overlay"
+LOOP="/root.sqh"
+LOOPTYPE="squashfs"
+
+good_msg "Initial ramdisk script. Linux kernel ${KV}"
+log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
+echo "" > /proc/sys/kernel/hotplug
+
+#run mkdir -p "${NEW_ROOT}"
+CHROOT="${NEW_ROOT}"
+run mount -n -t tmpfs tmpfs ${NEW_ROOT}
+DEVICES=$(devicelist)
+run findmediamount "cdrom"   "/livecd"  "REAL_ROOT" "${CDROOT_PATH}" "${DEVICES}" || run_emergency_shell
+run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
+run mount -o remount,ro "${CDROOT_PATH}"
+#sh
+CHROOT=${NEW_ROOT}
+
+run cd "${CHROOT}"
+good_msg 'Mounting squashfs filesystem'
+upperdir="${RW_MNT}/.upper"
+workdir="${RW_MNT}/.work"
+for i in "${RW_MNT}" "${STATIC}" "${OVERLAY}" "${upperdir}" "${workdir}"
+do
+    [ ! -d "${i}" ] && run mkdir -p "${i}"
+done
+run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}"
+#if [ -d ${CDROOT_PATH}/modules ]
+#then
+#        warn_msg "Adding all modules in ${CDROOT_PATH}/modules"
+#        for module in "${CDROOT_PATH}/modules/"*.lzm; do
+#                mod=${module##*/}
+#                mod=${mod//-/_}
+#                mod=${mod%.*}
+#                if [ ! -d "${OVERLAY}/.${mod}" ]
+#                then
+#                        run mkdir -p "${OVERLAY}/.${mod}" || return
+#                fi
+#                run mount -o loop,ro "${module}" "${OVERLAY}/.${mod}"
+#                mod_path="${mod_path}:${OVERLAY}/.${mod}"
+#                # Assign variable with paths to modules mount point
+#                # TODO: Stop using eval
+#                eval ${mod}="${OVERLAY}/.${mod}"
+#                mods="${mods} ${mod}"
+#        done
+#fi
+run mount -t overlay overlay -o lowerdir="${STATIC}${mod_path}",upperdir="${upperdir}",workdir="${workdir}" "${NEW_ROOT}"
+#[ ! -d "${NEW_ROOT}${RW_MNT}" ] && mkdir -p "${NEW_ROOT}${RW_MNT}"
+#[ ! -d "${NEW_ROOT}${STATIC}" ] && mkdir -p "${NEW_ROOT}${STATIC}"
+#echo "overlay / overlay defaults 0 0" > "${NEW_ROOT}"/etc/fstab
+#run mkdir -p "${NEW_ROOT}${OVERLAY}"
+#run chmod 755 "${NEW_ROOT}${OVERLAY}"
+#run mount --bind "${OVERLAY}" "${NEW_ROOT}${OVERLAY}"
+#run mount --bind "${STATIC}" "${NEW_ROOT}${STATIC}"
+#if [ -n "${mods}" ]
+#then
+#        for i in ${mods}
+#        do
+#                run mount --bind "${OVERLAY}/.${i}" "${NEW_ROOT}/${OVERLAY}/.${i}"
+#        done
+#fi
+#[ ! -d "${NEW_ROOT}${CDROOT_PATH}" ] && mkdir -p "${NEW_ROOT}${CDROOT_PATH}"
+#run mount --bind "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
+#run mount --bind "${RW_MNT}" "${NEW_ROOT}${RW_MNT}"
+run mount --move "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
+run mount --move "${RW_MNT}" "${NEW_ROOT}${RW_MNT}"
+run mount --move "${STATIC}" "${NEW_ROOT}${STATIC}"
+
+#for m in ${MODULES}; do
+#        run insmod "${NEW_ROOT}${m}"
+#done
+
+# Let Init scripts know that we booted from CD
+export CDBOOT
+CDBOOT=1
+
+run udevadm settle --timeout=120
+run udevadm control --exit
+init=${REAL_INIT:-/sbin/init}
+
+# create a file for correct shutdown process
+INIF="/run/initramfs"
+SH_FILE="${INIF}/shutdown"
+#run mkdir "${INIF}/bin"
+#run mount --bind /bin ${INIF}/bin
+run touch ${SH_FILE}
+echo "#!/bin/sh" >> ${SH_FILE}
+#echo "sh" >> ${SH_FILE}
+#echo "umount ${NEW_ROOT}${INIF}/bin" >> ${SH_FILE}
+#echo "umount ${NEW_ROOT}${INIF}" >> ${SH_FILE}
+echo "mount -o remount,ro ${NEW_ROOT}${CDROOT_PATH}" >> ${SH_FILE}
+echo "mount -o remount,ro ${NEW_ROOT}${RW_MNT}" >> ${SH_FILE}
+echo "sync" >> ${SH_FILE}
+echo "umount -l ${NEW_ROOT}${RW_MNT}" >> ${SH_FILE}
+echo "umount -l ${NEW_ROOT}${CDROOT_PATH}" >> ${SH_FILE}
+echo "umount -l ${NEW_ROOT}${STATIC}" >> ${SH_FILE}
+echo "umount -l ${NEW_ROOT}" >> ${SH_FILE}
+#run mkdir ${NEW_ROOT}${INIF}
+#run mount --rbind ${INIF} ${NEW_ROOT}${INIF}
+
+while true
+do
+    if  ! mountpoint "${CHROOT}" 1>/dev/null 2>&1
+    then
+        bad_msg "${CHROOT} is not a mountpoint; Was root device (${REAL_ROOT}) not mounted?"
+    elif ! chroot "${CHROOT}" /usr/bin/test -x /${init#/} 1>/dev/null 2>&1
+    then
+        mounted_root_device=$(mountpoint -n /newroot 2>/dev/null | awk '{ print $1 }')
+        bad_msg "init (${init}) not found in mounted root device (${mounted_root_device})!"
+    else
+        break
+    fi
+    run_emergency_shell
+done
+
+good_msg "Restoring console log level (${CONSOLE_LOGLEVEL}) ..."
+echo ${CONSOLE_LOGLEVEL} > /proc/sys/kernel/printk && log_msg "COMMAND: 'echo \"${CONSOLE_LOGLEVEL}\" > /proc/sys/kernel/printk'"
+good_msg "Switching to real root: switch_root ${CHROOT} ${init} ${init_opts}"
+#sh
+exec switch_root "${CHROOT}" "${init}" ${init_opts}
+
+exit 1
