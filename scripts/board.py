@@ -48,6 +48,8 @@ class Board:
     def __load_vars(self):
         for var_def in self.json["variables"]:
             self.variables.append(var_def.split(":"))
+        self.variables.append(["board_name", self.name])
+        self.variables.append(["build_dir", f"{ROOT_DIR}/build/{self.name}"])
         self.variables.append(["out_dir", self.out_dir])
         self.variables.append(["out_sh", self.out_sh])
 
