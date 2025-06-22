@@ -51,7 +51,7 @@
             "version": "v6.14-rc7",
             "version_type": "tag",
             "patch_dir": "kernel/sunxi-6.14",
-            "target": [ "Image", "modules", "dtbs" ],
+            "target": [ "Image", "modules", "dtbs", "modules_install" ],
             "artifacts":
             [
                 {
@@ -69,7 +69,15 @@
                     "subdir": "dts/allwiner/overlay"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
+        },
+        {
+            "parent": "rtl8189ES_linux",
+            "version": "rtl8189fs",
+            "version_type": "branch",
+            "target": [ "modules" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods KSRC=%{build_dir}%/kernel_%{board_name}%",
+            "artifacts": []
         },
         {
             "parent": "buildroot",

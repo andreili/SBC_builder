@@ -37,5 +37,12 @@
             "config": true,
             "config_target": "menuconfig"
         }
+    },
+    {
+        "rtl8189ES_linux":
+        {
+            "url": "https://github.com/jwrdegoede/rtl8189ES_linux.git",
+            "config": false
+        }
     }
 ]

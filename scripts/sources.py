@@ -138,7 +138,8 @@ class Sources:
 
     def git_work_get_hash_remote(self):
         if (self.type == "branch"):
-            Logger.error("Unsupported source type!")
+            tags = self.repo_bare.git.ls_remote("--branches", "origin", f"{self.version}")
+            return tags.split('\t')[0]
         elif (self.type == "head"):
             tags = self.repo_bare.git.ls_remote("origin", "HEAD")
             return tags.split('\t')[0]
@@ -173,11 +174,15 @@ class Sources:
         Path(self.work_done_marker).touch()
 
     def __patch_apply(self, file, work_dir):
-        patch_bn = os.path.basename(file)
-        Logger.build(f"\tApply patch '{patch_bn}'")
-        p = subprocess.Popen(["patch", "--batch", "-p1", "-N",
-            f"--input={file}", "--quiet"], cwd=work_dir)
-        p.wait()
+        patch_f = Path(file)
+        if (patch_f.is_file()):
+            patch_bn = os.path.basename(file)
+            Logger.build(f"\tApply patch '{patch_bn}'")
+            p = subprocess.Popen(["patch", "--batch", "-p1", "-N",
+                f"--input={file}", "--quiet"], cwd=work_dir)
+            p.wait()
+            if (p.returncode != 0):
+                Logger.error("Failed to patch!")
 
     def do_patch(self, board_name, dir):
         Logger.build(f"Patch...")
@@ -208,7 +213,7 @@ class Sources:
 
     def compile(self, opts, cfg_name):
         #print(f"opts:{opts} target:{target}")
-        Logger.build(f"Compile...")
+        Logger.build(f"Compile (opts='{opts}')...")
         if (cfg_name != ""):
             work_cfg_name = f"{self.work_dir}/.config"
             cfg_or = Path(cfg_name)
