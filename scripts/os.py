@@ -37,10 +37,12 @@ class OS:
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
         self.__sudo(["cp", f"{ROOT_DIR}/files/qemu/qemu-{self.arch}", f"{self.root_dir}/bin/"])
 
-    def __chroot(self, command):
+    def __chroot(self, command, dir=""):
         self.__prepare()
-        Logger.os(f"Start chroot'ed command: '{command}'")
-        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", self.root_dir, command])
+        if (dir == ""):
+            dir = self.root_dir
+        Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
+        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, command])
 
     def umount_safe(self):
         self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])
@@ -69,7 +71,7 @@ class OS:
     def custom(self, command):
         self.__chroot(command)
 
-    def __do_archive(self, excl_list, name):
+    def __do_archive(self, excl_list, name, dir):
         Logger.os(f"Create '{name}' archive...")
         my_env = os.environ.copy()
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
@@ -77,11 +79,11 @@ class OS:
         arch_path = self.board.parse_variables("%{out_sh}%/back_" + name + "_" + date + ".tar.xz")
         self.__sudo(["tar", "-cJpf", arch_path,
             f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
-            cwd=self.root_dir, env=my_env)
+            cwd=dir, env=my_env)
         return arch_path
 
     def pack(self):
-        return self.__do_archive("excl_min", "FULL")
+        return self.__do_archive("excl_min", "FULL", self.root_dir)
 
     def __fix_xorg(self):
         Logger.os("Fix Xorg permissions")
@@ -107,14 +109,54 @@ class OS:
         user = getpass.getuser()
         self.__sudo(["chown", user + ":" + user, to_file])
 
+    def __remove_bdeps(self, temp_dir):
+        # pack full system via tar
+        arch_full_path = self.pack()
+        self.__extract_tar(arch_full_path, temp_dir)
+        # remove unneccessarry packages
+        list_to_rm  = " virtual/perl-JSON-PP virtual/perl-podlators"
+        list_to_rm += " virtual/perl-Getopt-Long virtual/perl-Parse-CPAN-Meta"
+        list_to_rm += " virtual/perl-ExtUtils-CBuilder virtual/perl-ExtUtils-ParseXS"
+        list_to_rm += " virtual/perl-Unicode-Collate virtual/perl-Text-ParseWords"
+        list_to_rm += " virtual/perl-ExtUtils-MakeMaker virtual/perl-Module-Metadata"
+        list_to_rm += " virtual/perl-version virtual/perl-CPAN-Meta"
+        list_to_rm += " virtual/perl-File-Spec perl-core/Getopt-Long"
+        list_to_rm += " dev-perl/Module-Build"
+        list_to_rm += " x11-base/xcb-proto x11-libs/xtrans"
+        list_to_rm += " app-alternatives/ninja app-eselect/eselect-rust"
+        list_to_rm += " dev-libs/vala-common dev-util/glib-utils"
+        list_to_rm += " dev-util/gdbus-codegen media-fonts/font-util"
+        list_to_rm += " dev-libs/libxslt"
+        list_to_rm += " dev-build/gtk-doc-am sys-apps/help2man"
+        list_to_rm += " app-text/docbook-xsl-ns-stylesheets"
+        list_to_rm += " app-text/docbook-xsl-stylesheets app-text/docbook-xml-dtd:4.1.2"
+        list_to_rm += " app-text/docbook-xml-dtd:4.2 app-text/docbook-xml-dtd:4.3"
+        list_to_rm += " app-text/docbook-xml-dtd:4.4 app-text/docbook-xml-dtd:4.5"
+        list_to_rm += " app-text/build-docbook-catalog app-text/xmlto"
+        list_to_rm += " app-text/asciidoc app-text/sgml-common"
+        list_to_rm += " dev-lang/rust-common dev-lang/rust"
+        list_to_rm += " llvm-core/llvm llvm-core/llvm-toolchain-symlinks"
+        list_to_rm += " llvm-core/llvmgold dev-libs/oniguruma"
+        list_to_rm += " llvm-core/llvm-common sys-libs/binutils-libs"
+        list_to_rm += " dev-build/ninja dev-build/meson dev-build/meson-format-array"
+        list_to_rm += " dev-cpp/eigen"
+        list_to_rm += " "
+        self.__chroot(f"emerge -aC {list_to_rm} && ldconfig", temp_dir)
+        self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
+
     def sqh(self):
         self.__fix_xorg()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        arch_path = self.__do_archive("excl", "OS")
         temp_dir = f"{ROOT_DIR}/build/tmp"
+        self.__tmp_clean(temp_dir)
+        self.__remove_bdeps(temp_dir)
+        # pack a minimal archive
+        arch_path = self.__do_archive("excl", "OS", temp_dir)
+        # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
         self.__make_sqh(temp_dir, f"{ROOT_DIR}/out/root_" + date + ".sqh")
+        self.__tmp_clean(temp_dir)
 
     def action(self, action):
         for act in self.actions:
