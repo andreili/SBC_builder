@@ -14,3 +14,6 @@ class Logger:
 
     def os(msg):
         print(f"[🖥] {msg}")
+
+    def install(msg):
+        print(f"[💽] {msg}")

@@ -149,12 +149,22 @@ class Sources:
             tags = self.repo_bare.git.ls_remote("--tags", "origin", f"tags/{self.version}")
             return tags.split('\t')[0]
 
+    def __parse_version(self):
+        if (self.type == "branch"):
+            return f"origin/{self.version}"
+        elif (self.type == "head"):
+            return f"{self.version}"
+        elif (self.type == "commit"):
+            return f"{self.version}"
+        elif (self.type == "tag"):
+            return f"{self.version}"
+
     def git_work_reset_state(self):
         hash_local = self.repo.git.rev_parse("@")
         hash_remote = self.git_work_get_hash_remote()
         if (hash_local == "") or (hash_local == "@") or (hash_local != hash_remote):
             Logger.git(f"\tUpdate references: {hash_local}->{hash_remote}")
-            self.repo.git.fetch("--no-tags", self.bare_dir, self.version)
+            self.repo.git.fetch("--no-tags", self.bare_dir, self.__parse_version())
             #git fetch --no-tags "${repo_local}" "${ref_name}"
         Logger.git(f"\tCheckout: {hash_remote}")
         self.repo.git.checkout("-f", "-q", hash_remote)

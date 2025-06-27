@@ -77,7 +77,14 @@
             "version_type": "branch",
             "target": [ "modules" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods KSRC=%{build_dir}%/kernel_%{board_name}%",
-            "artifacts": []
+            "artifacts":
+            [
+                {
+                    "file": "8189fs.ko",
+                    "store_type": "boot",
+                    "subdir": "modules"
+                }
+            ]
         },
         {
             "parent": "buildroot",
@@ -92,6 +99,16 @@
     {
         "target": "image",
         "block_size": "1k",
-        "image_size": "2g"
+        "partitions":
+        [
+            {
+                "name": "boot",
+                "size": "2g"
+            },
+            {
+                "name": "rw",
+                "size": "2g"
+            }
+        ]
     }
 }
