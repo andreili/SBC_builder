@@ -80,8 +80,8 @@ CHROOT="${NEW_ROOT}"
 run mount -n -t tmpfs tmpfs ${NEW_ROOT}
 DEVICES=$(devicelist)
 run findmediamount "cdrom"   "/livecd"  "REAL_ROOT" "${CDROOT_PATH}" "${DEVICES}" || run_emergency_shell
-run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
 run mount -o remount,ro "${CDROOT_PATH}"
+run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
 #sh
 CHROOT=${NEW_ROOT}
 

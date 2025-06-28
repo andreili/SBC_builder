@@ -5,14 +5,14 @@ from . import *
 class Initramfs:
     def __init__(self):
         self.busybox = Sources("busybox", "https://git.busybox.net/busybox")
-        self.busybox.init_source_path("common")
+        self.busybox.init_source_path("common", True)
         self.busybox.set_git_params("@", "head")
         self.busybox_cfg = f"{ROOT_DIR}/cfg/busybox_config"
         self.eudev = Sources("eudev", "https://github.com/eudev-project/eudev.git")
-        self.eudev.init_source_path("common")
+        self.eudev.init_source_path("common", True)
         self.eudev.set_git_params("@", "head")
         self.e2fsp = Sources("e2fsp", "git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git")
-        self.e2fsp.init_source_path("common")
+        self.e2fsp.init_source_path("common", True)
         self.e2fsp.set_git_params("@", "head")
         self.build_dir = f"{ROOT_DIR}/build/common"
         self.out_dir = f"{ROOT_DIR}/out"

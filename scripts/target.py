@@ -33,7 +33,10 @@ class Target:
         self.sources.set_git_params(detail_js["version"], detail_js["version_type"])
         self.target = detail_js["target"]
         self.version = detail_js["version"]
-        self.config_name = f"{ROOT_DIR}/cfg/{board_name}/{self.name}"
+        if (self.is_shared):
+            self.config_name = f"{ROOT_DIR}/cfg/{self.name}"
+        else:
+            self.config_name = f"{ROOT_DIR}/cfg/{board_name}/{self.name}"
         if (self.version != "") and (self.version != "@"):
             self.config_name += f"_{self.version}"
         if ("patch_dir" in detail_js):

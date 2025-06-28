@@ -53,7 +53,6 @@ bad_msg() {
     local msg_string=${1}
     msg_string="${msg_string:-...}"
     log_msg "[!!] ${msg_string}"
-    splash 'verbose' >/dev/null &
     printf "%b\n" "${BAD}!!${NORMAL}${BOLD} ${msg_string} ${NORMAL}"
 }
 
@@ -175,4 +174,51 @@ findmediamount() {
     fi
     eval local result='$'${vrbl}
     [ -n "${result}" ] || bad_msg "Media not found"
+}
+
+run_shell() {
+	[ -x /bin/sh ] && SH=/bin/sh || SH=/bin/ash
+
+	export PS1='rescueshell \w \# '
+
+	echo
+	GOOD=${BLUE} good_msg "${NORMAL}Welcome to ${BOLD}rescue shell${NORMAL}!" 0
+	GOOD=${BLUE} good_msg "${NORMAL}...running Linux kernel ${BOLD}${KV}${NORMAL}" 0
+	echo
+
+	# Avoid /dev/{console,tty0} due to "can't access tty; job control turned off" problem;
+	# cttyhack will handle this for us...
+	if [ -n "${CONSOLE}" ] \
+		&& [ "${CONSOLE}" != "/dev/console" ] \
+		&& [ "${CONSOLE}" != "/dev/tty0" ] \
+		&& [ -c "${CONSOLE}" ]
+	then
+		log_msg "Opening rescue shell on ${CONSOLE} ..."
+		setsid ${SH} -c "exec sh --login 0<>${CONSOLE} 1<>${CONSOLE} 2<>${CONSOLE}"
+	elif command -v cttyhack 1>/dev/null 2>&1
+	then
+		log_msg "Opening rescue shell using cttyhack ..."
+		setsid cttyhack ${SH} --login
+	elif [ -c '/dev/tty1' ]
+	then
+		log_msg "Opening rescue shell on /dev/tty1 fallback ..."
+		setsid ${SH} -c "exec sh --login 0<>/dev/tty1 1<>/dev/tty1 2<>/dev/tty1"
+	else
+		log_msg "Opening rescue shell (last resort) ..."
+		${SH} --login
+	fi
+
+	# Leave function early when /dev/null does not exist anymore,
+	# i.e. after failed switch_root call
+	[ ! -e /dev/null ] && return
+
+	echo
+
+	# We maybe have called exec and dettached from main script; We
+	# must restore control...
+	exec 0<>${CONSOLE} 1<>${CONSOLE} 2<>${CONSOLE}
+}
+
+run_emergency_shell() {
+	run_shell
 }
