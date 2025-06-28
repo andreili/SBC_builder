@@ -1,0 +1,91 @@
+{
+    "build":
+    [
+        "rkbin", "uboot", "kernel"
+    ],
+    "variables":
+    [
+        "CROSS_C:aarch64-linux-gnu-",
+        "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
+        "BL31_BIN:rk3568_bl31_v1.44.elf",
+        "ARCH:aarch64"
+    ],
+    "targets":
+    [
+        {
+            "parent": "rkbin",
+            "version": "@",
+            "version_type": "head",
+            "target": [ "bl31" ],
+            "no_build": 1,
+            "artifacts":
+            [
+                {
+                    "file": "bin/rk35/%{TPL_BIN}%",
+                    "store_type": "temp"
+                },
+                {
+                    "file": "bin/rk35/%{BL31_BIN}%",
+                    "store_type": "temp"
+                }
+            ]
+        },
+        {
+            "parent": "uboot",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "uboot/btt",
+            "artifacts":
+            [
+                {
+                    "file": "idbloader.img",
+                    "store_type": "dd",
+                    "img_offset": 64
+                },
+                {
+                    "file": "u-boot.itb",
+                    "store_type": "dd",
+                    "img_offset": 16368
+                }
+            ],
+            "target": [ "" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCHV=%{ARCH}% ROCKCHIP_TPL=%{out_dir}%/%{TPL_BIN}% BL31=%{out_dir}%/%{BL31_BIN}%"
+        },
+        {
+            "parent": "kernel",
+            "version": "v6.14-rc7",
+            "version_type": "tag",
+            "patch_dir": [ "kernel/sunxi-6.14", "kernel/rockchip64-6.14" ],
+            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
+            "artifacts":
+            [
+                {
+                    "file": "arch/arm64/boot/Image",
+                    "store_type": "boot"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-*.dtb",
+                    "store_type": "boot",
+                    "subdir": "dtb/rockchip"
+                }
+            ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
+        }
+    ],
+    "install":
+    {
+        "target": "image",
+        "block_size": "512b",
+        "partitions":
+        [
+            {
+                "name": "boot",
+                "size": "2g"
+            },
+            {
+                "name": "rw",
+                "size": "2g"
+            }
+        ]
+    }
+}

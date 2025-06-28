@@ -3,7 +3,8 @@
         "atf":
         {
             "url": "https://github.com/ARM-software/arm-trusted-firmware.git",
-            "config": false
+            "config": false,
+            "is_shared": false
         }
     },
     {
@@ -11,7 +12,8 @@
         {
             "url": "https://github.com/u-boot/u-boot.git",
             "config": true,
-            "config_target": "menuconfig"
+            "config_target": "menuconfig",
+            "is_shared": false
         }
     },
     {
@@ -19,15 +21,8 @@
         {
             "url": "https://github.com/torvalds/linux.git",
             "config": true,
-            "config_target": "menuconfig"
-        }
-    },
-    {
-        "buildroot":
-        {
-            "url": "https://github.com/buildroot/buildroot.git",
-            "config": true,
-            "config_target": "menuconfig"
+            "config_target": "menuconfig",
+            "is_shared": true
         }
     },
     {
@@ -35,14 +30,24 @@
         {
             "url": "https://git.busybox.net/busybox",
             "config": true,
-            "config_target": "menuconfig"
+            "config_target": "menuconfig",
+            "is_shared": false
         }
     },
     {
         "rtl8189ES_linux":
         {
             "url": "https://github.com/jwrdegoede/rtl8189ES_linux.git",
-            "config": false
+            "config": false,
+            "is_shared": false
+        }
+    },
+    {
+        "rkbin":
+        {
+            "url": "https://github.com/rockchip-linux/rkbin",
+            "config": false,
+            "is_shared": false
         }
     }
 ]

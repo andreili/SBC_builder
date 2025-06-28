@@ -52,7 +52,7 @@
             "version": "v6.14-rc7",
             "version_type": "tag",
             "patch_dir": "kernel/sunxi-6.14",
-            "target": [ "Image", "modules", "dtbs", "modules_install" ],
+            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
             "artifacts":
             [
                 {
@@ -62,23 +62,15 @@
                 {
                     "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
                     "store_type": "boot",
-                    "subdir": "dts/allwiner"
+                    "subdir": "dtb/allwiner"
                 },
                 {
                     "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
                     "store_type": "boot",
-                    "subdir": "dts/allwiner/overlay"
+                    "subdir": "dtb/allwiner/overlay"
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
-        },
-        {
-            "parent": "buildroot",
-            "version": "@",
-            "version_type": "head",
-            "patch_dir": "buildroot/sunxi",
-            "target": [],
-            "artifacts": []
         }
     ],
     "install":

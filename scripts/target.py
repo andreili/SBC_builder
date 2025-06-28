@@ -15,6 +15,7 @@ class Target:
                 self.config_target = meta_js[key]["config_target"]
             else:
                 self.config_target = ""
+            self.is_shared = meta_js[key]["is_shared"]
 
     def load_meta(meta_fn):
         with open(meta_fn) as json_data:
@@ -28,7 +29,7 @@ class Target:
 
     def load_detail(self, board_name, detail_js, parse_variables):
         self.board_name = board_name
-        self.sources.init_source_path(board_name)
+        self.sources.init_source_path(board_name, self.is_shared)
         self.sources.set_git_params(detail_js["version"], detail_js["version_type"])
         self.target = detail_js["target"]
         self.version = detail_js["version"]
@@ -51,6 +52,10 @@ class Target:
             self.defconfig = detail_js["config_def"]
         else:
             self.defconfig = ""
+        if ("no_build" in detail_js):
+            self.no_build = True
+        else:
+            self.no_build = False
         _artifacts = detail_js["artifacts"]
         self.artifacts = []
         for art in _artifacts:
@@ -64,16 +69,21 @@ class Target:
 
     def build(self, sub_target, out_dir):
         self.source_sync()
-        opts = self.makeopts.split(" ")
-        config = ""
-        if (sub_target == "") or (not self.have_config):
-            opts += self.target
-        else:
-            if (sub_target == "config"):
-                opts.append(self.defconfig)
-                opts.append(self.config_target)
+        if (not self.no_build):
+            opts = self.makeopts.split(" ")
+            config = ""
+            targets = [""]
+            if (sub_target == "") or (not self.have_config):
+                targets = self.target
             else:
-                Logger.error("Invalid sub-target!")
-        self.sources.compile(opts, self.config_name)
+                if (sub_target == "config"):
+                    opts.append(self.defconfig)
+                    opts.append(self.config_target)
+                else:
+                    Logger.error("Invalid sub-target!")
+            for target in targets:
+                opts_tmp = opts.copy()
+                opts_tmp.append(target)
+                self.sources.compile(opts_tmp, self.config_name)
         if (sub_target != "config"):
             self.sources.copy_artifacts(self.artifacts, out_dir)

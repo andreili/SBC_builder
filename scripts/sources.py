@@ -85,12 +85,19 @@ class Sources:
         self.bare_dir = f"{ROOT_DIR}/bare_git/{name}"
         self.bare_done_marker = f"{self.bare_dir}/.git_done_marker"
 
-    def init_source_path(self, board_name):
-        self.board_name = board_name
-        self.worktree = f"{self.name}_{board_name}"
-        self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
-        self.work_dir = f"{ROOT_DIR}/build/{board_name}/{self.worktree}"
-        self.work_done_marker = f"{self.work_dir}/.git_done_marker"
+    def init_source_path(self, board_name, is_shared):
+        if (is_shared):
+            self.board_name = ""
+            self.worktree = f"{self.name}"
+            self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
+            self.work_dir = f"{ROOT_DIR}/build/common/{self.worktree}"
+            self.work_done_marker = f"{self.work_dir}/.git_done_marker"
+        else:
+            self.board_name = board_name
+            self.worktree = f"{self.name}_{board_name}"
+            self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
+            self.work_dir = f"{ROOT_DIR}/build/{board_name}/{self.worktree}"
+            self.work_done_marker = f"{self.work_dir}/.git_done_marker"
 
     def set_git_params(self, version, _type):
         self.version = version
@@ -196,23 +203,28 @@ class Sources:
 
     def do_patch(self, board_name, dir):
         Logger.build(f"Patch...")
-        dirs = [
-            f"{ROOT_DIR}/patch/{dir}/..",
-            f"{ROOT_DIR}/patch/{dir}",
-            f"{ROOT_DIR}/patch/{dir}/board_{board_name}"
-        ]
-        for dir_p in dirs:
-            conf_fn = f"{dir_p}/series.conf"
-            conf_f = Path(conf_fn)
-            if (conf_f.is_file()):
-                with open(conf_fn, 'r') as f:
-                    for line in f:
-                        if (len(line)>10) and (line[0] != "#") and (line[0] != "-"):
-                            file_n = line.strip()
-                            self.__patch_apply(f"{dir_p}/{file_n}", self.work_dir)
-                    f.close()
-            for patch_file in Path(dir_p).glob('*.patch'):
-                self.__patch_apply(patch_file, self.work_dir)
+        if (hasattr(dir, '__len__') and (not isinstance(dir, str))):
+            dirs_arr = dir
+        else:
+            dirs_arr = [dir]
+        for ddir in dirs_arr:
+            dirs = [
+                f"{ROOT_DIR}/patch/{ddir}/..",
+                f"{ROOT_DIR}/patch/{ddir}",
+                f"{ROOT_DIR}/patch/{ddir}/board_{board_name}"
+            ]
+            for dir_p in dirs:
+                conf_fn = f"{dir_p}/series.conf"
+                conf_f = Path(conf_fn)
+                if (conf_f.is_file()):
+                    with open(conf_fn, 'r') as f:
+                        for line in f:
+                            if (len(line)>10) and (line[0] != "#") and (line[0] != "-"):
+                                file_n = line.strip()
+                                self.__patch_apply(f"{dir_p}/{file_n}", self.work_dir)
+                        f.close()
+                for patch_file in sorted(Path(dir_p).glob('*.patch')):
+                    self.__patch_apply(patch_file, self.work_dir)
 
     def configure(self, opts):
         opts.insert(0, "./configure")

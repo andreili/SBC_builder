@@ -31,7 +31,7 @@ class Board:
             for dep_name in target.dep_names:
                 dep = self.__find_target(dep_name)
                 if (dep == 0):
-                    Logger.error("Unable to find package!")
+                    Logger.error(f"Unable to find package '{dep_name}'!")
                 target.depends.append(dep)
 
     def __find_meta(self, targets_meta, name):

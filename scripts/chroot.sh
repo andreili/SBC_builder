@@ -25,7 +25,7 @@ OS_DIR_DEF="./root/"
     mount --bind /sys ${DDIR}/sys
     mount --bind /proc ${DDIR}/proc
     mount --bind /var/db/repos ${DDIR}/var/db/repos
-    mount --bind /mnt/work/SBC/universal/build/btt_cb1/kernel_btt_cb1 ${DDIR}/usr/src/linux-6.14-rc7
+    mount --bind /mnt/work/SBC/universal/build/common/kernel ${DDIR}/usr/src/linux-6.14-rc7
     mount -t tmpfs tmpfs ${DDIR}/var/tmp/
     if [ -z "$2" ]
     then
