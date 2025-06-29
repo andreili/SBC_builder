@@ -89,11 +89,15 @@ run cd "${CHROOT}"
 good_msg 'Mounting squashfs filesystem'
 upperdir="${RW_MNT}/.upper"
 workdir="${RW_MNT}/.work"
-for i in "${RW_MNT}" "${STATIC}" "${OVERLAY}" "${upperdir}" "${workdir}"
+for i in "${RW_MNT}" "${STATIC}" "${OVERLAY}"
 do
     [ ! -d "${i}" ] && run mkdir -p "${i}"
 done
-run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}"
+#for i in "${upperdir}" "${workdir}"
+#do
+#    [ ! -d "${i}" ] && run mkdir -p "${i}"
+#done
+run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}" || run_emergency_shell
 #if [ -d ${CDROOT_PATH}/modules ]
 #then
 #        warn_msg "Adding all modules in ${CDROOT_PATH}/modules"
@@ -113,9 +117,11 @@ run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}"
 #                mods="${mods} ${mod}"
 #        done
 #fi
-run mount -t overlay overlay -o lowerdir="${STATIC}${mod_path}",upperdir="${upperdir}",workdir="${workdir}" "${NEW_ROOT}"
-#[ ! -d "${NEW_ROOT}${RW_MNT}" ] && mkdir -p "${NEW_ROOT}${RW_MNT}"
-#[ ! -d "${NEW_ROOT}${STATIC}" ] && mkdir -p "${NEW_ROOT}${STATIC}"
+run mount -t overlay overlay -o lowerdir="${STATIC}${mod_path}",upperdir="${upperdir}",workdir="${workdir}" "${NEW_ROOT}" || run_emergency_shell
+for i in "${RW_MNT}" "${STATIC}" "${CDROOT_PATH}"
+do
+    [ ! -d "${NEW_ROOT}${i}" ] && run mkdir -p "${NEW_ROOT}${i}"
+done
 #echo "overlay / overlay defaults 0 0" > "${NEW_ROOT}"/etc/fstab
 #run mkdir -p "${NEW_ROOT}${OVERLAY}"
 #run chmod 755 "${NEW_ROOT}${OVERLAY}"
@@ -131,9 +137,9 @@ run mount -t overlay overlay -o lowerdir="${STATIC}${mod_path}",upperdir="${uppe
 #[ ! -d "${NEW_ROOT}${CDROOT_PATH}" ] && mkdir -p "${NEW_ROOT}${CDROOT_PATH}"
 #run mount --bind "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
 #run mount --bind "${RW_MNT}" "${NEW_ROOT}${RW_MNT}"
-run mount --move "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
-run mount --move "${RW_MNT}" "${NEW_ROOT}${RW_MNT}"
-run mount --move "${STATIC}" "${NEW_ROOT}${STATIC}"
+run mount --move "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}" || run_emergency_shell
+run mount --move "${RW_MNT}" "${NEW_ROOT}${RW_MNT}" || run_emergency_shell
+run mount --move "${STATIC}" "${NEW_ROOT}${STATIC}" || run_emergency_shell
 
 #for m in ${MODULES}; do
 #        run insmod "${NEW_ROOT}${m}"

@@ -244,7 +244,7 @@ class Sources:
                 # copy configuration, if exists
                 shutil.copyfile(cfg_name, work_cfg_name)
         opts.insert(0, "make")
-        opts.append("-l11")
+        opts.append("-j11")
         p = subprocess.Popen(opts, cwd=self.work_dir)
         p.wait()
         if (p.returncode != 0):

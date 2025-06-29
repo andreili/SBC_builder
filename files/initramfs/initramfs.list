@@ -57,10 +57,10 @@ slink /dev/stderr                       /proc/self/fd/2                 777 0 0
 slink /dev/stdin                        /proc/self/fd/0                 777 0 0
 slink /dev/std/out                      /proc/self/fd/1                 777 0 0
 
-file /bin/busybox            build/common/busybox            755 0 0
-file /bin/udevadm            build/common/udevadm            755 0 0
-file /bin/e2fsck             build/common/e2fsck             755 0 0
-file /bin/resize2fs          build/common/resize2fs          755 0 0
+file /bin/busybox            build/common/initrd/busybox            755 0 0
+file /bin/udevadm            build/common/initrd/udevadm            755 0 0
+file /bin/e2fsck             build/common/initrd/e2fsck             755 0 0
+file /bin/resize2fs          build/common/initrd/resize2fs          755 0 0
 file /etc/init.def           files/initramfs/init.def        755 0 0
 file /etc/init.script        files/initramfs/init.script     755 0 0
 file /init                   files/initramfs/init            755 0 0

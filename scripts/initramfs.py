@@ -15,8 +15,10 @@ class Initramfs:
         self.e2fsp.init_source_path("common", True)
         self.e2fsp.set_git_params("@", "head")
         self.build_dir = f"{ROOT_DIR}/build/common"
+        self.files_dir = f"{self.build_dir}/initrd"
         self.out_dir = f"{ROOT_DIR}/out"
         self.root_dir = f"{ROOT_DIR}/root/media/initramfs_tmp"
+        os.makedirs(self.files_dir, exist_ok=True)
 
     def __prepare(self):
         self.busybox.sync()
@@ -34,9 +36,14 @@ class Initramfs:
     def __busybox(self, os):
         Logger.build(f"Compile busybox")
         dir = "/media/busybox"
+        shutil.copy(self.busybox_cfg, self.busybox.work_dir + "/.config")
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
         self.__chrooted(self.busybox, os, dir, "make -l10")
-        shutil.copy(self.busybox.work_dir + "/busybox", f"{self.build_dir}/")
+        shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
+        cfg_or = Path(self.busybox_cfg)
+        if (cfg_or.is_file()):
+            # backup old configuration
+            shutil.copyfile(self.busybox_cfg, f"{self.busybox_cfg}.bak")
 
     def __eudev(self, os):
         Logger.build(f"Compile eudev")
@@ -48,9 +55,11 @@ class Initramfs:
         cfg_cmd += " --enable-blkid --disable-introspection --disable-manpages"
         cfg_cmd += " --disable-selinux --disable-rule-generator"
         cfg_cmd += " --disable-hwdb --disable-kmod"
-        #self.__chrooted(self.eudev, os, dir, f"./autogen.sh && ./configure {cfg_cmd}")
+        makefile = Path(f"{self.eudev.work_dir}/Makefile")
+        if (not makefile.is_file()):
+            self.__chrooted(self.eudev, os, dir, f"./autogen.sh && ./configure {cfg_cmd}")
         self.__chrooted(self.eudev, os, dir, f"make -l10 && strip --strip-all {udev_bin}")
-        shutil.copy(self.eudev.work_dir + f"/{udev_bin}", f"{self.build_dir}/")
+        shutil.copy(self.eudev.work_dir + f"/{udev_bin}", f"{self.files_dir}/")
 
     def __e2fsp(self, os):
         Logger.build(f"Compile e2fsprogs")
@@ -65,14 +74,16 @@ class Initramfs:
         cfg_cmd += " --disable-imager --enable-resizer"
         cfg_cmd += " --disable-defrag"
         cfg_cmd += " --enable-lto "
-        self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
+        makefile = Path(f"{self.e2fsp.work_dir}/Makefile")
+        if (not makefile.is_file()):
+            self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
         self.__chrooted(self.e2fsp, os, dir, f"make -l10 && strip --strip-all {bin1} {bin2}")
-        shutil.copy(self.e2fsp.work_dir + f"/{bin1}", f"{self.build_dir}/")
-        shutil.copy(self.e2fsp.work_dir + f"/{bin2}", f"{self.build_dir}/")
+        shutil.copy(self.e2fsp.work_dir + f"/{bin1}", f"{self.files_dir}/")
+        shutil.copy(self.e2fsp.work_dir + f"/{bin2}", f"{self.files_dir}/")
 
     def __cpio(self):
         Logger.build(f"\tCreate init.cpio")
-        f = open(f"{self.build_dir}/init.cpio", "wb")
+        f = open(f"{self.files_dir}/init.cpio", "wb")
         p = subprocess.Popen(["/usr/src/linux/usr/gen_init_cpio",
             f"{ROOT_DIR}/files/initramfs/initramfs.list"], stdout=f, cwd=ROOT_DIR)
         p.wait()
@@ -80,18 +91,18 @@ class Initramfs:
 
     def __compress_gzip(self):
         Logger.build(f"\tCompress GZIP")
-        p = subprocess.Popen(["gzip", "-fk", "--best", f"{self.build_dir}/init.cpio"])
+        p = subprocess.Popen(["gzip", "-fk", "--best", f"{self.files_dir}/init.cpio"])
         p.wait()
 
     def __compress_lzma(self):
         Logger.build(f"\tCompress LZMA")
-        p = subprocess.Popen(["lzma", "-fzk9e", f"{self.build_dir}/init.cpio"])
+        p = subprocess.Popen(["lzma", "-fzk9e", f"{self.files_dir}/init.cpio"])
         p.wait()
 
     def __mkimage(self):
         Logger.build(f"\tImage")
         p = subprocess.Popen(["mkimage", "-A", "arm", "-T", "ramdisk", "-C",
-            "none", "-n", "uInitrd", "-d", f"{self.build_dir}/init.cpio.lzma",
+            "none", "-n", "uInitrd", "-d", f"{self.files_dir}/init.cpio.lzma",
             f"{self.out_dir}/uInitrd"])
         p.wait()
 
