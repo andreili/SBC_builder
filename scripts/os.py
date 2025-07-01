@@ -157,7 +157,7 @@ class OS:
         self.__extract_tar(arch_path, temp_dir)
         sqh_fn = f"{ROOT_DIR}/out/root_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
-        os.symlink(sqh_fn, f"{ROOT_DIR}/out/root.sqh")
+        #os.symlink(sqh_fn, f"{ROOT_DIR}/out/root.sqh")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):

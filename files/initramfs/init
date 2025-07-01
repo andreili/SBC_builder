@@ -173,6 +173,9 @@ echo "umount -l ${NEW_ROOT}" >> ${SH_FILE}
 #run mkdir ${NEW_ROOT}${INIF}
 #run mount --rbind ${INIF} ${NEW_ROOT}${INIF}
 
+# uncomment for debug
+#run_emergency_shell
+
 while true
 do
     if  ! mountpoint "${CHROOT}" 1>/dev/null 2>&1
