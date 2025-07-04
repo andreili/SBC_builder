@@ -101,7 +101,9 @@ class OS:
     def __extract_tar(self, arch_fn, to_path):
         Logger.os("Extract to temporary directory...")
         os.makedirs(to_path, exist_ok=True)
-        self.__sudo(["tar", "xf", arch_fn], cwd=to_path)
+        my_env = os.environ.copy()
+        my_env["XZ_OPT"] = "-9 --extreme --threads=0"
+        self.__sudo(["tar", "xf", arch_fn], cwd=to_path, env=my_env)
 
     def __make_sqh(self, root_path, to_file):
         Logger.os("Create squashed archive...")

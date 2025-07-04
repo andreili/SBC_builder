@@ -10,11 +10,24 @@ class Software:
             js = json.load(json_data)
             json_data.close()
         self.user = js["user"]
+        self.user_groups = js["user_groups"]
+        self.repos = js["repos"]
+        self.make_venv = js["make_venv"]
     
     def finalize(self, dir):
-        cmd_user = f"useradd -m -G wheel,video,audio,disk,usb {self.user} --password {self.user}"
-        cmd_klipper = "sudo klipper 'cd ~ && git clone https://github.com/dw-0/kiauh.git --depth=1'"
-        cmd_venv = "sudo klipper 'cd ~ && python -m venv ~/venv'"
-        self.os.chroot_ext(cmd_user, dir)
-        self.os.chroot_ext(cmd_klipper, dir)
-        self.os.chroot_ext(cmd_venv, dir)
+        home_dir = f"/home/{self.user}"
+        cmds = []
+        # create user
+        cmds.push_back(f"useradd -m -G {self.user_groups} {self.user} --password {self.user}")
+        #make password for user
+        cmds.push_back(f"echo '{self.user}:{self.user}' | chpasswd")
+        for repo in self.repos:
+            #clone repos from configuration
+            repo_dir = repo["directory"]
+            repo_url = repo["url"]
+            cmds.push_back(f"sudo -i -u klipper git clone {repo_url} --depth=1 {home_dir}/{repo_dir}")
+        if (self.make_venv):
+            # make python environment
+            cmds.push_back(f"sudo -i -u klipper python -m venv {home_dir}/venv")
+        for cmd in cmds:
+            self.os.chroot_ext(cmd, dir)

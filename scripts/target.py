@@ -71,7 +71,7 @@ class Target:
         self.sources.do_patch(self.board_name, self.patch_dir)
 
     def build(self, sub_target, out_dir):
-        self.source_sync()
+        #self.source_sync()
         if (not self.no_build):
             opts = self.makeopts.split(" ")
             config = ""
@@ -80,6 +80,7 @@ class Target:
                 targets = self.target
             else:
                 if (sub_target == "config"):
+                    shutil.copyfile("cfg/printer_defconfig", "build/common/kernel/arch/arm64/configs/printer_defconfig")
                     opts.append(self.defconfig)
                     opts.append(self.config_target)
                 else:
