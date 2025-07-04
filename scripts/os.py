@@ -1,4 +1,4 @@
-import subprocess, os, sys, datetime, getpass, shutil
+import subprocess, os, sys, datetime, getpass, shutil, requests
 from pathlib import Path
 if __name__ != '__main__':
     from . import *
@@ -20,6 +20,23 @@ class OS:
         for act in self.actions:
             lst.append(act[0])
         return lst
+
+    def check_rootfs(self):
+        root_marker = Path(self.root_dir)
+        if (not root_marker.is_dir()):
+            Logger.os(f"Download base OS rootfs archive...")
+            temp_dir = f"{ROOT_DIR}/build/tmp"
+            os.makedirs(temp_dir, exist_ok=True)
+            r = requests.get("https://cloud.andreil.by/public.php/dav/files/sbc-rootfs-archive", stream=True)
+            arch_fn = f"{temp_dir}/sbc_rootfs_archive.tar.xz"
+            with open(arch_fn, 'wb') as f:
+                total_length = int(r.headers.get('content-length'))
+                for chunk in r.iter_content(chunk_size=1024):
+                    f.write(chunk)
+            os.makedirs(self.root_dir, exist_ok=True)
+            self.__extract_tar(arch_fn, self.root_dir)
+            self.__tmp_clean(temp_dir)
+            self.__chroot("eix-sync -v")
 
     def set_board(self, board):
         self.board = board

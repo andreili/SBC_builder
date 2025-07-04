@@ -3,9 +3,9 @@ boot/*
 media/*
 usr/lib/python3.13/test*
 usr/lib64/perl5*
-usr/src/*
+#usr/src/*
 var/cache/binpkgs/*
 var/cache/distfiles/*
-vvar/cache/edb/*
+var/cache/edb/*
 var/cache/eix/*
 var/log/*.log

@@ -23,6 +23,8 @@ targets_meta = Target.load_meta(f"config/target_meta.json")
 target_board = Board(args.board, f"config/board/{args.board}.json", targets_meta)
 os.set_board(target_board)
 
+os.check_rootfs()
+
 if (args.sync):
     target_board.sync()
 elif (args.target != ""):
