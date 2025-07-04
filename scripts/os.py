@@ -110,9 +110,6 @@ class OS:
         self.__sudo(["chown", user + ":" + user, to_file])
 
     def __remove_bdeps(self, temp_dir):
-        # pack full system via tar
-        arch_full_path = self.pack()
-        self.__extract_tar(arch_full_path, temp_dir)
         # remove unneccessarry packages
         list_to_rm  = " virtual/perl-JSON-PP virtual/perl-podlators"
         list_to_rm += " virtual/perl-Getopt-Long virtual/perl-Parse-CPAN-Meta"
@@ -128,10 +125,10 @@ class OS:
         list_to_rm += " dev-util/gdbus-codegen media-fonts/font-util"
         list_to_rm += " dev-libs/libxslt"
         list_to_rm += " dev-build/gtk-doc-am sys-apps/help2man"
-        list_to_rm += " app-text/docbook-xsl-ns-stylesheets"
-        list_to_rm += " app-text/docbook-xsl-stylesheets app-text/docbook-xml-dtd:4.1.2"
+        list_to_rm += " app-text/docbook-xml-dtd:4.1.2"
         list_to_rm += " app-text/docbook-xml-dtd:4.2 app-text/docbook-xml-dtd:4.3"
         list_to_rm += " app-text/docbook-xml-dtd:4.4 app-text/docbook-xml-dtd:4.5"
+        list_to_rm += " app-text/docbook-xsl-ns-stylesheets app-text/docbook-xsl-stylesheets"
         list_to_rm += " app-text/build-docbook-catalog app-text/xmlto"
         list_to_rm += " app-text/asciidoc app-text/sgml-common"
         list_to_rm += " dev-lang/rust-common dev-lang/rust"
@@ -144,12 +141,28 @@ class OS:
         self.__chroot(f"emerge -aC {list_to_rm} && ldconfig", temp_dir)
         self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
 
+    def __finalize(self, dir):
+        Logger.os(f"Finalize system installation...")
+        # enable network services
+        services = "systemctl enable NetworkManager ntpdate sshd"
+        self.__chroot(services, dir)
+        journal_min  = "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' /etc/systemd/journald.conf &&"
+        journal_min += "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' /etc/systemd/journald.conf"
+        self.__chroot(journal_min, dir)
+        self.__sudo(["cp", "-r", f"{ROOT_DIR}/files/firmware/usr", f"{dir}/"])
+
     def sqh(self):
         self.__fix_xorg()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
+        # pack full system via tar
+        arch_full_path = self.pack()
         self.__tmp_clean(temp_dir)
+        self.__extract_tar(arch_full_path, temp_dir)
+        # remove unnecessary packages
         self.__remove_bdeps(temp_dir)
+        # prepare system
+        self.__finalize(temp_dir)
         # pack a minimal archive
         arch_path = self.__do_archive("excl", "OS", temp_dir)
         # remove temp directory
