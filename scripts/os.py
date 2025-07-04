@@ -42,7 +42,7 @@ class OS:
         if (dir == ""):
             dir = self.root_dir
         Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
-        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, command])
+        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR, command])
 
     def umount_safe(self):
         self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])
@@ -56,6 +56,9 @@ class OS:
 
     def chroot(self):
         self.__chroot("")
+
+    def chroot_ext(self, command, dir):
+        self.__chroot(command, dir)
 
     def sync_repo(self):
         self.__chroot("eix-sync -v")
@@ -146,10 +149,13 @@ class OS:
         # enable network services
         services = "systemctl enable NetworkManager ntpdate sshd"
         self.__chroot(services, dir)
+        # minimize systemd journal files
         journal_min  = "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' /etc/systemd/journald.conf &&"
         journal_min += "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' /etc/systemd/journald.conf"
         self.__chroot(journal_min, dir)
         self.__sudo(["cp", "-r", f"{ROOT_DIR}/files/firmware/usr", f"{dir}/"])
+        soft = Software(self)
+        soft.finalize(dir)
 
     def sqh(self):
         self.__fix_xorg()
