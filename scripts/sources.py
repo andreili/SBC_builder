@@ -203,13 +203,13 @@ class Sources:
 
     def do_patch(self, board_name, dir):
         Logger.build(f"Patch...")
+        patchs = []
         if (hasattr(dir, '__len__') and (not isinstance(dir, str))):
             dirs_arr = dir
         else:
             dirs_arr = [dir]
         for ddir in dirs_arr:
             dirs = [
-                f"{ROOT_DIR}/patch/{ddir}/..",
                 f"{ROOT_DIR}/patch/{ddir}",
                 f"{ROOT_DIR}/patch/{ddir}/board_{board_name}"
             ]
@@ -221,10 +221,17 @@ class Sources:
                         for line in f:
                             if (len(line)>10) and (line[0] != "#") and (line[0] != "-"):
                                 file_n = line.strip()
-                                self.__patch_apply(f"{dir_p}/{file_n}", self.work_dir)
+                                patchs.append(f"{dir_p}/{file_n}")
                         f.close()
                 for patch_file in sorted(Path(dir_p).glob('*.patch')):
-                    self.__patch_apply(patch_file, self.work_dir)
+                    patchs.append(patch_file)
+        # create array only with unique files
+        patch_uniq = []
+        for patch_fn in patchs:
+            if patch_fn not in patch_uniq:
+                patch_uniq.append(patch_fn)
+        for patch_fn in patch_uniq:
+            self.__patch_apply(patch_fn, self.work_dir)
 
     def configure(self, opts):
         opts.insert(0, "./configure")
