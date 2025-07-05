@@ -40,4 +40,4 @@ if (args.os_act != ""):
         os.action(act)
 
 if (args.install != ""):
-    target_board.install(args.install)
+    os.install(args.install)

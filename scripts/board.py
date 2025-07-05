@@ -1,8 +1,6 @@
-import json, os, stat, re
+import json, os
 from pathlib import Path
 from . import *
-
-units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
 
 class Board:
     def __init__(self, name, js_fn, targets_meta):
@@ -88,67 +86,3 @@ class Board:
                     break
         if (not is_finded):
             Logger.error("Don't find target!")
-
-    def __do_cmd(self, args, cwd=None, env=None, stdin=None):
-        if (stdin != None):
-            p = subprocess.Popen(args, cwd=cwd, env=env, stdin=subprocess.PIPE, text=True)
-        else:
-            p = subprocess.Popen(args, cwd=cwd, env=env)
-        if (stdin != None):
-            p.communicate(input=stdin)
-        if (p.wait() != 0):
-            Logger.error(f"Command '{args[0]}' finished with error code!")
-
-    def __make_blk_struct(self, dev):
-        Logger.install("\tBlock device. Prepare and mount it...")
-
-    def __create_img_file(self, path, size):
-        Logger.install("\tCreate image file...")
-        img_f = Path(path)
-        if (img_f.is_file()):
-            shutil.rmtree(path, ignore_errors=True)
-        blk_size = 1024*1024
-        blk_count = int(size / blk_size)
-        self.__do_cmd(["dd", "if=/dev/zero", f"of={path}", f"bs={blk_size}", f"count={blk_count}"])
-
-    def __parse_size(elf, size):
-        size = size.upper()
-        if not re.match(r' ', size):
-            size = re.sub(r'([KMGT])', r' \1', size)
-        number, unit = [string.strip() for string in size.split()]
-        return int(float(number)*units[unit])
-
-    def __create_parts(self, img_or_dev):
-        args = ""
-        args += "o\n"
-        for part in self.installs["partitions"]:
-            part_sz = part["size"]
-            args += "n\n"
-            args += "p\n"
-            args += "\n"
-            args += "\n"
-            args += f"+{part_sz}\n"
-        args += "w\n"
-        args += "q\n"
-        self.__do_cmd(["fdisk", img_or_dev], stdin=args)
-
-    def __install_to_img(self):
-        Logger.install("\tImage. Prepare and mount it...")
-        img_fn = f"{self.out_dir}/all.img"
-        # basic image offset - space for partition table and bootloader
-        img_sz = 1024*1024 + 512
-        parts = self.installs["partitions"]
-        for part in parts:
-            img_sz += self.__parse_size(part["size"])
-        self.__create_img_file(img_fn, img_sz)
-        self.__create_parts(img_fn)
-
-    def install(self, dir):
-        Logger.install(f"Install to '{dir}'")
-        if (self.installs["target"] == "image"):
-            self.__install_to_img()
-        else:
-            Logger.error("Unsupported instalation type!")
-        #is_blk = False
-        #if (stat.S_ISBLK(os.stat(dir).st_mode)):
-        #    dir = self.__make_blk_struct(dir)

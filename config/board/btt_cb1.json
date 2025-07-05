@@ -40,6 +40,7 @@
                 {
                     "file": "u-boot-sunxi-with-spl.bin",
                     "store_type": "dd",
+                    "block_size": "1k",
                     "img_offset": 8
                 }
             ],
@@ -91,12 +92,14 @@
     "install":
     {
         "target": "image",
-        "block_size": "1k",
+        "type": "mbr",
+        "block_size": "512b",
         "partitions":
         [
             {
                 "name": "boot",
-                "size": "2g"
+                "size": "1g",
+                "first_sector": "2048"
             },
             {
                 "name": "rw",

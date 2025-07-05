@@ -8,7 +8,8 @@
         "CROSS_C:aarch64-linux-gnu-",
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
         "BL31_BIN:rk3568_bl31_v1.44.elf",
-        "ARCH:aarch64"
+        "ARCH:aarch64",
+        "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb"
     ],
     "targets":
     [
@@ -40,12 +41,14 @@
                 {
                     "file": "idbloader.img",
                     "store_type": "dd",
+                    "block_size": "512b",
                     "img_offset": 64
                 },
                 {
                     "file": "u-boot.itb",
                     "store_type": "dd",
-                    "img_offset": 16368
+                    "block_size": "512b",
+                    "img_offset": 16384
                 }
             ],
             "target": [ "" ],
@@ -65,7 +68,7 @@
                     "store_type": "boot"
                 },
                 {
-                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-*.dtb",
+                    "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
                     "subdir": "dtb/rockchip"
                 }
@@ -76,12 +79,14 @@
     "install":
     {
         "target": "image",
+        "type": "gpt",
         "block_size": "512b",
         "partitions":
         [
             {
                 "name": "boot",
-                "size": "2g"
+                "size": "1g",
+                "first_sector": "32768"
             },
             {
                 "name": "rw",

@@ -90,3 +90,15 @@ class Target:
                 self.sources.compile(opts_tmp, self.config_name)
         if (sub_target != "config"):
             self.sources.copy_artifacts(self.artifacts, out_dir)
+
+    def install_files(self, dir, tmp_dir, part_name, on_file, on_dd):
+        Logger.install(f"'{self.name}': Install artifacts")
+        for art in self.artifacts:
+            art_fn = os.path.basename(art["file"])
+            if (art["store_type"] == part_name):
+                subdir = ""
+                if "subdir" in art:
+                    subdir = art["subdir"] + "/"
+                on_file(f"{tmp_dir}/{subdir}{art_fn}", f"{dir}/{subdir}")
+            if (art["store_type"] == "dd"):
+                on_dd(f"{tmp_dir}/{art_fn}", art["block_size"], int(art["img_offset"]))
