@@ -323,12 +323,15 @@ class OS:
     def __umount_dev(self, dir):
         self.__sudo(["umount", dir], stdout=subprocess.DEVNULL)
 
-    def __create_fs(self, img_or_blk):
+    def __create_fs(self, img_or_blk, is_blk):
         Logger.install("\tCreate filesystems...")
         for i in range(len(self.partitions)):
-            if (self.__mount_loop(img_or_blk, i)):
+            if (not is_blk) and (self.__mount_loop(img_or_blk, i)):
                 self.__sudo(["mkfs.ext2", "/dev/loop0"], stdout=subprocess.DEVNULL)
                 self.__umount_loop()
+            if is_blk:
+                idx = i + 1
+                self.__sudo(["mkfs.ext2", "-F", f"{img_or_blk}{idx}"], stdout=subprocess.DEVNULL)
 
     def __copy_file(self, src, dst):
         Logger.install(f"\tCopy {src}")
@@ -360,22 +363,23 @@ class OS:
         self.__sudo(["mkdir", "-p", f"{out_dir}/.upper"], stdout=subprocess.DEVNULL)
         self.__sudo(["mkdir", "-p", f"{out_dir}/.work"], stdout=subprocess.DEVNULL)
 
-    def __do_boot(self, img_or_blk):
+    def __do_boot(self, img_or_blk, is_blk):
         Logger.install("\tCreate boot files...")
         i = 0
         os.makedirs(self.mount_dir, exist_ok=True)
         for part in self.partitions:
+            if is_blk:
+                idx = i + 1
+                self.__mount_dev(f"{img_or_blk}{idx}", self.mount_dir)
+            else:
+                self.__mount_loop(img_or_blk, i)
+                self.__mount_dev("/dev/loop0", self.mount_dir)
             if (part.name == "boot"):
-                self.__mount_loop(img_or_blk, i)
-                self.__mount_dev("/dev/loop0", self.mount_dir)
                 self.__install_boot(self.mount_dir)
-                self.__umount_dev(self.mount_dir)
-                self.__umount_loop()
             if (part.name == "rw"):
-                self.__mount_loop(img_or_blk, i)
-                self.__mount_dev("/dev/loop0", self.mount_dir)
                 self.__install_rw(self.mount_dir)
-                self.__umount_dev(self.mount_dir)
+            self.__umount_dev(self.mount_dir)
+            if not is_blk:
                 self.__umount_loop()
             i += 1
 
@@ -394,8 +398,8 @@ class OS:
             Logger.error("Unsupported instalation type!")
         self.out_path = dir_or_dev
         self.__create_parts(dir_or_dev, is_blk)
-        self.__create_fs(dir_or_dev)
-        self.__do_boot(dir_or_dev)
+        self.__create_fs(dir_or_dev, is_blk)
+        self.__do_boot(dir_or_dev, is_blk)
         Logger.install(f"Finished!")
 
 if __name__ == '__main__':
