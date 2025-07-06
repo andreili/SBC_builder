@@ -3,7 +3,7 @@ new file mode 100644
 index 000000000000..51de9e95b7d2
 --- /dev/null
 +++ b/arch/arm64/configs/printer_defconfig
-@@ -0,0 +1,686 @@
+@@ -0,0 +1,687 @@
 +CONFIG_DEFAULT_HOSTNAME="Printer"
 +CONFIG_LOCALVERSION="-arm64"
 +CONFIG_LOCALVERSION_AUTO=n
@@ -524,6 +524,7 @@ index 000000000000..51de9e95b7d2
 +CONFIG_BLK_DEV_LOOP=y
 +CONFIG_SCSI=y
 +CONFIG_BLK_DEV_SD=y
++CONFIG_USB_ACM=m
 +
 +#for system software
 +CONFIG_TASKSTATS=y
