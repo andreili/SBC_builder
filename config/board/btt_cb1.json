@@ -63,12 +63,12 @@
                 {
                     "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
                     "store_type": "boot",
-                    "subdir": "dtb/allwiner"
+                    "subdir": "dtb/allwinner"
                 },
                 {
                     "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
                     "store_type": "boot",
-                    "subdir": "dtb/allwiner/overlay"
+                    "subdir": "dtb/allwinner/overlay"
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
@@ -78,7 +78,7 @@
             "version": "rtl8189fs",
             "version_type": "branch",
             "target": [ "modules" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods KSRC=%{build_dir}%/kernel_%{board_name}%",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods KSRC=%{common_dir}%/kernel",
             "artifacts":
             [
                 {

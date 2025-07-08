@@ -1,0 +1,10 @@
+--- kernel/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi.old	2025-07-06 20:36:43.730388402 +0200
++++ kernel/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi	2025-07-06 20:34:36.687531470 +0200
+@@ -336,6 +336,7 @@
+ 		#clock-cells = <1>;
+ 		clock-names = "mclk";
+ 		clocks = <&cru I2S1_MCLKOUT_TX>;
++		clock-output-names = "rk808-clkout1", "rk808-clkout2";
+ 		pinctrl-names = "default", "pmic-sleep",
+ 				"pmic-power-off", "pmic-reset";
+ 		pinctrl-0 = <&pmic_int>, <&i2s1m0_mclk>;

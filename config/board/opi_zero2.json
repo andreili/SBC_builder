@@ -64,12 +64,12 @@
                 {
                     "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-orangepi-zero2.dtb",
                     "store_type": "boot",
-                    "subdir": "dtb/allwiner"
+                    "subdir": "dtb/allwinner"
                 },
                 {
                     "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
                     "store_type": "boot",
-                    "subdir": "dtb/allwiner/overlay"
+                    "subdir": "dtb/allwinner/overlay"
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
