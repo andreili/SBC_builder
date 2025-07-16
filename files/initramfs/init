@@ -63,14 +63,6 @@ then
     echo ${CONSOLE_LOGLEVEL} > /proc/sys/kernel/printk
 fi
 
-NEW_ROOT='/newroot'
-CDROOT_PATH="/mnt/cdrom"
-RW_MNT="/mnt/rw_part"
-STATIC="/mnt/livecd"
-OVERLAY="/mnt/overlay"
-LOOP="/root.sqh"
-LOOPTYPE="squashfs"
-
 good_msg "Initial ramdisk script. Linux kernel ${KV}"
 log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
 echo "" > /proc/sys/kernel/hotplug
@@ -196,5 +188,9 @@ echo ${CONSOLE_LOGLEVEL} > /proc/sys/kernel/printk && log_msg "COMMAND: 'echo \"
 good_msg "Switching to real root: switch_root ${CHROOT} ${init} ${init_opts}"
 #sh
 exec switch_root "${CHROOT}" "${init}" ${init_opts}
+#exec pivot_root "${CHROOT}" "${init}" ${init_opts}
+
+good_msg "Return from real root, finishing..."
+run_emergency_shell
 
 exit 1

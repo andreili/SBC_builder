@@ -1,0 +1,43 @@
+#!/bin/busybox sh
+
+. /etc/init.def
+. /etc/init.script
+
+# Set up symlinks
+run busybox --install -s
+
+ln -s /proc/self/mounts /etc/mtab
+ACTION="${1:-halt}"
+
+good_msg "Shutdown ramdisk script. Linux kernel ${KV}"
+log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
+echo "" > /proc/sys/kernel/hotplug
+
+good_msg "Move all to temporary..."
+sh_mnt=$(cat /proc/self/mountinfo | cut -d' ' -f5 | grep "^/oldroot/run/shutdown/mounts/")
+good_msg ${sh_mnt}
+for ddir in ${sh_mnt}
+do
+    run mount --move "${ddir}" "/tmp"
+done
+good_msg "Move system mounts..."
+for ddir in /dev /proc /sys /run
+do
+    run mount --move "/oldroot${ddir}" "${ddir}"
+done
+good_msg "Unmount  old root..."
+for ddir in /oldroot /tmp
+do
+    run umount "${ddir}"
+done
+good_msg "Finished"
+#for debug - uncomment
+#run_emergency_shell
+# send sysrq
+case "${ACTION}" in
+    reboot)    reboot -f;    break;;
+    poweroff)  poweroff -f;  break;;
+    halt)      halt -f;      break;;
+esac
+# this should never happen
+run_emergency_shell

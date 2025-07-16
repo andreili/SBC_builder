@@ -1,0 +1,9 @@
+[Unit]
+Description=Prepare a shutdown script to correctly unmount all filesystems
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=sh -c "mkdir -p /run/initramfs && cd /run/initramfs && tar xf /usr/shutdown.tar.xz"

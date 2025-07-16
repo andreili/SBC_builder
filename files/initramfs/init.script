@@ -222,3 +222,11 @@ run_shell() {
 run_emergency_shell() {
 	run_shell
 }
+
+find_mount() {
+    # $1 = mount point
+    local mnt_p=$1
+    local res
+    res=$(cat /proc/self/mountinfo | cut -d' ' -f5 | grep "^${mnt_p}/")
+    echo ${res}
+}
