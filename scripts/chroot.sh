@@ -3,6 +3,7 @@
 OS_DIR_DEF="./root/"
 DDIR=$(realpath "$1")
 ROOT_DIR="$2"
+KV=$(make -C ./build/common/kernel/ --silent kernelversion)
 
 if [ -z "${DDIR}" ]
 then
@@ -12,29 +13,25 @@ fi
 
 mkdir -p ${DDIR}/usr/portage
 mount --bind ${ROOT_DIR}/files/portage ${DDIR}/usr/portage
-mkdir -p ${DDIR}/usr/src/linux-6.14-rc7
-mount --bind ${ROOT_DIR}/build/common/kernel ${DDIR}/usr/src/linux-6.14-rc7
+mkdir -p ${DDIR}/usr/src/linux-${KV}
+mount --bind ${ROOT_DIR}/build/common/kernel ${DDIR}/usr/src/linux-${KV}
 
 mount --bind /dev ${DDIR}/dev
 mount --bind /dev/shm ${DDIR}/dev/shm
 mount --bind /dev/pts ${DDIR}/dev/pts
 mount --bind /sys ${DDIR}/sys
 mount --bind /proc ${DDIR}/proc
-if [ -d "/var/db/repos" ]; then
-    mount --bind /var/db/repos ${DDIR}/var/db/repos
-fi
 mount -t tmpfs tmpfs ${DDIR}/var/tmp/
 if [ -z "$3" ]
 then
     chroot ${DDIR}/ /bin/bash
+    ret=$?
 else
     chroot ${DDIR}/ /bin/bash -c "${@:3}"
+    ret=$?
 fi
 umount ${DDIR}/var/tmp
-umount ${DDIR}/usr/src/linux-6.14-rc7
-if [ -d "/var/db/repos" ]; then
-    umount ${DDIR}/var/db/repos
-fi
+umount ${DDIR}/usr/src/linux-${KV}
 umount ${DDIR}/proc
 umount ${DDIR}/sys
 umount ${DDIR}/dev/pts
@@ -44,3 +41,4 @@ if [ -n "$1" ]
 then
     umount ${DDIR}/usr/portage
 fi
+exit ${ret}

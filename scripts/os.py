@@ -4,6 +4,7 @@ if __name__ != '__main__':
     from . import *
 
 units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
+MARKER_ROOTFS_READY = ".rootfs_ready"
 
 class Partition(object):
     pass
@@ -21,38 +22,99 @@ class OS:
             [ "sqh",       self.sqh         ]
         ]
 
+    def load_info(self):
+        with open(f"{ROOT_DIR}/config/os_{self.arch}.json") as json_data:
+            js_data = json.load(json_data)
+            json_data.close()
+            self.st3_info = js_data["stage3_info"]
+            self.st3_prepare = js_data["prepare"]
+            self.st3_update = js_data["update"]
+
     def actions_list(self):
         lst = []
         for act in self.actions:
             lst.append(act[0])
         return lst
 
+    def __get_stage3_url(self):
+        url_descr = self.st3_info["server_dir"] + self.st3_info["info_file"]
+        r = requests.get(url_descr, stream=True)
+        descr = r.content.decode('utf-8').splitlines()
+        stage3_fn = ""
+        for d in descr:
+            if (d.startswith("stage3")):
+                stage3_fn = d.split()[0]
+        arch_url = self.st3_info["server_dir"] + stage3_fn
+        return [arch_url, stage3_fn]
+
+    def __stage3_apply(self, info, text):
+        self.__tmp_clean(f"{ROOT_DIR}/root")
+        [url,fn] = self.__get_stage3_url()
+        Logger.os(f"Download Stage3 archive '{fn}'...")
+        temp_dir = f"{ROOT_DIR}/build/tmp"
+        self.__tmp_clean(temp_dir)
+        os.makedirs(temp_dir, exist_ok=True)
+        r = requests.get(url, stream=True)
+        arch_fn = f"{temp_dir}/{fn}"
+        with open(arch_fn, 'wb') as f:
+            total_length = int(r.headers.get('content-length'))
+            for chunk in r.iter_content(chunk_size=1024):
+                f.write(chunk)
+        Logger.os(f"Extract Stage3 archive...")
+        os.makedirs(self.root_dir, exist_ok=True)
+        self.__extract_tar(arch_fn, self.root_dir)
+        self.__tmp_clean(temp_dir)
+
+    def __stage3_steps(self, info, text):
+        Logger.os(text)
+        self.__sudo(["cp", "/etc/resolv.conf", f"{self.root_dir}/etc/resolv.conf"])
+        for step in info["steps"]:
+            if ("file" in step):
+                is_append = "-a" if step["append"] else ""
+                lines = "\n".join(step["lines"])
+                path = step["file"]
+                directory = Path(path).parent
+                cmd  = f"mkdir -p {self.root_dir}{directory} && echo '{lines}'"
+                cmd += f" | sudo tee {is_append} {self.root_dir}{path} > /dev/null"
+                Logger.os(f"\tCreate file {path}...")
+                self.__sudo(cmd, shell=True)
+            if ("chroot" in step):
+                self.__chroot(step["chroot"], stdout=subprocess.DEVNULL)
+            if ("action" in step):
+                action = step["action"]
+                for act in self.actions:
+                    if (act[0] == action):
+                        act[1]()
+                        break
+
     def check_rootfs(self):
-        root_marker = Path(self.root_dir)
-        if (not root_marker.is_dir()):
-            Logger.os(f"Download base OS rootfs archive...")
-            temp_dir = f"{ROOT_DIR}/build/tmp"
-            os.makedirs(temp_dir, exist_ok=True)
-            r = requests.get("https://cloud.andreil.by/public.php/dav/files/sbc-rootfs-archive", stream=True)
-            arch_fn = f"{temp_dir}/sbc_rootfs_archive.tar.xz"
-            with open(arch_fn, 'wb') as f:
-                total_length = int(r.headers.get('content-length'))
-                for chunk in r.iter_content(chunk_size=1024):
-                    f.write(chunk)
-            os.makedirs(self.root_dir, exist_ok=True)
-            self.__extract_tar(arch_fn, self.root_dir)
-            self.__tmp_clean(temp_dir)
-            self.__chroot("eix-sync -v")
+        if marker_check(MARKER_ROOTFS_READY):
+            return
+        stages = [
+            [self.st3_info,    self.__stage3_apply, ""                    ],
+            [self.st3_prepare, self.__stage3_steps, "Basic preparation..."],
+            [self.st3_update,  self.__stage3_steps, "System update..."    ],
+        ]
+        for st in stages:
+            if (not marker_check(st[0]["marker"])):
+                st[1](st[0], st[2])
+                marker_set(st[0]["marker"])
 
     def set_board(self, board):
         self.board = board
         self.arch = board.parse_variables("%{ARCH}%")
 
-    def __sudo(self, args, cwd=None, env=None, stdout=None):
-        args.insert(0, "sudo")
-        p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout)
-        if (p.wait() != 0):
-            Logger.error(f"Command '{args[1]}' finished with error code!")
+    def __sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
+        if isinstance(args, str):
+            args = "sudo " + args
+            err_n = args
+        else:
+            args.insert(0, "sudo")
+            err_n = args[1]
+        p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
+        p.wait()
+        if (p.returncode != 0):
+            Logger.error(f"Command '{err_n}' finished with error code {p.returncode}!")
 
     def __prepare(self):
         qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{self.arch}")
@@ -60,12 +122,12 @@ class OS:
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
         self.__sudo(["cp", f"{ROOT_DIR}/files/qemu/qemu-{self.arch}", f"{self.root_dir}/bin/"])
 
-    def __chroot(self, command, dir=""):
+    def __chroot(self, command, dir="", stdout=None):
         self.__prepare()
         if (dir == ""):
             dir = self.root_dir
         Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
-        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR, command])
+        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR, command], stdout=stdout)
 
     def umount_safe(self):
         self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])
@@ -116,7 +178,7 @@ class OS:
         self.__sudo(["chmod", "u+s", f"{self.root_dir}/usr/bin/Xorg"])
 
     def  __tmp_clean(self, path):
-        Logger.os("Clean temporary directory...")
+        Logger.os(f"Clean directory '{path}'...")
         t_dir = Path(path)
         if (t_dir.is_dir()):
             self.__sudo(["rm", "-rf", path])

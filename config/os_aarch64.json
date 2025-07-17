@@ -1,0 +1,170 @@
+{
+    "stage3_info":
+    {
+        "marker": "stage3_extracted",
+        "server_dir": "https://distfiles.gentoo.org/releases/arm64/autobuilds/current-stage3-arm64-systemd/",
+        "info_file": "latest-stage3-arm64-systemd.txt"
+    },
+    "prepare":
+    {
+        "marker": "stage3_prepared",
+        "steps":
+        [
+            {
+                "file": "/etc/portage/modules",
+                "append": false,
+                "lines": [ "portdbapi.auxdbmodule = portage.cache.sqlite.database" ]
+            },
+            {
+                "file": "/etc/portage/make.conf",
+                "append": false,
+                "lines":
+                [
+                    "COMMON_FLAGS=\"-O3 -pipe\"",
+                    "CFLAGS=\"${COMMON_FLAGS}\"",
+                    "CXXFLAGS=\"${COMMON_FLAGS}\"",
+                    "FCFLAGS=\"${COMMON_FLAGS}\"",
+                    "FFLAGS=\"${COMMON_FLAGS}\"",
+                    "CHOST=\"aarch64-unknown-linux-gnu\"",
+                    "",
+                    "EMERGE_DEFAULT_OPTS=\"--load-average 8.0\"",
+                    "USE=\"${USE} ${ARCH}",
+                    "    -handbook -compiler-rt -sanitize -gtk-doc -gtk -jit",
+                    "    -vulkan -cups -wayland -opengl -egl -eglfs -gles2 -kms",
+                    "    -vala -spell -tk -tcl -fortran",
+                    "    -slang -gpg -doc -test lto -nls",
+                    "    sqlite\"",
+                    "FEATURES=\"${FEATURES} metadata-transfer nodoc noinfo noman -pid-sandbox\"",
+                    "",
+                    "VIDEO_CARDS=\"panfrost fbdev\"",
+                    "INPUT_DEVICES=\"libinput evdev\"",
+                    "LLVM_TARGETS=\"\"",
+                    "PYTHON_TARGETS=\"python3_13\"",
+                    "PYTHON_SINGLE_TARGET=\"${PYTHON_TARGETS}\"",
+                    "",
+                    "LC_MESSAGES=C.utf8"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.accept_keywords/all",
+                "append": false,
+                "lines": [ "*/* ~arm64" ]
+            },
+            {
+                "file": "/etc/portage/package.mask/python",
+                "append": false,
+                "lines": [ ">dev-lang/python-3.13.999" ]
+            },
+            {
+                "file": "/etc/portage/repos.conf/andreil.conf",
+                "append": false,
+                "lines":
+                [
+                    "[andreil]",
+                    "location = /usr/portage/andreil"
+                ]
+            },
+            {
+                "file": "/etc/portage/savedconfig/sys-kernel/linux-firmware",
+                "append": false,
+                "lines": [ "regulatory.db" ]
+            },
+            {
+                "file": "/etc/portage/package.use/test",
+                "append": false,
+                "lines":
+                [
+                    "net-misc/networkmanager -bluetooth -modemmanager",
+                    "net-misc/networkmanager -ppp"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/system",
+                "append": false,
+                "lines":
+                [
+                    "sys-kernel/linux-firmware savedconfig",
+                    "sys-kernel/genkernel -firmware",
+                    "net-misc/networkmanager tools",
+                    "sys-apps/util-linux static-libs"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/minimal",
+                "append": false,
+                "lines":
+                [
+                    "sys-apps/portage -rsync-verify",
+                    "app-admin/sudo -sendmail",
+                    "sys-apps/systemd -dns-over-tls -gcrypt -kernel-install",
+                    "media-libs/mesa -llvm",
+                    "sys-process/htop lm-sensors"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/klipper",
+                "append": false,
+                "lines":
+                [
+                    "virtual/klipper mainsail",
+                    "app-misc/mime-types nginx",
+                    "media-libs/mesa -proprietary-codecs",
+                    "x11-base/xorg-server minimal",
+                    "sys-apps/iproute2 minimal",
+                    "dev-perl/* minimal",
+                    "dev-lang/perl dev-perl",
+                    "sys-apps/systemd policykit",
+                    "x11-libs/cairo X",
+                    "dev-python/pycairo X",
+                    "media-libs/libepoxy -egl",
+                    "net-wireless/wpa_supplicant dbus",
+                    "#x11-base/xorg-server suid",
+                    "cross-arm-none-eabi/newlib nano",
+                    "media-libs/libepoxy egl",
+                    "net-misc/networkmanager -tools",
+                    "media-libs/libglvnd X",
+                    "media-libs/libv4l bpf",
+                    "media-video/ffmpeg x264 x265",
+                    "#media-libs/libv4l -bpf",
+                    "sys-devel/gcc fortran",
+                    "dev-python/pillow webp",
+                    "virtual/imagemagick-tools jpeg tiff",
+                    "media-gfx/imagemagick jpeg tiff",
+                    "sci-libs/atlas lapack threads",
+                    "dev-lang/rust system-llvm",
+                    "sys-apps/busybox static -pam savedconfig",
+                    "virtual/libcrypt static-libs",
+                    "sys-libs/libxcrypt static-libs",
+                    "sys-fs/e2fsprogs static-libs"
+                ]
+            },
+            {
+                "chroot": "emerge-webrsync"
+            }
+        ]
+    },
+    "update":
+    {
+        "marker": "stage3_updated",
+        "steps":
+        [
+            {
+                "file": "/etc/locale.gen",
+                "append": false,
+                "lines": [ "en_US.UTF-8 UTF-8" ]
+            },
+            {
+                "chroot": "locale-gen"
+            },
+            {
+                "chroot": "eselect kernel set 1"
+            },
+            {
+                "chroot": "eselect news read"
+            },
+            {
+                "action": "update"
+            }
+        ]
+    }
+}

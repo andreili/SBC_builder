@@ -22,6 +22,7 @@ if (args.board == ''):
 targets_meta = Target.load_meta(f"config/target_meta.json")
 target_board = Board(args.board, f"config/board/{args.board}.json", targets_meta)
 os.set_board(target_board)
+os.load_info()
 
 os.check_rootfs()
 
