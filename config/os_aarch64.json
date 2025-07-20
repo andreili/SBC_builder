@@ -1,4 +1,8 @@
 {
+    "variables":
+    [
+        "USER_LOGIN:klipper"
+    ],
     "stage3_info":
     {
         "marker": "stage3_extracted",
@@ -62,6 +66,15 @@
                 [
                     "[andreil]",
                     "location = /usr/portage/andreil"
+                ]
+            },
+            {
+                "file": "/etc/portage/repos.conf/crossdev.conf",
+                "append": false,
+                "lines":
+                [
+                    "[crossdev]",
+                    "location = /usr/portage/crossdev"
                 ]
             },
             {
@@ -138,9 +151,7 @@
                     "sys-fs/e2fsprogs static-libs"
                 ]
             },
-            {
-                "chroot": "emerge-webrsync"
-            }
+            { "chroot": "emerge-webrsync" }
         ]
     },
     "update":
@@ -153,18 +164,52 @@
                 "append": false,
                 "lines": [ "en_US.UTF-8 UTF-8" ]
             },
+            { "chroot": "locale-gen" },
+            { "chroot": "eselect kernel set 1" },
+            { "chroot": "eselect news read" },
+            { "chroot": "eselect editor set nano" },
+            { "action": "update" }
+        ]
+    },
+    "install":
+    {
+        "marker": "stage3_installed",
+        "steps":
+        [
             {
-                "chroot": "locale-gen"
+                "soft_inst":
+                [
+                    "app-editors/nano",
+                    "app-misc/mc",
+                    "app-portage/eix",
+                    "app-portage/gentoolkit",
+                    "sys-devel/crossdev",
+                    "sys-process/htop",
+                    "virtual/klipper"
+                ],
+                "oneshot": false
             },
-            {
-                "chroot": "eselect kernel set 1"
-            },
-            {
-                "chroot": "eselect news read"
-            },
-            {
-                "action": "update"
-            }
+            { "chroot": "crossdev -s4 arm-none-eabi" },
+            { "chroot": "eselect news read" },
+            { "soft_clean": "default" }
+        ]
+    },
+    "finalize":
+    {
+        "steps":
+        [
+            { "chroot": "systemctl enable NetworkManager ntpdate sshd" },
+            { "sudo": "sed -i -E 's/^# (%wheel ALL)/\\1/' ./etc/sudoers" },
+            { "sudo": "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' ./etc/systemd/journald.conf" },
+            { "sudo": "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' ./etc/systemd/journald.conf" },
+            { "copy": [ "%{ROOT_DIR}%/files/firmware/usr", "."] },
+            { "sudo": "chmod u+s ./usr/bin/Xorg" },
+            { "sudo": "ln -sf /usr/share/zoneinfo/Europe/Warsaw ./etc/localtime" },
+            { "chroot": "useradd -m -G wheel,video,audio,disk,usb %{USER_LOGIN}% --password %{USER_LOGIN}%" },
+            { "chroot": "echo '%{USER_LOGIN}%:%{USER_LOGIN}%' | chpasswd" },
+            { "chroot": "echo 'root:root' | chpasswd" },
+            { "chroot": "sudo -i -u klipper python -m venv /home/%{USER_LOGIN}%/venv" },
+            { "soft_clean": "bdeps" }
         ]
     }
 }

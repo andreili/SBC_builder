@@ -3,13 +3,18 @@
 OS_DIR_DEF="./root/"
 DDIR=$(realpath "$1")
 ROOT_DIR="$2"
-KV=$(make -C ./build/common/kernel/ --silent kernelversion)
 
 if [ -z "${DDIR}" ]
 then
-    echo "No directory specified!"
+    echo "No root directory specified!"
     exit 1
 fi
+if [ -z "${ROOT_DIR}" ]
+then
+    echo "No main directory specified!"
+    exit 1
+fi
+KV=$(make -C "${ROOT_DIR}/build/common/kernel/" --silent kernelversion)
 
 mkdir -p ${DDIR}/usr/portage
 mount --bind ${ROOT_DIR}/files/portage ${DDIR}/usr/portage

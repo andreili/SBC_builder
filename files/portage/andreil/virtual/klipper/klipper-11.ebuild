@@ -26,4 +26,6 @@ RDEPEND="
 	dev-python/matplotlib
 	sys-devel/crossdev
 	sys-apps/pciutils
+	media-libs/libv4l
+	net-misc/ntp
 "

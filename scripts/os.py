@@ -4,7 +4,7 @@ if __name__ != '__main__':
     from . import *
 
 units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
-MARKER_ROOTFS_READY = ".rootfs_ready"
+MARKER_ROOTFS_READY = "rootfs_ready"
 
 class Partition(object):
     pass
@@ -29,6 +29,10 @@ class OS:
             self.st3_info = js_data["stage3_info"]
             self.st3_prepare = js_data["prepare"]
             self.st3_update = js_data["update"]
+            self.st3_install = js_data["install"]
+            self.finalize = js_data["finalize"]
+            self.board.add_vars(js_data["variables"])
+            self.board.add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
         lst = []
@@ -48,7 +52,7 @@ class OS:
         return [arch_url, stage3_fn]
 
     def __stage3_apply(self, info, text):
-        self.__tmp_clean(f"{ROOT_DIR}/root")
+        self.__tmp_clean(self.root_dir)
         [url,fn] = self.__get_stage3_url()
         Logger.os(f"Download Stage3 archive '{fn}'...")
         temp_dir = f"{ROOT_DIR}/build/tmp"
@@ -65,7 +69,9 @@ class OS:
         self.__extract_tar(arch_fn, self.root_dir)
         self.__tmp_clean(temp_dir)
 
-    def __stage3_steps(self, info, text):
+    def __stage3_steps(self, info, text, dir=""):
+        if (dir == ""):
+            dir = self.root_dir
         Logger.os(text)
         self.__sudo(["cp", "/etc/resolv.conf", f"{self.root_dir}/etc/resolv.conf"])
         for step in info["steps"]:
@@ -77,36 +83,54 @@ class OS:
                 cmd  = f"mkdir -p {self.root_dir}{directory} && echo '{lines}'"
                 cmd += f" | sudo tee {is_append} {self.root_dir}{path} > /dev/null"
                 Logger.os(f"\tCreate file {path}...")
-                self.__sudo(cmd, shell=True)
+                self.__sudo(cmd, shell=True, cwd=dir)
             if ("chroot" in step):
-                self.__chroot(step["chroot"], stdout=subprocess.DEVNULL)
+                cmd = self.board.parse_variables(step["chroot"])
+                self.__chroot(cmd, dir=dir)
             if ("action" in step):
                 action = step["action"]
                 for act in self.actions:
                     if (act[0] == action):
                         act[1]()
                         break
+            if ("soft_inst" in step):
+                sw_list = " ".join(step["soft_inst"])
+                oneshot = "1" if step["oneshot"] else ""
+                self.__chroot(f"emerge -avb{oneshot} {sw_list} -j2", dir=dir)
+            if ("soft_clean" in step):
+                clean_type = step["soft_clean"]
+                if (clean_type == "default"):
+                    self.__chroot(f"emerge -ac", dir=dir)
+                if (clean_type == "bdeps"):
+                    self.__chroot(f"emerge --ask --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", dir=dir)
+            if ("sudo" in step):
+                cmd = self.board.parse_variables(step["sudo"])
+                Logger.os(f"\tSudo command {cmd}...")
+                self.__sudo(cmd, cwd=dir, shell=True)
 
     def check_rootfs(self):
         if marker_check(MARKER_ROOTFS_READY):
             return
         stages = [
-            [self.st3_info,    self.__stage3_apply, ""                    ],
-            [self.st3_prepare, self.__stage3_steps, "Basic preparation..."],
-            [self.st3_update,  self.__stage3_steps, "System update..."    ],
+            [self.st3_info,     self.__stage3_apply, ""                    ],
+            [self.st3_prepare,  self.__stage3_steps, "Basic preparation..."],
+            [self.st3_update,   self.__stage3_steps, "System update..."    ],
+            [self.st3_install,  self.__stage3_steps, "Software installation..."],
         ]
         for st in stages:
             if (not marker_check(st[0]["marker"])):
                 st[1](st[0], st[2])
                 marker_set(st[0]["marker"])
+        marker_set(MARKER_ROOTFS_READY)
 
     def set_board(self, board):
         self.board = board
+        self.board.add_var("ROOTFS", self.root_dir)
         self.arch = board.parse_variables("%{ARCH}%")
 
     def __sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         if isinstance(args, str):
-            args = "sudo " + args
+            args = self.board.parse_variables("sudo " + args)
             err_n = args
         else:
             args.insert(0, "sudo")
@@ -173,10 +197,6 @@ class OS:
     def pack(self):
         return self.__do_archive("excl_min", "FULL", self.root_dir)
 
-    def __fix_xorg(self):
-        Logger.os("Fix Xorg permissions")
-        self.__sudo(["chmod", "u+s", f"{self.root_dir}/usr/bin/Xorg"])
-
     def  __tmp_clean(self, path):
         Logger.os(f"Clean directory '{path}'...")
         t_dir = Path(path)
@@ -199,66 +219,19 @@ class OS:
         user = getpass.getuser()
         self.__sudo(["chown", user + ":" + user, to_file])
 
-    def __remove_bdeps(self, temp_dir):
-        # remove unneccessarry packages
-        # emerge --ask --depclean --with-bdeps=n
-        #list_to_rm  = " virtual/perl-JSON-PP virtual/perl-podlators"
-        #list_to_rm += " virtual/perl-Getopt-Long virtual/perl-Parse-CPAN-Meta"
-        #list_to_rm += " virtual/perl-ExtUtils-CBuilder virtual/perl-ExtUtils-ParseXS"
-        #list_to_rm += " virtual/perl-Unicode-Collate virtual/perl-Text-ParseWords"
-        #list_to_rm += " virtual/perl-ExtUtils-MakeMaker virtual/perl-Module-Metadata"
-        #list_to_rm += " virtual/perl-version virtual/perl-CPAN-Meta"
-        #list_to_rm += " virtual/perl-File-Spec perl-core/Getopt-Long"
-        #list_to_rm += " dev-perl/Module-Build"
-        #list_to_rm += " x11-base/xcb-proto x11-libs/xtrans"
-        #list_to_rm += " app-alternatives/ninja app-eselect/eselect-rust"
-        #list_to_rm += " dev-libs/vala-common dev-util/glib-utils"
-        #list_to_rm += " dev-util/gdbus-codegen media-fonts/font-util"
-        #list_to_rm += " dev-libs/libxslt"
-        #list_to_rm += " dev-build/gtk-doc-am sys-apps/help2man"
-        #list_to_rm += " app-text/docbook-xml-dtd:4.1.2"
-        #list_to_rm += " app-text/docbook-xml-dtd:4.2 app-text/docbook-xml-dtd:4.3"
-        #list_to_rm += " app-text/docbook-xml-dtd:4.4 app-text/docbook-xml-dtd:4.5"
-        #list_to_rm += " app-text/docbook-xsl-ns-stylesheets app-text/docbook-xsl-stylesheets"
-        #list_to_rm += " app-text/build-docbook-catalog app-text/xmlto"
-        #list_to_rm += " app-text/asciidoc app-text/sgml-common"
-        #list_to_rm += " dev-lang/rust-common dev-lang/rust"
-        #list_to_rm += " llvm-core/llvm llvm-core/llvm-toolchain-symlinks"
-        #list_to_rm += " llvm-core/llvmgold dev-libs/oniguruma"
-        #list_to_rm += " llvm-core/llvm-common sys-libs/binutils-libs"
-        #list_to_rm += " dev-build/ninja dev-build/meson dev-build/meson-format-array"
-        #list_to_rm += " dev-cpp/eigen"
-        #list_to_rm += " "
-        #self.__chroot(f"emerge -aC {list_to_rm} && ldconfig", temp_dir)
-        # remove build deps, exclude gcc/binutils - it's required to build a software after it updates
-        self.__chroot(f"emerge --ask --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", temp_dir)
-        self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
-
     def __finalize(self, dir):
-        Logger.os(f"Finalize system installation...")
-        # enable network services
-        services = "systemctl enable NetworkManager ntpdate sshd"
-        self.__chroot(services, dir)
-        # minimize systemd journal files
-        journal_min  = "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' /etc/systemd/journald.conf &&"
-        journal_min += "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' /etc/systemd/journald.conf"
-        self.__chroot(journal_min, dir)
-        self.__sudo(["cp", "-r", f"{ROOT_DIR}/files/firmware/usr", f"{dir}/"])
-        soft = Software(self)
-        soft.finalize(dir)
+        self.__stage3_steps(self.finalize, "Finalize system installation...", dir=dir)
 
     def sqh(self):
-        self.__fix_xorg()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
         # pack full system via tar
-        arch_full_path = self.pack()
-        self.__tmp_clean(temp_dir)
-        self.__extract_tar(arch_full_path, temp_dir)
-        # remove unnecessary packages
-        self.__remove_bdeps(temp_dir)
-        # prepare system
+        #arch_full_path = self.pack()
+        #self.__tmp_clean(temp_dir)
+        #self.__extract_tar(arch_full_path, temp_dir)
+        # prepare system, remove unnecessary packages
         self.__finalize(temp_dir)
+        self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
         # pack a minimal archive
         arch_path = self.__do_archive("excl", "OS", temp_dir)
         # remove temp directory

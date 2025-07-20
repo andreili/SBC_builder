@@ -6,6 +6,7 @@ usr/lib64/perl5*
 #usr/src/*
 var/cache/binpkgs/*
 var/cache/distfiles/*
-var/cache/edb/*
+#var/cache/edb/*
 var/cache/eix/*
 var/log/*.log
+#var/db/repos/*

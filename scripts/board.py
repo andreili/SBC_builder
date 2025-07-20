@@ -1,4 +1,4 @@
-import json, os
+import json, os, re
 from pathlib import Path
 from . import *
 
@@ -47,18 +47,27 @@ class Board:
         return 0
 
     def __load_vars(self):
-        for var_def in self.json["variables"]:
-            self.variables.append(var_def.split(":"))
+        self.add_vars(self.json["variables"])
         self.variables.append(["board_name", self.name])
         self.variables.append(["build_dir", f"{ROOT_DIR}/build/{self.name}"])
         self.variables.append(["common_dir", f"{ROOT_DIR}/build/common"])
         self.variables.append(["out_dir", self.out_dir])
         self.variables.append(["out_sh", self.out_sh])
+        self.variables.append(["ROOT_DIR", ROOT_DIR])
+
+    def add_var(self, name, val):
+        self.variables.append([name, val])
+
+    def add_vars(self, lst):
+        for var_def in lst:
+            self.variables.append(var_def.split(":"))
 
     def parse_variables(self, string):
-        for var_d in self.variables:
-            string = string.replace("%{"+var_d[0]+"}%", var_d[1])
-        #out_dir
+        while True:
+            for var_d in self.variables:
+                string = string.replace("%{"+var_d[0]+"}%", str(var_d[1]))
+            if not re.compile('%{\\S+}%').match(string):
+                break
         return string
 
     def sync(self):
