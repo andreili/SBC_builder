@@ -22,6 +22,14 @@ class OS:
             [ "sqh",       self.sqh         ]
         ]
 
+    def __relaunch_as_sudo(self):
+        if (os.geteuid() == 0):
+            return
+        Logger.os("Relaunch scripts with 'sudo'...")
+        args = ["./build.py"]
+        self.__sudo(sys.argv)
+        Logger.ok_exit("Finished running from 'sudo'")
+
     def load_info(self):
         with open(f"{ROOT_DIR}/config/os_{self.arch}.json") as json_data:
             js_data = json.load(json_data)
@@ -102,15 +110,23 @@ class OS:
                 if (clean_type == "default"):
                     self.__chroot(f"emerge -ac", dir=dir)
                 if (clean_type == "bdeps"):
-                    self.__chroot(f"emerge --ask --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", dir=dir)
+                    self.__chroot(f"emerge --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", dir=dir)
             if ("sudo" in step):
                 cmd = self.board.parse_variables(step["sudo"])
                 Logger.os(f"\tSudo command {cmd}...")
                 self.__sudo(cmd, cwd=dir, shell=True)
+            if ("copy" in step):
+                path_from = self.board.parse_variables(step["copy"][0])
+                path_to = self.board.parse_variables(step["copy"][1])
+                if (Path(path_from).is_dir()):
+                    self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
+                else:
+                    self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
 
     def check_rootfs(self):
         if marker_check(MARKER_ROOTFS_READY):
             return
+        self.__relaunch_as_sudo()
         stages = [
             [self.st3_info,     self.__stage3_apply, ""                    ],
             [self.st3_prepare,  self.__stage3_steps, "Basic preparation..."],
@@ -129,12 +145,13 @@ class OS:
         self.arch = board.parse_variables("%{ARCH}%")
 
     def __sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
-        if isinstance(args, str):
-            args = self.board.parse_variables("sudo " + args)
-            err_n = args
-        else:
-            args.insert(0, "sudo")
-            err_n = args[1]
+        if (os.geteuid() != 0):
+            if isinstance(args, str):
+                args = self.board.parse_variables("sudo " + args)
+                err_n = args
+            else:
+                args.insert(0, "sudo")
+                err_n = args[1]
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
@@ -223,12 +240,13 @@ class OS:
         self.__stage3_steps(self.finalize, "Finalize system installation...", dir=dir)
 
     def sqh(self):
+        self.__relaunch_as_sudo()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
         # pack full system via tar
-        #arch_full_path = self.pack()
-        #self.__tmp_clean(temp_dir)
-        #self.__extract_tar(arch_full_path, temp_dir)
+        arch_full_path = self.pack()
+        self.__tmp_clean(temp_dir)
+        self.__extract_tar(arch_full_path, temp_dir)
         # prepare system, remove unnecessary packages
         self.__finalize(temp_dir)
         self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
@@ -318,7 +336,7 @@ class OS:
             offset += part.size_blk + 1
         args += "w\nq\n"
         cmd = []
-        if (from_sudo):
+        if (os.geteuid() != 0) and (from_sudo):
             cmd.append("sudo")
         cmd.append("fdisk")
         cmd.append(img_or_dev)
@@ -419,6 +437,7 @@ class OS:
             i += 1
 
     def install(self, dir_or_dev):
+        self.__relaunch_as_sudo()
         Logger.install(f"Install to '{dir_or_dev}'")
         is_blk = False
         dir_ch = Path(dir_or_dev)

@@ -113,11 +113,13 @@ class Initramfs:
         if (dir_ch.is_dir()):
             p = subprocess.Popen(["sudo", "rm", "-rf", dir_tmp])
             p.wait()
+        fn = "shutdown.tar.xz"
         p = subprocess.Popen(["mkdir", "-p", dir_tmp])
         p.wait()
-        p = subprocess.Popen(f"sudo cat {self.files_dir}/init.cpio | sudo cpio -idm && sudo tar cJpf {self.out_dir}/shutdown.tar.xz .", shell=True, cwd=dir_tmp)
+        p = subprocess.Popen(f"sudo cat {self.files_dir}/init.cpio | sudo cpio -idm && sudo tar cJpf ../{fn} . && cp ../{fn} {self.out_dir}/{fn}",
+            shell=True, cwd=dir_tmp)
         p.wait()
-        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/shutdown.tar.xz", f"{ROOT_DIR}/root/usr/"])
+        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/{fn}", f"{ROOT_DIR}/root/usr/"])
         p.wait()
         p = subprocess.Popen(["sudo", "rm", "-rf", dir_tmp])
         p.wait()
@@ -131,8 +133,8 @@ class Initramfs:
         self.__mkshutdown()
 
     def build(self, os):
-        #self.__prepare()
-        #self.__busybox(os)
-        #self.__eudev(os)
-        #self.__e2fsp(os)
+        self.__prepare()
+        self.__busybox(os)
+        self.__eudev(os)
+        self.__e2fsp(os)
         self.__initrd()

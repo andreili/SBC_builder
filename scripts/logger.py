@@ -3,6 +3,10 @@ class Logger:
         print(f"[❌] {msg}")
         exit(1)
 
+    def ok_exit(msg):
+        print(f"[✅] {msg}")
+        exit(0)
+
     def build(msg):
         print(f"[🔨] {msg}")
 

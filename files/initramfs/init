@@ -29,30 +29,11 @@ CMDLINE=$(cat /proc/cmdline 2>/dev/null)
 for x in ${CMDLINE}
 do
     case "${x}" in
-        subdir=*)
-            SUBDIR=${x#*=}
-            ;;
-        real_init=*)
-            REAL_INIT=${x#*=}
-            ;;
-        init=*)
-            FAKE_INIT=${x#*=}
-            ;;
         quiet|quiet_genkernel)
             QUIET=1
             ;;
-        # Scan delay options
-        scandelay=*)
-            SDELAY=${x#*=}
-            ;;
-        scandelay)
-            SDELAY=3
-            ;;
-        rootdelay=*|rootwait=*)
-            ROOTDELAY=${x#*=}
-            ;;
-        rootdelay|rootwait)
-            ROOTDELAY=5
+        loglevel=*)
+            CONSOLE_LOGLEVEL=${x#*=}
             ;;
     esac
 done
@@ -145,26 +126,6 @@ run udevadm settle --timeout=120
 run udevadm control --exit
 init=${REAL_INIT:-/sbin/init}
 
-# create a file for correct shutdown process
-INIF="/run/initramfs"
-SH_FILE="${INIF}/shutdown"
-#run mkdir "${INIF}/bin"
-#run mount --bind /bin ${INIF}/bin
-run touch ${SH_FILE}
-echo "#!/bin/sh" >> ${SH_FILE}
-#echo "sh" >> ${SH_FILE}
-#echo "umount ${NEW_ROOT}${INIF}/bin" >> ${SH_FILE}
-#echo "umount ${NEW_ROOT}${INIF}" >> ${SH_FILE}
-echo "mount -o remount,ro ${NEW_ROOT}${CDROOT_PATH}" >> ${SH_FILE}
-echo "mount -o remount,ro ${NEW_ROOT}${RW_MNT}" >> ${SH_FILE}
-echo "sync" >> ${SH_FILE}
-echo "umount -l ${NEW_ROOT}${RW_MNT}" >> ${SH_FILE}
-echo "umount -l ${NEW_ROOT}${CDROOT_PATH}" >> ${SH_FILE}
-echo "umount -l ${NEW_ROOT}${STATIC}" >> ${SH_FILE}
-echo "umount -l ${NEW_ROOT}" >> ${SH_FILE}
-#run mkdir ${NEW_ROOT}${INIF}
-#run mount --rbind ${INIF} ${NEW_ROOT}${INIF}
-
 # uncomment for debug
 #run_emergency_shell
 
@@ -188,9 +149,5 @@ echo ${CONSOLE_LOGLEVEL} > /proc/sys/kernel/printk && log_msg "COMMAND: 'echo \"
 good_msg "Switching to real root: switch_root ${CHROOT} ${init} ${init_opts}"
 #sh
 exec switch_root "${CHROOT}" "${init}" ${init_opts}
-#exec pivot_root "${CHROOT}" "${init}" ${init_opts}
-
-good_msg "Return from real root, finishing..."
-run_emergency_shell
 
 exit 1
