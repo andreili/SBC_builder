@@ -12,6 +12,7 @@ class Tree:
     def __init__(self):
         self.childs = []
         self.size = 0
+        self.size_self = 0
         self.name = ""
 
     def add(self, fn, size):
@@ -21,6 +22,7 @@ class Tree:
             ch.name = path[0]
             ch.size = size
             self.size += size
+            self.size_self  += size
             self.childs.append(ch)
             return
         for ch in self.childs:
@@ -39,8 +41,9 @@ class Tree:
         if (level > level_max) or (self.size == 0) or (self.size < minsz):
             return
         s = "\t" * level
-        sz = sizeof_fmt(self.size)
-        s += f"+[{sz}] {self.name}"
+        sz = sizeof_fmt(self.size - self.size_self)
+        sz_self = sizeof_fmt(self.size_self)
+        s += f"+{self.name} [ch={sz}:self={sz_self}]"
         print(s)
         for ch in self.childs:
             ch.print(level + 1, level_max, minsz)
