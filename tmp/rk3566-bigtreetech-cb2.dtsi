@@ -33,6 +33,17 @@
 		#clock-cells = <0>;
 	};
 
+	hdmi-con {
+		compatible = "hdmi-connector";
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
 	leds: leds {
 		compatible = "gpio-leds";
 
@@ -109,7 +120,7 @@
 		compatible = "regulator-fixed";
 		regulator-name = "vcc3v3_pcie";
 		enable-active-high;
-		gpios = <&gpio4 RK_PB1 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pcie_drv>;
 		regulator-always-on;
@@ -214,355 +225,6 @@
 		regulator-name = "vcc_sd";
 		vin-supply = <&vcc3v3_sys>;
 	};
-
-	ddr3_params: ddr3-params {
-		version = <0x100>;
-		expanded_version = <0x00>;
-		reserved = <0x00>;
-		freq_0 = <0x420>;
-		freq_1 = <0x144>;
-		freq_2 = <0x210>;
-		freq_3 = <0x30c>;
-		freq_4 = <0x00>;
-		freq_5 = <0x00>;
-		pd_idle = <0x0d>;
-		sr_idle = <0x5d>;
-		sr_mc_gate_idle = <0x00>;
-		srpd_lite_idle = <0x00>;
-		standby_idle = <0x00>;
-		pd_dis_freq = <0x42a>;
-		sr_dis_freq = <0x320>;
-		dram_dll_dis_freq = <0x12c>;
-		phy_dll_dis_freq = <0x00>;
-		phy_dq_drv_odten = <0x21>;
-		phy_ca_drv_odten = <0x21>;
-		phy_clk_drv_odten = <0x21>;
-		dram_dq_drv_odten = <0x22>;
-		phy_dq_drv_odtoff = <0x21>;
-		phy_ca_drv_odtoff = <0x21>;
-		phy_clk_drv_odtoff = <0x21>;
-		dram_dq_drv_odtoff = <0x22>;
-		dram_odt = <0x78>;
-		phy_odt = <0xa7>;
-		phy_odt_puup_en = <0x01>;
-		phy_odt_pudn_en = <0x01>;
-		dram_dq_odt_en_freq = <0x14d>;
-		phy_odt_en_freq = <0x14d>;
-		phy_dq_sr_odten = <0x0f>;
-		phy_ca_sr_odten = <0x03>;
-		phy_clk_sr_odten = <0x00>;
-		phy_dq_sr_odtoff = <0x0f>;
-		phy_ca_sr_odtoff = <0x03>;
-		phy_clk_sr_odtoff = <0x00>;
-		ssmod_downspread = <0x00>;
-		ssmod_div = <0x00>;
-		ssmod_spread = <0x00>;
-		mode_2t = <0x00>;
-		speed_bin = <0x15>;
-		dram_ext_temp = <0x00>;
-		byte_map = <0xe4>;
-		dq_map_cs0_dq_l = <0x00>;
-		dq_map_cs0_dq_h = <0x00>;
-		dq_map_cs1_dq_l = <0x00>;
-		dq_map_cs1_dq_h = <0x00>;
-	};
-
-	ddr4_params: ddr4-params {
-		version = <0x100>;
-		expanded_version = <0x00>;
-		reserved = <0x00>;
-		freq_0 = <0x420>;
-		freq_1 = <0x144>;
-		freq_2 = <0x210>;
-		freq_3 = <0x30c>;
-		freq_4 = <0x00>;
-		freq_5 = <0x00>;
-		pd_idle = <0x0d>;
-		sr_idle = <0x5d>;
-		sr_mc_gate_idle = <0x00>;
-		srpd_lite_idle = <0x00>;
-		standby_idle = <0x00>;
-		pd_dis_freq = <0x42a>;
-		sr_dis_freq = <0x320>;
-		dram_dll_dis_freq = <0x271>;
-		phy_dll_dis_freq = <0x00>;
-		phy_dq_drv_odten = <0x25>;
-		phy_ca_drv_odten = <0x25>;
-		phy_clk_drv_odten = <0x25>;
-		dram_dq_drv_odten = <0x22>;
-		phy_dq_drv_odtoff = <0x25>;
-		phy_ca_drv_odtoff = <0x25>;
-		phy_clk_drv_odtoff = <0x25>;
-		dram_dq_drv_odtoff = <0x22>;
-		dram_odt = <0x78>;
-		phy_odt = <0x8b>;
-		phy_odt_puup_en = <0x01>;
-		phy_odt_pudn_en = <0x01>;
-		dram_dq_odt_en_freq = <0x1f4>;
-		phy_odt_en_freq = <0x1f4>;
-		phy_dq_sr_odten = <0x0e>;
-		phy_ca_sr_odten = <0x01>;
-		phy_clk_sr_odten = <0x01>;
-		phy_dq_sr_odtoff = <0x0e>;
-		phy_ca_sr_odtoff = <0x01>;
-		phy_clk_sr_odtoff = <0x01>;
-		ssmod_downspread = <0x00>;
-		ssmod_div = <0x00>;
-		ssmod_spread = <0x00>;
-		mode_2t = <0x00>;
-		speed_bin = <0x0c>;
-		dram_ext_temp = <0x00>;
-		byte_map = <0xe4>;
-		dq_map_cs0_dq_l = <0x22777788>;
-		dq_map_cs0_dq_h = <0xd7888877>;
-		dq_map_cs1_dq_l = <0x22777788>;
-		dq_map_cs1_dq_h = <0xd7888877>;
-	};
-
-	lpddr3_params: lpddr3-params {
-		version = <0x100>;
-		expanded_version = <0x00>;
-		reserved = <0x00>;
-		freq_0 = <0x420>;
-		freq_1 = <0x144>;
-		freq_2 = <0x210>;
-		freq_3 = <0x30c>;
-		freq_4 = <0x00>;
-		freq_5 = <0x00>;
-		pd_idle = <0x0d>;
-		sr_idle = <0x5d>;
-		sr_mc_gate_idle = <0x00>;
-		srpd_lite_idle = <0x00>;
-		standby_idle = <0x00>;
-		pd_dis_freq = <0x42a>;
-		sr_dis_freq = <0x320>;
-		dram_dll_dis_freq = <0x00>;
-		phy_dll_dis_freq = <0x00>;
-		phy_dq_drv_odten = <0x25>;
-		phy_ca_drv_odten = <0x25>;
-		phy_clk_drv_odten = <0x27>;
-		dram_dq_drv_odten = <0x22>;
-		phy_dq_drv_odtoff = <0x25>;
-		phy_ca_drv_odtoff = <0x25>;
-		phy_clk_drv_odtoff = <0x27>;
-		dram_dq_drv_odtoff = <0x22>;
-		dram_odt = <0x78>;
-		phy_odt = <0x94>;
-		phy_odt_puup_en = <0x01>;
-		phy_odt_pudn_en = <0x01>;
-		dram_dq_odt_en_freq = <0x14d>;
-		phy_odt_en_freq = <0x14d>;
-		phy_dq_sr_odten = <0x0f>;
-		phy_ca_sr_odten = <0x01>;
-		phy_clk_sr_odten = <0x0f>;
-		phy_dq_sr_odtoff = <0x0f>;
-		phy_ca_sr_odtoff = <0x01>;
-		phy_clk_sr_odtoff = <0x0f>;
-		ssmod_downspread = <0x00>;
-		ssmod_div = <0x00>;
-		ssmod_spread = <0x00>;
-		mode_2t = <0x00>;
-		speed_bin = <0x00>;
-		dram_ext_temp = <0x00>;
-		byte_map = <0x8d>;
-		dq_map_cs0_dq_l = <0x00>;
-		dq_map_cs0_dq_h = <0x00>;
-		dq_map_cs1_dq_l = <0x00>;
-		dq_map_cs1_dq_h = <0x00>;
-	};
-
-	lpddr4_params: lpddr4-params {
-		version = <0x100>;
-		expanded_version = <0x00>;
-		reserved = <0x00>;
-		freq_0 = <0x420>;
-		freq_1 = <0x144>;
-		freq_2 = <0x210>;
-		freq_3 = <0x30c>;
-		freq_4 = <0x00>;
-		freq_5 = <0x00>;
-		pd_idle = <0x0d>;
-		sr_idle = <0x5d>;
-		sr_mc_gate_idle = <0x00>;
-		srpd_lite_idle = <0x00>;
-		standby_idle = <0x00>;
-		pd_dis_freq = <0x42a>;
-		sr_dis_freq = <0x320>;
-		dram_dll_dis_freq = <0x00>;
-		phy_dll_dis_freq = <0x00>;
-		phy_dq_drv_odten = <0x1e>;
-		phy_ca_drv_odten = <0x26>;
-		phy_clk_drv_odten = <0x26>;
-		dram_dq_drv_odten = <0x28>;
-		phy_dq_drv_odtoff = <0x1e>;
-		phy_ca_drv_odtoff = <0x26>;
-		phy_clk_drv_odtoff = <0x26>;
-		dram_dq_drv_odtoff = <0x28>;
-		dram_odt = <0x50>;
-		phy_odt = <0x3c>;
-		phy_odt_puup_en = <0x00>;
-		phy_odt_pudn_en = <0x00>;
-		dram_dq_odt_en_freq = <0x320>;
-		phy_odt_en_freq = <0x320>;
-		phy_dq_sr_odten = <0x00>;
-		phy_ca_sr_odten = <0x0f>;
-		phy_clk_sr_odten = <0x0f>;
-		phy_dq_sr_odtoff = <0x00>;
-		phy_ca_sr_odtoff = <0x0f>;
-		phy_clk_sr_odtoff = <0x0f>;
-		ssmod_downspread = <0x00>;
-		ssmod_div = <0x00>;
-		ssmod_spread = <0x00>;
-		mode_2t = <0x00>;
-		speed_bin = <0x00>;
-		dram_ext_temp = <0x00>;
-		byte_map = <0xe4>;
-		dq_map_cs0_dq_l = <0x00>;
-		dq_map_cs0_dq_h = <0x00>;
-		dq_map_cs1_dq_l = <0x00>;
-		dq_map_cs1_dq_h = <0x00>;
-		lp4_ca_odt = <0x78>;
-		lp4_drv_pu_cal_odten = <0x01>;
-		lp4_drv_pu_cal_odtoff = <0x01>;
-		phy_lp4_drv_pulldown_en_odten = <0x00>;
-		phy_lp4_drv_pulldown_en_odtoff = <0x00>;
-		lp4_ca_odt_en_freq = <0x320>;
-		phy_lp4_cs_drv_odten = <0x00>;
-		phy_lp4_cs_drv_odtoff = <0x00>;
-		lp4_odte_ck_en = <0x01>;
-		lp4_odte_cs_en = <0x01>;
-		lp4_odtd_ca_en = <0x00>;
-		phy_lp4_dq_vref_odten = <0xa6>;
-		lp4_dq_vref_odten = <0x12c>;
-		lp4_ca_vref_odten = <0x17c>;
-		phy_lp4_dq_vref_odtoff = <0x1a4>;
-		lp4_dq_vref_odtoff = <0x1a4>;
-		lp4_ca_vref_odtoff = <0x1a4>;
-	};
-
-	lpddr4x_params: lpddr4x-params {
-		version = <0x100>;
-		expanded_version = <0x00>;
-		reserved = <0x00>;
-		freq_0 = <0x420>;
-		freq_1 = <0x144>;
-		freq_2 = <0x210>;
-		freq_3 = <0x30c>;
-		freq_4 = <0x00>;
-		freq_5 = <0x00>;
-		pd_idle = <0x0d>;
-		sr_idle = <0x5d>;
-		sr_mc_gate_idle = <0x00>;
-		srpd_lite_idle = <0x00>;
-		standby_idle = <0x00>;
-		pd_dis_freq = <0x42a>;
-		sr_dis_freq = <0x320>;
-		dram_dll_dis_freq = <0x00>;
-		phy_dll_dis_freq = <0x00>;
-		phy_dq_drv_odten = <0x1d>;
-		phy_ca_drv_odten = <0x24>;
-		phy_clk_drv_odten = <0x24>;
-		dram_dq_drv_odten = <0x28>;
-		phy_dq_drv_odtoff = <0x1d>;
-		phy_ca_drv_odtoff = <0x24>;
-		phy_clk_drv_odtoff = <0x24>;
-		dram_dq_drv_odtoff = <0x28>;
-		dram_odt = <0x50>;
-		phy_odt = <0x3c>;
-		phy_odt_puup_en = <0x00>;
-		phy_odt_pudn_en = <0x00>;
-		dram_dq_odt_en_freq = <0x320>;
-		phy_odt_en_freq = <0x320>;
-		phy_dq_sr_odten = <0x00>;
-		phy_ca_sr_odten = <0x00>;
-		phy_clk_sr_odten = <0x00>;
-		phy_dq_sr_odtoff = <0x00>;
-		phy_ca_sr_odtoff = <0x00>;
-		phy_clk_sr_odtoff = <0x00>;
-		ssmod_downspread = <0x00>;
-		ssmod_div = <0x00>;
-		ssmod_spread = <0x00>;
-		mode_2t = <0x00>;
-		speed_bin = <0x00>;
-		dram_ext_temp = <0x00>;
-		byte_map = <0xe4>;
-		dq_map_cs0_dq_l = <0x00>;
-		dq_map_cs0_dq_h = <0x00>;
-		dq_map_cs1_dq_l = <0x00>;
-		dq_map_cs1_dq_h = <0x00>;
-		lp4_ca_odt = <0x78>;
-		lp4_drv_pu_cal_odten = <0x00>;
-		lp4_drv_pu_cal_odtoff = <0x00>;
-		phy_lp4_drv_pulldown_en_odten = <0x00>;
-		phy_lp4_drv_pulldown_en_odtoff = <0x00>;
-		lp4_ca_odt_en_freq = <0x320>;
-		phy_lp4_cs_drv_odten = <0x00>;
-		phy_lp4_cs_drv_odtoff = <0x00>;
-		lp4_odte_ck_en = <0x00>;
-		lp4_odte_cs_en = <0x00>;
-		lp4_odtd_ca_en = <0x00>;
-		phy_lp4_dq_vref_odten = <0xa6>;
-		lp4_dq_vref_odten = <0xe4>;
-		lp4_ca_vref_odten = <0x157>;
-		phy_lp4_dq_vref_odtoff = <0x1a4>;
-		lp4_dq_vref_odtoff = <0x1a4>;
-		lp4_ca_vref_odtoff = <0x157>;
-	};
-
-	dmc: dmc {
-		compatible = "rockchip,rk3568-dmc";
-		interrupts = <GIC_SPI 0x0a IRQ_TYPE_LEVEL_HIGH>;
-		interrupt-names = "complete";
-		devfreq-events = <&dfi 0xa2>;
-		clocks = <&scmi_clk 0x03>;
-		clock-names = "dmc_clk";
-		operating-points-v2 = <&dmc_opp_table>;
-		vop-bw-dmc-freq = <0x00 0x11e 0x4f1a0 0x11f 0x1869f 0x80e80>;
-		vop-frame-bw-dmc-freq = <0x00 0x26c 0x4f1a0 0x26d 0x1869f 0xbe6e0>;
-		cpu-bw-dmc-freq = <0x00 0x15e 0x4f1a0 0x15f 0x190 0x80e80 0x191 0x1869f 0xbe6e0>;
-		upthreshold = <0x28>;
-		downdifferential = <0x14>;
-		system-status-level = <0x01 0x04 0x08 0x08 0x02 0x01 0x10 0x04 0x10000 0x04 0x1000 0x08 0x4000 0x08 0x2000 0x08 0xc00 0x08>;
-		auto-min-freq = <0x4f1a0>;
-		auto-freq-en = <1>;
-		#cooling-cells = <2>;
-		status = "disabled";
-		center-supply = <&vdd_logic>;
-	};
-
-	dmc_fsp: dmc-fsp {
-		compatible = "rockchip,rk3568-dmc-fsp";
-		debug_print_level = <0>;
-		ddr3_params = <&ddr3_params>;
-		ddr4_params = <&ddr4_params>;
-		lpddr3_params = <&lpddr3_params>;
-		lpddr4_params = <&lpddr4_params>;
-		lpddr4x_params = <&lpddr4x_params>;
-		status = "disabled";
-	};
-
-	dmc_opp_table: dmc-opp-table {
-		compatible = "operating-points-v2";
-		mbist-vmin = <0xc96a8 0xdbba0 0xe7ef0>;
-		nvmem-cells = <0x70 0x07 0x08 0xa9 0x0a 0x0b>;
-		nvmem-cell-names = "leakage", "pvtm", "mbist-vmin", "opp-info", "specification_serial_number", "remark_spec_serial_number";
-		rockchip,supported-hw;
-		rockchip,max-volt = <0xf4240>;
-		rockchip,temp-hysteresis = <0x1388>;
-		rockchip,low-temp = <0x00>;
-		rockchip,low-temp-adjust-volt = <0x00 0x618 0x124f8>;
-		rockchip,leakage-voltage-sel = <0x01 0x50 0x00 0x51 0xfe 0x01>;
-		rockchip,pvtm-voltage-sel = <0x00 0x14820 0x00 0x14821 0x186a0 0x01>;
-		rockchip,pvtm-ch = <0x00 0x05>;
-
-		opp-1560000000 {
-			opp-supported-hw = <0xf9 0xffff>;
-			opp-hz = <0x00 0x5cfbb600>;
-			opp-microvolt = <0xdbba0 0xdbba0 0xf4240>;
-			opp-microvolt-L0 = <0xdbba0 0xdbba0 0xf4240>;
-			opp-microvolt-L1 = <0xd59f8 0xd59f8 0xf4240>;
-		};
-	};
 };
 
 &combphy1 {
@@ -603,8 +265,6 @@
 			&gmac1m0_rgmii_clk
 			&gmac1m0_clkinout
 			&gmac1m0_rgmii_bus>;
-	tx_delay = <0x30>;
-	rx_delay = <0x10>;
 	status = "okay";
 };
 
@@ -620,289 +280,29 @@
 
 &gpu {
 	mali-supply = <&vdd_gpu>;
-	status = "disabled";
-	upthreshold = <0x28>;
-	downdifferential = <0x0a>;
+	status = "okay";
+};
 
-	gpu_power_model: power-model {
-		compatible = "simple-power-model";
-		leakage-range = <0x05 0x0f>;
-		ls = <0xffffa23e 0x5927 0x00>;
-		static-coefficient = <0x186a0>;
-		dynamic-coefficient = <0x3b9>;
-		ts = <0xfffe56a6 0xf87a 0xfffffab5 0x14>;
-		thermal-zone = "gpu-thermal";
+&hdmi {
+	avdd-0v9-supply = <&vdda0v9_image>;
+	avdd-1v8-supply = <&vcca1v8_image>;
+	status = "okay";
+};
+
+&hdmi_in {
+	hdmi_in_vp0: endpoint {
+		remote-endpoint = <&vp0_out_hdmi>;
 	};
 };
 
-&display_subsystem {
-	devfreq = <&dmc>;
-	status = "disabled";
-
-	route {
-		route_dsi0: route-dsi0 {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x11>;
-		};
-
-		route_dsi1: route-dsi1 {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x12>;
-		};
-
-		route_edp: route-edp {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x13>;
-		};
-
-		route_hdmi: route-hdmi {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x14>;
-		};
-
-		route_lvds: route-lvds {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x15>;
-		};
-
-		route_rgb: route-rgb {
-			status = "disabled";
-			logo,uboot = "logo.bmp";
-			logo,kernel = "logo_kernel.bmp";
-			logo,mode = "center";
-			charge_logo,mode = "center";
-			connect = <0x16>;
-		};
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
 	};
 };
 
-&vp0 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	vp0_out_dsi0: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&dsi0_in_vp0>;
-	};
-
-	vp0_out_dsi1: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&dsi1_in_vp0>;
-	};
-
-	vp0_out_edp: endpoint@2 {
-		reg = <2>;
-		remote-endpoint = <&edp_in_vp0>;
-	};
-
-	/*vp0_out_hdmi: endpoint@3 {
-		reg = <3>;
-		remote-endpoint = <&hdmi_in_vp0>;
-	};*/
-};
-
-&vp1 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	vp1_out_dsi0: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&dsi0_in_vp1>;
-	};
-
-	vp1_out_dsi1: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&dsi1_in_vp1>;
-	};
-
-	vp1_out_edp: endpoint@2 {
-		reg = <2>;
-		remote-endpoint = <&edp_in_vp1>;
-	};
-
-	/*vp1_out_hdmi: endpoint@3 {
-		reg = <3>;
-		remote-endpoint = <&hdmi_in_vp1>;
-	};*/
-
-	vp1_out_lvds: endpoint@4 {
-		reg = <4>;
-		remote-endpoint = <&lvds_in_vp1>;
-	};
-};
-
-&vp2 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	vp2_out_lvds: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&lvds_in_vp2>;
-	};
-
-	vp2_out_rgb: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&rgb_in_vp2>;
-	};
-};
-
-
-&dsi0_in {
-	dsi0_in_vp0: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&vp0_out_dsi0>;
-		status = "disabled";
-	};
-
-	dsi0_in_vp1: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&vp1_out_dsi0>;
-		status = "disabled";
-	};
-};
-
-&dsi1_in {
-	reg = <0>;
-
-	dsi1_in_vp0: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&vp0_out_dsi1>;
-		status = "disabled";
-	};
-
-	dsi1_in_vp1: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&vp1_out_dsi1>;
-		status = "disabled";
-	};
-};
-
-&dsi1_out {
-	dsi1_out_panel: endpoint {
-		remote-endpoint = <&panel_in_dsi1>;
-	};
-};
-
-&dsi1 {
-	dsi1_panel: panel@0 {
-		status = "disabled";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		power-supply = <&vcc3v3_sys>;
-		compatible = "btt-pitft";
-		reg = <0>;
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-
-				panel_in_dsi1: endpoint {
-					remote-endpoint = <&dsi1_out_panel>;
-				};
-			};
-		};
-	};
-};
-
-&edp_in{
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	edp_in_vp0: endpoint@0 {
-		reg = <0>;
-		remote-endpoint = <&vp0_out_edp>;
-		status = "disabled";
-	};
-
-	edp_in_vp1: endpoint@1 {
-		reg = <1>;
-		remote-endpoint = <&vp1_out_edp>;
-		status = "disabled";
-	};
-};
-
-&grf {
-	io_domains: io-domains {
-		compatible = "rockchip,rk3568-io-voltage-domain";
-		status = "disabled";
-	};
-
-	lvds: lvds {
-		compatible = "rockchip,rk3568-lvds";
-		phys = <&dsi_dphy0>;
-		phy-names = "phy";
-		status = "disabled";
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-				#address-cells = <1>;
-				#size-cells = <0>;
-
-				lvds_in_vp1: endpoint@1 {
-					reg = <1>;
-					remote-endpoint = <&vp1_out_lvds>;
-					status = "disabled";
-				};
-
-				lvds_in_vp2: endpoint@2 {
-					reg = <2>;
-					remote-endpoint = <&vp2_out_lvds>;
-					status = "disabled";
-				};
-			};
-		};
-	};
-
-	rgb: rgb {
-		compatible = "rockchip,rk3568-rgb";
-		pinctrl-names = "default";
-		pinctrl-0 = <&lcdc_ctl>;
-		status = "disabled";
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-				#address-cells = <1>;
-				#size-cells = <0>;
-
-				rgb_in_vp2: endpoint@2 {
-					reg = <2>;
-					remote-endpoint = <&vp2_out_rgb>;
-					status = "disabled";
-				};
-			};
-		};
-	};
+&hdmi_sound {
+	status = "okay";
 };
 
 &i2c0 {
@@ -1168,7 +568,7 @@
 	tft_tp: touchscreen@48 {
 		compatible = "ti,tsc2007";
 		reg = <0x48>;
-		status = "disabled";
+		status = "okay";
 		ti,x-plate-ohms = <660>;
 		ti,rt-thr = <3000>;
 		ti,fuzzx = <32>;
@@ -1177,14 +577,14 @@
 };
 
 &i2s0_8ch {
-	status = "disabled";
+	status = "okay";
 };
 
 &i2s1_8ch {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s1m0_sclktx &i2s1m0_lrcktx &i2s1m0_sdi0 &i2s1m0_sdo0>;
 	rockchip,trcm-sync-tx-only;
-	status = "disabled";
+	status = "okay";
 };
 
 &spi1 {
@@ -1215,7 +615,7 @@
 	pinctrl-0 = <&pcie_reset_h>;
 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie>;
-	status = "disabled";
+	status = "okay";
 };
 
 &pinctrl {
@@ -1334,7 +734,7 @@
 
 &saradc {
 	vref-supply = <&vcca_1v8>;
-	status = "disabled";
+	status = "okay";
 };
 
 &sdhci {
@@ -1395,7 +795,7 @@
 };
 
 &tsadc {
-	status = "disabled";
+	status = "okay";
 };
 
 &uart1 {
@@ -1490,9 +890,16 @@
 &vop {
 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-	status = "disabled";
+	status = "okay";
 };
 
 &vop_mmu {
-	status = "disabled";
+	status = "okay";
+};
+
+&vp0 {
+	vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
+		remote-endpoint = <&hdmi_in_vp0>;
+	};
 };
