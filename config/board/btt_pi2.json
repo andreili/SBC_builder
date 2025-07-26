@@ -71,9 +71,14 @@
                     "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
                     "subdir": "dtb/rockchip"
+                },
+                {
+                    "file": "",
+                    "store_type": "boot",
+                    "kmods": true
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
         }
     ],
     "install":

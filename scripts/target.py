@@ -72,6 +72,7 @@ class Target:
 
     def build(self, sub_target, out_dir):
         self.source_sync()
+        self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
             opts = self.makeopts.split(" ")
             config = ""

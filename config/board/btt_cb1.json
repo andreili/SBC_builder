@@ -69,9 +69,14 @@
                     "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
                     "store_type": "boot",
                     "subdir": "dtb/allwinner/overlay"
+                },
+                {
+                    "file": "",
+                    "store_type": "boot",
+                    "kmods": true
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
         },
         {
             "parent": "rtl8189ES_linux",

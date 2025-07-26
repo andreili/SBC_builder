@@ -92,6 +92,9 @@ class OS:
                 cmd += f" | sudo tee {is_append} {self.root_dir}{path} > /dev/null"
                 Logger.os(f"\tCreate file {path}...")
                 self.__sudo(cmd, shell=True, cwd=dir)
+                if ("chmod" in step):
+                    mode = step["chmod"]
+                    self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
             if ("chroot" in step):
                 cmd = self.board.parse_variables(step["chroot"])
                 self.__chroot(cmd, dir=dir)
@@ -239,8 +242,20 @@ class OS:
     def __finalize(self, dir):
         self.__stage3_steps(self.finalize, "Finalize system installation...", dir=dir)
 
+    def make_sqh_kmod(self):
+        mod_path = f"{ROOT_DIR}/out/modules"
+        os.makedirs(mod_path, exist_ok=True)
+        kmod_fn = self.board.parse_variables("%{out_dir}%/kmods/usr/lib/modules")
+        kmod = Path(kmod_fn)
+        for f in kmod.iterdir():
+            sqh_name = f.name
+            self.__make_sqh(f"{kmod_fn}/../../..", f"{mod_path}/{sqh_name}.lzm")
+            break
+
     def sqh(self):
         self.__relaunch_as_sudo()
+        self.make_sqh_kmod()
+        exit(0)
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
         # pack full system via tar
@@ -410,6 +425,7 @@ class OS:
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
         Logger.install(f"\tCopy root.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
+        self.__sudo(["cp", "-H", f"{self.board.out_sh}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)

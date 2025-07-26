@@ -71,48 +71,43 @@ done
 #    [ ! -d "${i}" ] && run mkdir -p "${i}"
 #done
 run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}" || run_emergency_shell
-#if [ -d ${CDROOT_PATH}/modules ]
-#then
-#        warn_msg "Adding all modules in ${CDROOT_PATH}/modules"
-#        for module in "${CDROOT_PATH}/modules/"*.lzm; do
-#                mod=${module##*/}
-#                mod=${mod//-/_}
-#                mod=${mod%.*}
-#                if [ ! -d "${OVERLAY}/.${mod}" ]
-#                then
-#                        run mkdir -p "${OVERLAY}/.${mod}" || return
-#                fi
-#                run mount -o loop,ro "${module}" "${OVERLAY}/.${mod}"
-#                mod_path="${mod_path}:${OVERLAY}/.${mod}"
-#                # Assign variable with paths to modules mount point
-#                # TODO: Stop using eval
-#                eval ${mod}="${OVERLAY}/.${mod}"
-#                mods="${mods} ${mod}"
-#        done
-#fi
+if [ -d ${CDROOT_PATH}/modules ]
+then
+    warn_msg "Adding all modules in ${CDROOT_PATH}/modules"
+    for module in "${CDROOT_PATH}/modules/"*.lzm; do
+        mod=${module##*/}
+        mod=${mod//-/_}
+        mod=${mod%.*}
+        if [ ! -d "${OVERLAY}/.${mod}" ]
+        then
+            run mkdir -p "${OVERLAY}/.${mod}" || return
+        fi
+        run mount -o loop,ro "${module}" "${OVERLAY}/.${mod}"
+        mod_path="${mod_path}:${OVERLAY}/.${mod}"
+        # Assign variable with paths to modules mount point
+        # TODO: Stop using eval
+        eval ${mod}="${OVERLAY}/.${mod}"
+        mods="${mods} ${mod}"
+    done
+fi
 run mount -t overlay overlay -o lowerdir="${STATIC}${mod_path}",upperdir="${upperdir}",workdir="${workdir}" "${NEW_ROOT}" || run_emergency_shell
 for i in "${RW_MNT}" "${STATIC}" "${CDROOT_PATH}"
 do
     [ ! -d "${NEW_ROOT}${i}" ] && run mkdir -p "${NEW_ROOT}${i}"
+    run mount --move "${i}" "${NEW_ROOT}${i}" || run_emergency_shell
 done
-#echo "overlay / overlay defaults 0 0" > "${NEW_ROOT}"/etc/fstab
-#run mkdir -p "${NEW_ROOT}${OVERLAY}"
-#run chmod 755 "${NEW_ROOT}${OVERLAY}"
-#run mount --bind "${OVERLAY}" "${NEW_ROOT}${OVERLAY}"
-#run mount --bind "${STATIC}" "${NEW_ROOT}${STATIC}"
-#if [ -n "${mods}" ]
-#then
-#        for i in ${mods}
-#        do
-#                run mount --bind "${OVERLAY}/.${i}" "${NEW_ROOT}/${OVERLAY}/.${i}"
-#        done
-#fi
-#[ ! -d "${NEW_ROOT}${CDROOT_PATH}" ] && mkdir -p "${NEW_ROOT}${CDROOT_PATH}"
-#run mount --bind "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}"
-#run mount --bind "${RW_MNT}" "${NEW_ROOT}${RW_MNT}"
-run mount --move "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}" || run_emergency_shell
-run mount --move "${RW_MNT}" "${NEW_ROOT}${RW_MNT}" || run_emergency_shell
-run mount --move "${STATIC}" "${NEW_ROOT}${STATIC}" || run_emergency_shell
+
+#run mount --move "${CDROOT_PATH}" "${NEW_ROOT}${CDROOT_PATH}" || run_emergency_shell
+#run mount --move "${RW_MNT}" "${NEW_ROOT}${RW_MNT}" || run_emergency_shell
+#run mount --move "${STATIC}" "${NEW_ROOT}${STATIC}" || run_emergency_shell
+if [ -n "${mods}" ]
+then
+    for i in ${mods}
+    do
+        [ ! -d "${NEW_ROOT}${OVERLAY}/.${i}" ] && run mkdir -p "${NEW_ROOT}${OVERLAY}/.${i}"
+        run mount --bind "${OVERLAY}/.${i}" "${NEW_ROOT}/${OVERLAY}/.${i}"
+    done
+fi
 
 #for m in ${MODULES}; do
 #        run insmod "${NEW_ROOT}${m}"
