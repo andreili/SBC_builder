@@ -251,6 +251,10 @@
 	cpu-supply = <&vdd_cpu>;
 };
 
+&tsadc {
+ 	status = "okay";
+};
+
 &dsi_dphy1 {
  	status = "disabled";
 };
