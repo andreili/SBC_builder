@@ -191,8 +191,17 @@
                 ],
                 "oneshot": false
             },
+            {
+                "file": "/etc/eixrc/00-eixrc",
+                "append": false,
+                "lines": [
+                    "PORTDIR_CACHE_METHOD='sqlite'",
+                    "OVERLAY_CACHE_METHOD='sqlite'"
+                ]
+            },
             { "chroot": "crossdev -s4 arm-none-eabi" },
             { "chroot": "eselect news read" },
+            { "chroot": "eix-update" },
             { "soft_clean": "default" }
         ]
     },
