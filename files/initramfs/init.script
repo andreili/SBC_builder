@@ -101,7 +101,7 @@ devicelist() {
     # iSeries devices
     DEVICES="${DEVICES} /dev/iseries/vcd*"
     # builtin mmc/sd card reader devices
-    DEVICES="${DEVICES} /dev/mmcblk* /dev/mmcblk*/*"
+    DEVICES="${DEVICES} /dev/mmcblk*p*/*"
     # fallback scanning, this might scan something twice, but it's better than
     # failing to boot.
     [ -e /proc/partitions ] && DEVICES="${DEVICES} $(awk '/([0-9]+[[:space:]]+)/{print "/dev/" $4}' /proc/partitions)"
