@@ -251,6 +251,58 @@
 	cpu-supply = <&vdd_cpu>;
 };
 
+&dsi_dphy1 {
+ 	status = "disabled";
+};
+
+&dsi1 {
+	status = "disabled";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	dsi1_panel: panel@0 {
+		compatible = "btt-pitft";
+		reg = <0x0>;
+		status = "disabled";
+		vddc-supply = <&bl_dsi>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				panel_in: endpoint {
+					remote-endpoint = <&mipi_dsi_out>;
+				};
+			};
+		};
+	};
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		dsi1_in: port@0 {
+			reg = <0>;
+
+			dsi1_in_vp1: endpoint {
+				remote-endpoint = <&vp1_out_dsi1>;
+			};
+		};
+
+		dsi1_out: port@1 {
+			reg = <1>;
+
+			mipi_dsi_out: endpoint {
+				remote-endpoint = <&panel_in>;
+			};
+		};
+	};
+};
+
 &gmac1 {
 	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
 	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>, <&cru CLK_MAC1_2TOP>;
@@ -265,6 +317,8 @@
 			&gmac1m0_rgmii_clk
 			&gmac1m0_clkinout
 			&gmac1m0_rgmii_bus>;
+	tx_delay = <0x19>;
+	rx_delay = <0x05>;
 	status = "okay";
 };
 
@@ -286,7 +340,7 @@
 &hdmi {
 	avdd-0v9-supply = <&vdda0v9_image>;
 	avdd-1v8-supply = <&vcca1v8_image>;
-	status = "okay";
+	status = "disabled";
 };
 
 &hdmi_in {
@@ -299,10 +353,6 @@
 	hdmi_out_con: endpoint {
 		remote-endpoint = <&hdmi_con_in>;
 	};
-};
-
-&hdmi_sound {
-	status = "okay";
 };
 
 &i2c0 {
@@ -559,25 +609,36 @@
 };
 
 &i2c2 {
+	status = "okay";
+	pinctrl-names = "default";
+	clock-frequency = <100000>;
 	pinctrl-0 = <&i2c2m1_xfer>;
-};
+	avdd-1v8-supply = <&vcca1v8_image>;
+	avdd-0v9-supply = <&vdda0v9_image>;
+	power-domains = <&power RK3568_PD_VI>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	#size-cells = <0>;
 
-&i2c3 {
-	status = "okay";
-
-	tft_tp: touchscreen@48 {
-		compatible = "ti,tsc2007";
-		reg = <0x48>;
-		status = "okay";
-		ti,x-plate-ohms = <660>;
-		ti,rt-thr = <3000>;
-		ti,fuzzx = <32>;
-		ti,fuzzy = <16>;
+	bl_dsi: regulator@45 {
+		compatible = "raspberrypi,7inch-touchscreen-panel-regulator";
+		reg = <0x45>;
+		status = "disabled";
 	};
-};
 
-&i2s0_8ch {
-	status = "okay";
+	tp_dsi: touchscreen@38 {
+		compatible = "edt,edt-ft5306";
+		reg = <0x38>;
+		status = "disabled";
+
+		vcc-supply = <&vcc3v3_sys>;
+		iovcc-supply = <&vcc_3v3>;
+
+		touchscreen-size-x = <800>;
+		touchscreen-size-y = <480>;
+		touchscreen-inverted-x;
+		touchscreen-inverted-y;
+	};
 };
 
 &i2s1_8ch {
@@ -615,7 +676,6 @@
 	pinctrl-0 = <&pcie_reset_h>;
 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie>;
-	status = "okay";
 };
 
 &pinctrl {
@@ -794,10 +854,6 @@
 	status = "okay";
 };
 
-&tsadc {
-	status = "okay";
-};
-
 &uart1 {
 	dma-names = "tx","rx";
 	pinctrl-names = "default";
@@ -890,16 +946,23 @@
 &vop {
 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-	status = "okay";
+	vop-supply = <&vdd_logic>;
 };
 
-&vop_mmu {
-	status = "okay";
+&scmi_clk {
+	rockchip,clk-init = <1104000000>;
 };
 
 &vp0 {
 	vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
 		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
 		remote-endpoint = <&hdmi_in_vp0>;
+	};
+};
+
+&vp1 {
+	vp1_out_dsi1: endpoint@ROCKCHIP_VOP2_EP_MIPI1 {
+		reg = <ROCKCHIP_VOP2_EP_MIPI1>;
+		remote-endpoint = <&dsi1_in_vp1>;
 	};
 };

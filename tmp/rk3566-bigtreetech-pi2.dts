@@ -8,3 +8,55 @@
 	model = "BigTreeTech Pi 2";
 	compatible = "bigtreetech,pi2", "rockchip,rk3566";
 };
+
+/* HDMI output */
+/*&vop {
+	status = "okay";
+};
+&vop_mmu {
+	status = "okay";
+};
+&display_subsystem {
+	status = "okay";
+};
+&hdmi_sound {
+	status = "okay";
+};
+&i2s0_8ch {
+	status = "okay";
+};
+&hdmi {
+	status = "okay";
+};
+&hdmi_in_vp0 {
+	status = "okay";
+};*/
+
+/* DSI1 output */
+&vop {
+	status = "okay";
+};
+&vop_mmu {
+	status = "okay";
+};
+&display_subsystem {
+	status = "okay";
+};
+&dsi1 {
+	status = "okay";
+};
+&dsi1_panel {
+	status = "okay";
+};
+&dsi1_in_vp1 {
+	status = "okay";
+};
+&dsi_dphy1 {
+	status = "okay";
+};
+&tp_dsi {
+	status = "okay";
+};
+&bl_dsi {
+	status = "okay";
+};
