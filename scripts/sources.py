@@ -267,7 +267,7 @@ class Sources:
     def prepare_artifacts(self, artifacts, out_dir):
         for art in artifacts:
             if ("kmods" in art):
-                shutil.rmtree(f"{out_dir}/kmods")
+                shutil.rmtree(f"{out_dir}/kmods", ignore_errors=True)
 
     def copy_artifacts(self, artifacts, out_dir):
         for art in artifacts:
