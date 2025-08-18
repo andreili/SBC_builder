@@ -49,6 +49,10 @@
                     "store_type": "dd",
                     "block_size": "512b",
                     "img_offset": 16384
+                },
+                {
+                    "file": "u-boot-rockchip-spi.bin",
+                    "store_type": "temp"
                 }
             ],
             "target": [ "" ],
@@ -71,11 +75,6 @@
                     "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
                     "subdir": "dtb/rockchip"
-                },
-                {
-                    "file": "",
-                    "store_type": "boot",
-                    "kmods": true
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
@@ -90,12 +89,12 @@
         [
             {
                 "name": "boot",
-                "size": "1g",
+                "size": "1G",
                 "first_sector": "32768"
             },
             {
                 "name": "rw",
-                "size": "2g"
+                "size": "2G"
             }
         ]
     }

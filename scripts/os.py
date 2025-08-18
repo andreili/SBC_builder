@@ -155,6 +155,8 @@ class OS:
             else:
                 args.insert(0, "sudo")
                 err_n = args[1]
+        else:
+            err_n = args
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
@@ -270,6 +272,7 @@ class OS:
         # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
+        self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}")
         sqh_fn = f"{ROOT_DIR}/out/root_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
         os.symlink(sqh_fn, f"{ROOT_DIR}/out/root.sqh.tmp")
@@ -374,9 +377,8 @@ class OS:
             if (part_size > (90 * 1024 * 1024)) and (i == idx):
                 # required partition
                 #print(f"\tIdx:{i} Size:{part_size}")
-                self.__sudo(["losetup", "-o", str(offset), "--sizelimit",
-                    str(part_size), "/dev/loop0", img_or_blk],
-                    cwd=ROOT_DIR)#, stdout=subprocess.DEVNULL)
+                self.__sudo(f"losetup -o {offset} --sizelimit {part_size} /dev/loop0 {img_or_blk}",
+                    cwd=ROOT_DIR, shell=True)#, stdout=subprocess.DEVNULL)
                 return True
             i += 1
             offset += part_size
@@ -425,7 +427,7 @@ class OS:
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
         Logger.install(f"\tCopy root.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
-        self.__sudo(["cp", "-H", f"{self.board.out_sh}/modules", f"{out_dir}/"])
+        self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)
