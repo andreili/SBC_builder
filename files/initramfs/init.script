@@ -130,6 +130,21 @@ determine_fs() {
     echo "${_fs}"
 }
 
+get_active_console() {
+	local active_console=console
+
+	while [ -f /sys/class/tty/${active_console}/active ]
+	do
+		active_console=$(cat /sys/class/tty/${active_console}/active)
+
+		# last console will be the active one,
+		# see https://www.kernel.org/doc/html/latest/admin-guide/serial-console.html
+		active_console=${active_console##* }
+	done
+
+	echo ${active_console}
+}
+
 findmediamount() {
     # $1 = mount dir name / media name
     # $2 = recognition file

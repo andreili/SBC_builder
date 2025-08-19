@@ -3,6 +3,9 @@
 . /etc/init.def
 . /etc/init.script
 
+CONSOLE="/dev/$(get_active_console)"
+exec 0<>${CONSOLE} 1<>${CONSOLE} 2<>${CONSOLE}
+
 run mount -t sysfs sysfs /sys -o noexec,nosuid,nodev >/dev/null
 run mount -t devtmpfs -o exec,nosuid,mode=0755,size=10M udev /dev
 run mkdir -m 0755 /dev/pts
