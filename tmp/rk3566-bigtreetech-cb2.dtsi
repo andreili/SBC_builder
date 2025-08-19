@@ -225,22 +225,6 @@
 		regulator-name = "vcc_sd";
 		vin-supply = <&vcc3v3_sys>;
 	};
-
-    onewire: onewire {
-        compatible = "w1-gpio";
-        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
-        pinctrl-names = "default";
-        pinctrl-0 = <&gpio_w1>;
-        status = "okay";
-    };
-};
-
-&pinctrl {
-    gpio-w1 {
-        gpio_w1:gpio-w1 {
-            rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-        };
-    };
 };
 
 &combphy1 {
