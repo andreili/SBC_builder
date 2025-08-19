@@ -259,6 +259,7 @@
             { "copy": [ "%{ROOT_DIR}%/files/firmware/usr", "."] },
             { "sudo": "chmod u+s ./usr/bin/Xorg" },
             { "sudo": "ln -sf /usr/share/zoneinfo/%{TIME_ZONE}% ./etc/localtime" },
+            { "chroot": "groupadd -g %{USER_ID}% %{USER_LOGIN}%" },
             { "chroot": "useradd -m -G wheel,video,audio,disk,usb -g %{USER_ID}% -u %{USER_ID}% %{USER_LOGIN}% --password %{USER_LOGIN}%" },
             { "chroot": "echo '%{USER_LOGIN}%:%{USER_LOGIN}%' | chpasswd" },
             { "chroot": "echo 'root:root' | chpasswd" },
