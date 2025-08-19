@@ -272,7 +272,7 @@ class OS:
         # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
-        self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}")
+        self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
         sqh_fn = f"{ROOT_DIR}/out/root_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
         os.symlink(sqh_fn, f"{ROOT_DIR}/out/root.sqh.tmp")
