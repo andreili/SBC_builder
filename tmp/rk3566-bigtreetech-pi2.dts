@@ -25,6 +25,63 @@
     };
 };
 
+&scmi_clk {
+	rockchip,clk-init = <1104000000>;
+};
+
+&sfc {
+	status = "okay";
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <100000000>;
+		spi-rx-bus-width = <4>;
+		spi-tx-bus-width = <1>;
+	};
+};
+
+&display_subsystem {
+	status = "disabled";
+};
+&dsi1 {
+	status = "disabled";
+};
+&dsi1_panel {
+	status = "disabled";
+};
+&dsi1_in_vp1 {
+	status = "disabled";
+};
+&dsi_dphy1 {
+	status = "disabled";
+};
+&tp_dsi {
+	status = "disabled";
+};
+&bl_dsi {
+	status = "disabled";
+};
+&vop {
+	vop-supply = <&vdd_logic>;
+	status = "disabled";
+};
+&vop_mmu {
+	status = "disabled";
+};
+&display_subsystem {
+	status = "disabled";
+};
+&hdmi_sound {
+	status = "disabled";
+};
+&hdmi {
+	status = "disabled";
+};
+&hdmi_in_vp0 {
+	status = "disabled";
+};
+
 /* HDMI output */
 /*&vop {
 	status = "okay";
@@ -49,7 +106,7 @@
 };*/
 
 /* DSI1 output */
-&vop {
+/*&vop {
 	status = "okay";
 };
 &vop_mmu {
@@ -75,16 +132,16 @@
 };
 &bl_dsi {
 	status = "okay";
+};*/
+
+&i2c3 {
+	status = "disabled";
 };
 
-&sfc {
-	status = "okay";
+&i2s0_8ch {
+	status = "disabled";
+};
 
-	flash@0 {
-		compatible = "jedec,spi-nor";
-		reg = <0>;
-		spi-max-frequency = <100000000>;
-		spi-rx-bus-width = <4>;
-		spi-tx-bus-width = <1>;
-	};
+&pcie2x1 {
+	status = "disabled";
 };

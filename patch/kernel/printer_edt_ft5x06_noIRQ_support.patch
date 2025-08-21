@@ -94,7 +94,7 @@ index 0d7bf18e2508..535e84de038e 100644
  
 +static void edt_ft5x06_ts_irq_poll_timer(struct timer_list *t)
 +{
-+	struct edt_ft5x06_ts_data *tsdata = from_timer(tsdata, t, timer);
++	struct edt_ft5x06_ts_data *tsdata = timer_container_of(tsdata, t, timer);
 +
 +	schedule_work(&tsdata->work_i2c_poll);
 +	mod_timer(&tsdata->timer, jiffies + msecs_to_jiffies(POLL_INTERVAL_MS));
@@ -153,7 +153,7 @@ index 0d7bf18e2508..535e84de038e 100644
  	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
  
 +	if (!client->irq) {
-+		del_timer(&tsdata->timer);
++		timer_delete(&tsdata->timer);
 +		cancel_work_sync(&tsdata->work_i2c_poll);
 +	}
  	edt_ft5x06_ts_teardown_debugfs(tsdata);

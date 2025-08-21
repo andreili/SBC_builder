@@ -251,16 +251,7 @@
 	cpu-supply = <&vdd_cpu>;
 };
 
-&tsadc {
- 	status = "okay";
-};
-
-&dsi_dphy1 {
- 	status = "disabled";
-};
-
 &dsi1 {
-	status = "disabled";
 	#address-cells = <1>;
 	#size-cells = <0>;
 
@@ -338,7 +329,7 @@
 
 &gpu {
 	mali-supply = <&vdd_gpu>;
-	status = "okay";
+	status = "disabled";
 };
 
 &hdmi {
@@ -357,6 +348,10 @@
 	hdmi_out_con: endpoint {
 		remote-endpoint = <&hdmi_con_in>;
 	};
+};
+
+&hdmi_sound {
+	status = "disabled";
 };
 
 &i2c0 {
@@ -613,8 +608,7 @@
 };
 
 &i2c2 {
-	status = "okay";
-	pinctrl-names = "default";
+	status = "disabled";
 	clock-frequency = <100000>;
 	pinctrl-0 = <&i2c2m1_xfer>;
 	avdd-1v8-supply = <&vcca1v8_image>;
@@ -642,6 +636,20 @@
 		touchscreen-size-y = <480>;
 		touchscreen-inverted-x;
 		touchscreen-inverted-y;
+	};
+};
+
+&i2c3 {
+	status = "disabled";
+
+	tft_tp: touchscreen@48 {
+		compatible = "ti,tsc2007";
+		reg = <0x48>;
+		status = "okay";
+		ti,x-plate-ohms = <660>;
+		ti,rt-thr = <3000>;
+		ti,fuzzx = <32>;
+		ti,fuzzy = <16>;
 	};
 };
 
@@ -680,6 +688,7 @@
 	pinctrl-0 = <&pcie_reset_h>;
 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie>;
+	status = "disabled";
 };
 
 &pinctrl {
@@ -840,7 +849,7 @@
 	rockchip,default-sample-phase = <90>;
 	status = "okay";
 
-	sdio-wifi@1 {
+	wifi@1 {
 		compatible = "brcm,bcm4329-fmac";
 		reg = <1>;
 		interrupt-parent = <&gpio2>;
@@ -855,6 +864,10 @@
 &sfc {
 	#address-cells = <1>;
 	#size-cells = <0>;
+	status = "okay";
+};
+
+&tsadc {
 	status = "okay";
 };
 
@@ -951,10 +964,6 @@
 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
 	vop-supply = <&vdd_logic>;
-};
-
-&scmi_clk {
-	rockchip,clk-init = <1104000000>;
 };
 
 &vp0 {
