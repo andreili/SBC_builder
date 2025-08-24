@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+
+/dts-v1/;
+/plugin/;
+
+&vop {
+	status = "okay";
+};
+&vop_mmu {
+	status = "okay";
+};
+&display_subsystem {
+	status = "okay";
+};
+&dsi1 {
+	status = "okay";
+};
+&dsi1_panel {
+	status = "okay";
+};
+&dsi1_in_vp1 {
+	status = "okay";
+};
+&dsi_dphy1 {
+	status = "okay";
+};
+&tp_dsi {
+	status = "okay";
+};
+&bl_dsi {
+	status = "okay";
+};

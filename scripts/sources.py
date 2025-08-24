@@ -275,7 +275,8 @@ class Sources:
                 continue
             file_name = self.work_dir + "/" + art["file"]
             if ("subdir" in art):
-                dir_o = out_dir + "/" + art["subdir"] + "/"
+                subdir = art["subdir"]
+                dir_o = out_dir + "/" + subdir + "/"
             else:
                 dir_o = out_dir + "/"
             os.makedirs(dir_o, exist_ok=True)

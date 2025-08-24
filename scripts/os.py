@@ -14,12 +14,13 @@ class OS:
         self.root_dir = f"{ROOT_DIR}/root"
         self.mount_dir = f"{ROOT_DIR}/build/mnt_tmp"
         self.actions = [
-            [ "chroot",    self.chroot      ],
-            [ "sync",      self.sync_repo   ],
-            [ "update",    self.update_all  ],
-            [ "reinstall", self.rebuild_all ],
-            [ "pack",      self.pack        ],
-            [ "sqh",       self.sqh         ]
+            [ "chroot",    self.chroot        ],
+            [ "sync",      self.sync_repo     ],
+            [ "update",    self.update_all    ],
+            [ "reinstall", self.rebuild_all   ],
+            [ "pack",      self.pack          ],
+            [ "sqh",       self.sqh           ],
+            [ "sqh_kmod",  self.make_sqh_kmod ]
         ]
 
     def __relaunch_as_sudo(self):
@@ -245,6 +246,7 @@ class OS:
         self.__stage3_steps(self.finalize, "Finalize system installation...", dir=dir)
 
     def make_sqh_kmod(self):
+        self.__relaunch_as_sudo()
         mod_path = f"{ROOT_DIR}/out/modules"
         os.makedirs(mod_path, exist_ok=True)
         kmod_fn = self.board.parse_variables("%{out_dir}%/kmods/usr/lib/modules")
@@ -255,9 +257,8 @@ class OS:
             break
 
     def sqh(self):
-        self.__relaunch_as_sudo()
+        #self.__relaunch_as_sudo()
         self.make_sqh_kmod()
-        exit(0)
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
         # pack full system via tar
@@ -405,8 +406,12 @@ class OS:
 
     def __copy_file(self, src, dst):
         Logger.install(f"\tCopy {src}")
+        dir_ch = Path(src)
         self.__sudo(["mkdir", "-p", dst], stdout=subprocess.DEVNULL)
-        self.__sudo(["cp", src, dst], stdout=subprocess.DEVNULL)
+        if (dir_ch.is_dir()):
+            self.__sudo(["cp", "-Hr", src, dst], stdout=subprocess.DEVNULL)
+        else:
+            self.__sudo(["cp", src, dst], stdout=subprocess.DEVNULL)
 
     def __dd_bin(self, src, block_size, offset):
         blk_sz = self.__parse_size(block_size)
@@ -418,9 +423,21 @@ class OS:
         extl_dir = f"{out_dir}/extlinux"
         extl_fn  = f"{extl_dir}/extlinux.conf"
         dtb_file = self.board.parse_variables("%{DTB_FILE}%")
+        dto_dir = self.board.parse_variables("%{DTO_DIR}%")
         cmd  = f"mkdir -p {extl_dir} && touch {out_dir}/livecd && "
-        cmd += f"echo 'menu title Boot Options.\n\ntimeout 20\ndefault Kernel_def\n\n"
-        cmd += f"label Kernel_def\n\tkernel /Image\n\tfdtdir /dtb/\n\tdevicetree /dtb/{dtb_file}\n\tinitrd /uInitrd\n' >> {extl_fn}"
+        cmd += f"echo 'menu title Boot Options.\n\n"
+        cmd += f"timeout 20\ndefault Kernel_def\n\n"
+        cmd += f"label Kernel_def\n"
+        cmd += f"\tkernel /Image\n"
+        cmd += f"\tfdtdir /dtb/\n"
+        cmd += f"\tdevicetree /dtb/{dtb_file}\n"
+        cmd += f"\tinitrd /uInitrd\n"
+        if ("overlays" in self.board.installs):
+            overlays = self.board.installs["overlays"]
+            overlays = " ".join(overlays)
+            overlays = self.board.parse_variables(overlays)
+            cmd += f"\tfdtoverlays {overlays}\n"
+        cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
         for target in self.board.targets:
             target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)

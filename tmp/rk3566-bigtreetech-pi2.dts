@@ -7,40 +7,13 @@
 / {
 	model = "BigTreeTech Pi 2";
 	compatible = "bigtreetech,pi2", "rockchip,rk3566";
-
-    onewire: onewire {
-        compatible = "w1-gpio";
-        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
-        pinctrl-names = "default";
-        pinctrl-0 = <&gpio_w1>;
-        status = "disabled";
-    };
-};
-
-&pinctrl {
-    gpio-w1 {
-        gpio_w1:gpio-w1 {
-            rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-        };
-    };
 };
 
 &scmi_clk {
 	rockchip,clk-init = <1104000000>;
 };
 
-&sfc {
-	status = "okay";
-
-	flash@0 {
-		compatible = "jedec,spi-nor";
-		reg = <0>;
-		spi-max-frequency = <100000000>;
-		spi-rx-bus-width = <4>;
-		spi-tx-bus-width = <1>;
-	};
-};
-
+/* disable all - default state */
 &display_subsystem {
 	status = "disabled";
 };
@@ -81,67 +54,12 @@
 &hdmi_in_vp0 {
 	status = "disabled";
 };
-
-/* HDMI output */
-/*&vop {
-	status = "okay";
-};
-&vop_mmu {
-	status = "okay";
-};
-&display_subsystem {
-	status = "okay";
-};
-&hdmi_sound {
-	status = "okay";
-};
-&i2s0_8ch {
-	status = "okay";
-};
-&hdmi {
-	status = "okay";
-};
-&hdmi_in_vp0 {
-	status = "okay";
-};*/
-
-/* DSI1 output */
-/*&vop {
-	status = "okay";
-};
-&vop_mmu {
-	status = "okay";
-};
-&display_subsystem {
-	status = "okay";
-};
-&dsi1 {
-	status = "okay";
-};
-&dsi1_panel {
-	status = "okay";
-};
-&dsi1_in_vp1 {
-	status = "okay";
-};
-&dsi_dphy1 {
-	status = "okay";
-};
-&tp_dsi {
-	status = "okay";
-};
-&bl_dsi {
-	status = "okay";
-};*/
-
 &i2c3 {
 	status = "disabled";
 };
-
 &i2s0_8ch {
 	status = "disabled";
 };
-
 &pcie2x1 {
 	status = "disabled";
 };
