@@ -85,15 +85,6 @@
                 "lines": [ "regulatory.db" ]
             },
             {
-                "file": "/etc/portage/package.use/test",
-                "append": false,
-                "lines":
-                [
-                    "net-misc/networkmanager -bluetooth -modemmanager",
-                    "net-misc/networkmanager -ppp"
-                ]
-            },
-            {
                 "file": "/etc/portage/package.use/system",
                 "append": false,
                 "lines":
@@ -113,7 +104,8 @@
                     "app-admin/sudo -sendmail",
                     "sys-apps/systemd -dns-over-tls -gcrypt -kernel-install",
                     "media-libs/mesa -llvm",
-                    "sys-process/htop lm-sensors"
+                    "sys-process/htop lm-sensors",
+                    "net-misc/networkmanager -bluetooth -modemmanager -ppp"
                 ]
             },
             {
@@ -136,7 +128,7 @@
                     "#x11-base/xorg-server suid",
                     "cross-arm-none-eabi/newlib nano",
                     "media-libs/libepoxy egl",
-                    "net-misc/networkmanager -tools",
+                    "#net-misc/networkmanager -tools",
                     "media-libs/libglvnd X",
                     "media-libs/libv4l bpf",
                     "media-video/ffmpeg x264 x265",
@@ -249,6 +241,19 @@
                     "    sync",
                     "    sleep 60",
                     "done"
+                ],
+                "chmod": "+x"
+            },
+            {
+                "file": "/etc/NetworkManager/conf.d/00-leave-original-mac.conf",
+                "append": false,
+                "lines": [
+                    "[device-mac-randomization]",
+                    "wifi.scan-rand-mac-address=no",
+                    "",
+                    "[connection-mac-randomization]",
+                    "ethernet.cloned-mac-address=permanent",
+                    "wifi.cloned-mac-address=permanent"
                 ],
                 "chmod": "+x"
             },
