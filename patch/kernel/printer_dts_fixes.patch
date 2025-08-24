@@ -237,7 +237,7 @@ diff --git a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dts b/arch/arm6
 index 7cd444caa18b..ff7df921f0f0 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dts
-@@ -8,3 +8,28 @@ / {
+@@ -8,3 +8,31 @@ / {
  	model = "BigTreeTech Pi 2";
  	compatible = "bigtreetech,pi2", "rockchip,rk3566";
  };
@@ -247,6 +247,9 @@ index 7cd444caa18b..ff7df921f0f0 100644
 +};
 +
 +/* disable all - default state */
++&fan {
++	status = "disabled";
++};
 +&display_subsystem {
 +	status = "disabled";
 +};
@@ -390,7 +393,7 @@ index 000000000000..410763276a6b
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/pinctrl/rockchip.h>
 +
-+/ {
++&{/} {
 +    onewire: onewire {
 +        compatible = "w1-gpio";
 +        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
@@ -411,34 +414,7 @@ diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts
 index fd2214b6fad4..9e99309eb9bd 100644
 --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-@@ -616,6 +629,26 @@ vepu_mmu: iommu@fdee0800 {
- 		#iommu-cells = <0>;
- 	};
- 
-+	vdec: video-codec@fdf80200 {
-+		compatible = "rockchip,rk3588-vdec";
-+		reg = <0x0 0xfdf80100 0x0 0x100>, <0x0 0xfdf80200 0x0 0x500>, <0x0 0xfdf80700 0x0 0x100>;
-+		reg-names = "link", "function", "cache";
-+		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_RKVDEC>, <&cru HCLK_RKVDEC>, <&cru CLK_RKVDEC_CA>,
-+			 <&cru CLK_RKVDEC_CORE>, <&cru CLK_RKVDEC_HEVC_CA>;
-+		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		assigned-clocks = <&cru ACLK_RKVDEC>, <&cru CLK_RKVDEC_CORE>,
-+				  <&cru CLK_RKVDEC_CA>, <&cru CLK_RKVDEC_HEVC_CA>;
-+		assigned-clock-rates = <297000000>, <297000000>,
-+				       <297000000>, <297000000>;
-+		resets = <&cru SRST_A_RKVDEC>, <&cru SRST_H_RKVDEC>, <&cru SRST_RKVDEC_CA>,
-+			 <&cru SRST_RKVDEC_CORE>, <&cru SRST_RKVDEC_HEVC_CA>;
-+		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-+			      "rst_core", "rst_hevc_cabac";
-+		power-domains = <&power RK3568_PD_RKVDEC>;
-+		sram = <&vdec_sram>;
-+	};
-+
- 	sdmmc2: mmc@fe000000 {
- 		compatible = "rockchip,rk3568-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		reg = <0x0 0xfe000000 0x0 0x4000>;
-@@ -1057,6 +1090,123 @@ rng: rng@fe388000 {
+@@ -1057,6 +1090,111 @@ rng: rng@fe388000 {
  		status = "disabled";
  	};
  
@@ -545,18 +521,6 @@ index fd2214b6fad4..9e99309eb9bd 100644
 +			reg = <0x56 1>;
 +			bits = <0 5>;
 +		};
-+	};
-+
-+	crypto: crypto@fe380000 {
-+		compatible = "rockchip,rk3568-crypto";
-+		reg = <0x0 0xfe380000 0x0 0x2000>;
-+		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_CRYPTO_NS>, <&cru HCLK_CRYPTO_NS>,
-+			 <&cru CLK_CRYPTO_NS_CORE>;
-+		clock-names = "aclk", "hclk", "core";
-+		resets = <&cru SRST_CRYPTO_NS_CORE>;
-+		reset-names = "core";
-+		status = "okay";
 +	};
 +
  	i2s0_8ch: i2s@fe400000 {

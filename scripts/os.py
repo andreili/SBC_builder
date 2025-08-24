@@ -82,15 +82,15 @@ class OS:
         if (dir == ""):
             dir = self.root_dir
         Logger.os(text)
-        self.__sudo(["cp", "/etc/resolv.conf", f"{self.root_dir}/etc/resolv.conf"])
+        self.__sudo(["cp", "/etc/resolv.conf", f"{dir}/etc/resolv.conf"])
         for step in info["steps"]:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
                 lines = "\n".join(step["lines"])
                 path = step["file"]
                 directory = Path(path).parent
-                cmd  = f"mkdir -p {self.root_dir}{directory} && echo '{lines}'"
-                cmd += f" | sudo tee {is_append} {self.root_dir}{path} > /dev/null"
+                cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
+                cmd += f" | sudo tee {is_append} {dir}{path} > /dev/null"
                 Logger.os(f"\tCreate file {path}...")
                 self.__sudo(cmd, shell=True, cwd=dir)
                 if ("chmod" in step):
