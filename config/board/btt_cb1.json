@@ -7,7 +7,10 @@
     [
         "CROSS_C:aarch64-linux-gnu-",
         "ATF_PLATFORM:sun50i_h616",
-        "ARCH:aarch64"
+        "ARCH:aarch64",
+        "DTB_FILE:allwinner/sun50i-h616-bigtreetech-cb1-manta.dtb",
+        "DTO_FILES:sun50i-h616*.dtbo",
+        "DTO_DIR:allwinner/overlays"
     ],
     "targets":
     [
@@ -49,9 +52,9 @@
         },
         {
             "parent": "kernel",
-            "version": "v6.14-rc7",
+            "version": "v6.16-rc2",
             "version_type": "tag",
-            "patch_dir": [ "kernel", "kernel/sunxi-6.14", "kernel/rockchip64-6.14" ],
+            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
             "config_def": "printer_defconfig",
             "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
             "artifacts":
@@ -61,19 +64,15 @@
                     "store_type": "boot"
                 },
                 {
-                    "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
+                    "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
-                    "subdir": "dtb/allwinner"
+                    "subdir": "dtb/allwinner",
+                    "destdir": "dtb"
                 },
                 {
-                    "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
-                    "store_type": "boot",
+                    "file": "arch/arm64/boot/dts/allwinner/overlay/%{DTO_FILES}%",
+                    "store_type": "none",
                     "subdir": "dtb/allwinner/overlay"
-                },
-                {
-                    "file": "",
-                    "store_type": "boot",
-                    "kmods": true
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
@@ -82,16 +81,10 @@
             "parent": "rtl8189ES_linux",
             "version": "rtl8189fs",
             "version_type": "branch",
-            "target": [ "modules" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods KSRC=%{common_dir}%/kernel",
+            "target": [ "modules", "install" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_dir}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel",
             "artifacts":
-            [
-                {
-                    "file": "8189fs.ko",
-                    "store_type": "boot",
-                    "subdir": "modules"
-                }
-            ]
+            []
         }
     ],
     "install":

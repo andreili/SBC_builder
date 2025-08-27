@@ -54,7 +54,7 @@ index f88a02913390..3eba9e152f1c 100644
 +
 +static ssize_t axp20x_sysfs_read_bin_file(struct file *filp,
 +				struct kobject *kobj,
-+				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
 +				char *buf, loff_t off, size_t count)
 +{
 +	int ret;
@@ -73,7 +73,7 @@ index f88a02913390..3eba9e152f1c 100644
 +
 +static ssize_t axp20x_sysfs_write_bin_file(struct file *filp,
 +				struct kobject *kobj,
-+				struct bin_attribute *bin_attr,
++				const struct bin_attribute *bin_attr,
 +				char *buf, loff_t off, size_t count)
 +{
 +	int ret;
