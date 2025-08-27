@@ -1,0 +1,116 @@
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+index fd2214b6fad4..9e99309eb9bd 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
+@@ -1057,6 +1090,111 @@ rng: rng@fe388000 {
+ 		status = "disabled";
+ 	};
+ 
++	otp: otp@fe38c000 {
++		compatible = "rockchip,rk3568-otp";
++		reg = <0x00 0xfe38c000 0x00 0x4000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		clocks = <&cru CLK_OTPC_NS_USR>,
++			<&cru CLK_OTPC_NS_SBPI>,
++			<&cru PCLK_OTPC_NS>,
++			<&cru PCLK_OTPPHY>;
++		clock-names = "usr", "sbpi", "apb", "phy";
++		resets = <&cru SRST_OTPPHY>;
++		reset-names = "otp_phy";
++
++		cpu_code: cpu-code@2 {
++			reg = <0x02 0x02>;
++		};
++
++		specification_serial_number: specification-serial-number@7 {
++			reg = <0x07 0x01>;
++			bits = <0x00 0x05>;
++		};
++
++		otp_cpu_version: cpu-version@8 {
++			reg = <0x08 0x01>;
++			bits = <0x03 0x03>;
++		};
++
++		mbist_vmin: mbist-vmin@9 {
++			reg = <0x09 0x01>;
++			bits = <0x00 0x04>;
++		};
++
++		otp_id: id@a {
++			reg = <0x0a 0x10>;
++		};
++
++		cpu_leakage: cpu-leakage@1a {
++			reg = <0x1a 0x01>;
++		};
++
++		log_leakage: log-leakage@1b {
++			reg = <0x1b 0x01>;
++		};
++
++		npu_leakage: npu-leakage@1c {
++			reg = <0x1c 0x01>;
++		};
++
++		gpu_leakage: gpu-leakage@1d {
++			reg = <0x1d 0x01>;
++		};
++
++		core_pvtm: core-pvtm@2a {
++			reg = <0x2a 0x02>;
++		};
++
++		cpu_tsadc_trim_l: cpu-tsadc-trim-l@2e {
++			reg = <0x2e 0x01>;
++		};
++
++		cpu_tsadc_trim_h: cpu-tsadc-trim-h@2f {
++			reg = <0x2f 0x01>;
++			bits = <0x00 0x04>;
++		};
++
++		gpu_tsadc_trim_l: npu-tsadc-trim-l@30 {
++			reg = <0x30 0x01>;
++		};
++
++		gpu_tsadc_trim_h: npu-tsadc-trim-h@31 {
++			reg = <0x31 0x01>;
++			bits = <0x00 0x04>;
++		};
++
++		tsadc_trim_base_frac: tsadc-trim-base-frac@31 {
++			reg = <0x31 0x01>;
++			bits = <0x04 0x04>;
++		};
++
++		tsadc_trim_base: tsadc-trim-base@32 {
++			reg = <0x32 0x01>;
++		};
++
++		cpu_opp_info: cpu-opp-info@36 {
++			reg = <0x36 0x06>;
++		};
++
++		gpu_opp_info: gpu-opp-info@3c {
++			reg = <0x3c 0x06>;
++		};
++
++		npu_opp_info: npu-opp-info@42 {
++			reg = <0x42 0x06>;
++		};
++
++		dmc_opp_info: dmc-opp-info@48 {
++			reg = <0x48 0x06>;
++		};
++
++		remark_spec_serial_number: remark-spec-serial-number@56 {
++			reg = <0x56 1>;
++			bits = <0 5>;
++		};
++	};
++
+ 	i2s0_8ch: i2s@fe400000 {
+ 		compatible = "rockchip,rk3568-i2s-tdm";
+ 		reg = <0x0 0xfe400000 0x0 0x1000>;

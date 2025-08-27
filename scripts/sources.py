@@ -264,11 +264,19 @@ class Sources:
                 # copy new configurtion, if exists
                 shutil.copyfile(work_cfg_name, cfg_name)
 
+    def prepare_artifacts(self, artifacts, out_dir):
+        for art in artifacts:
+            if ("kmods" in art):
+                shutil.rmtree(f"{out_dir}/kmods", ignore_errors=True)
+
     def copy_artifacts(self, artifacts, out_dir):
         for art in artifacts:
+            if ("kmods" in art):
+                continue
             file_name = self.work_dir + "/" + art["file"]
             if ("subdir" in art):
-                dir_o = out_dir + "/" + art["subdir"] + "/"
+                subdir = art["subdir"]
+                dir_o = out_dir + "/" + subdir + "/"
             else:
                 dir_o = out_dir + "/"
             os.makedirs(dir_o, exist_ok=True)

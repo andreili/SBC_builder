@@ -14,12 +14,13 @@ class OS:
         self.root_dir = f"{ROOT_DIR}/root"
         self.mount_dir = f"{ROOT_DIR}/build/mnt_tmp"
         self.actions = [
-            [ "chroot",    self.chroot      ],
-            [ "sync",      self.sync_repo   ],
-            [ "update",    self.update_all  ],
-            [ "reinstall", self.rebuild_all ],
-            [ "pack",      self.pack        ],
-            [ "sqh",       self.sqh         ]
+            [ "chroot",    self.chroot        ],
+            [ "sync",      self.sync_repo     ],
+            [ "update",    self.update_all    ],
+            [ "reinstall", self.rebuild_all   ],
+            [ "pack",      self.pack          ],
+            [ "sqh",       self.sqh           ],
+            [ "sqh_kmod",  self.make_sqh_kmod ]
         ]
 
     def __relaunch_as_sudo(self):
@@ -81,17 +82,20 @@ class OS:
         if (dir == ""):
             dir = self.root_dir
         Logger.os(text)
-        self.__sudo(["cp", "/etc/resolv.conf", f"{self.root_dir}/etc/resolv.conf"])
+        self.__sudo(["cp", "/etc/resolv.conf", f"{dir}/etc/resolv.conf"])
         for step in info["steps"]:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
                 lines = "\n".join(step["lines"])
                 path = step["file"]
                 directory = Path(path).parent
-                cmd  = f"mkdir -p {self.root_dir}{directory} && echo '{lines}'"
-                cmd += f" | sudo tee {is_append} {self.root_dir}{path} > /dev/null"
+                cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
+                cmd += f" | sudo tee {is_append} {dir}{path} > /dev/null"
                 Logger.os(f"\tCreate file {path}...")
                 self.__sudo(cmd, shell=True, cwd=dir)
+                if ("chmod" in step):
+                    mode = step["chmod"]
+                    self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
             if ("chroot" in step):
                 cmd = self.board.parse_variables(step["chroot"])
                 self.__chroot(cmd, dir=dir)
@@ -152,6 +156,8 @@ class OS:
             else:
                 args.insert(0, "sudo")
                 err_n = args[1]
+        else:
+            err_n = args
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
@@ -239,8 +245,20 @@ class OS:
     def __finalize(self, dir):
         self.__stage3_steps(self.finalize, "Finalize system installation...", dir=dir)
 
-    def sqh(self):
+    def make_sqh_kmod(self):
         self.__relaunch_as_sudo()
+        mod_path = f"{ROOT_DIR}/out/modules"
+        os.makedirs(mod_path, exist_ok=True)
+        kmod_fn = self.board.parse_variables("%{out_dir}%/kmods/usr/lib/modules")
+        kmod = Path(kmod_fn)
+        for f in kmod.iterdir():
+            sqh_name = f.name
+            self.__make_sqh(f"{kmod_fn}/../../..", f"{mod_path}/{sqh_name}.lzm")
+            break
+
+    def sqh(self):
+        #self.__relaunch_as_sudo()
+        self.make_sqh_kmod()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{ROOT_DIR}/build/tmp"
         # pack full system via tar
@@ -255,6 +273,7 @@ class OS:
         # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
+        self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
         sqh_fn = f"{ROOT_DIR}/out/root_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
         os.symlink(sqh_fn, f"{ROOT_DIR}/out/root.sqh.tmp")
@@ -359,9 +378,8 @@ class OS:
             if (part_size > (90 * 1024 * 1024)) and (i == idx):
                 # required partition
                 #print(f"\tIdx:{i} Size:{part_size}")
-                self.__sudo(["losetup", "-o", str(offset), "--sizelimit",
-                    str(part_size), "/dev/loop0", img_or_blk],
-                    cwd=ROOT_DIR)#, stdout=subprocess.DEVNULL)
+                self.__sudo(f"losetup -o {offset} --sizelimit {part_size} /dev/loop0 {img_or_blk}",
+                    cwd=ROOT_DIR, shell=True)#, stdout=subprocess.DEVNULL)
                 return True
             i += 1
             offset += part_size
@@ -388,8 +406,12 @@ class OS:
 
     def __copy_file(self, src, dst):
         Logger.install(f"\tCopy {src}")
+        dir_ch = Path(src)
         self.__sudo(["mkdir", "-p", dst], stdout=subprocess.DEVNULL)
-        self.__sudo(["cp", src, dst], stdout=subprocess.DEVNULL)
+        if (dir_ch.is_dir()):
+            self.__sudo(["cp", "-Hr", src, dst], stdout=subprocess.DEVNULL)
+        else:
+            self.__sudo(["cp", src, dst], stdout=subprocess.DEVNULL)
 
     def __dd_bin(self, src, block_size, offset):
         blk_sz = self.__parse_size(block_size)
@@ -401,15 +423,28 @@ class OS:
         extl_dir = f"{out_dir}/extlinux"
         extl_fn  = f"{extl_dir}/extlinux.conf"
         dtb_file = self.board.parse_variables("%{DTB_FILE}%")
+        dto_dir = self.board.parse_variables("%{DTO_DIR}%")
         cmd  = f"mkdir -p {extl_dir} && touch {out_dir}/livecd && "
-        cmd += f"echo 'menu title Boot Options.\n\ntimeout 20\ndefault Kernel_def\n\n"
-        cmd += f"label Kernel_def\n\tkernel /Image\n\tfdtdir /dtb/\n\tdevicetree /dtb/{dtb_file}\n\tinitrd /uInitrd\n' >> {extl_fn}"
+        cmd += f"echo 'menu title Boot Options.\n\n"
+        cmd += f"timeout 20\ndefault Kernel_def\n\n"
+        cmd += f"label Kernel_def\n"
+        cmd += f"\tkernel /Image\n"
+        cmd += f"\tfdtdir /dtb/\n"
+        cmd += f"\tdevicetree /dtb/{dtb_file}\n"
+        cmd += f"\tinitrd /uInitrd\n"
+        if ("overlays" in self.board.installs):
+            overlays = self.board.installs["overlays"]
+            overlays = " ".join(overlays)
+            overlays = self.board.parse_variables(overlays)
+            cmd += f"\tfdtoverlays {overlays}\n"
+        cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
         for target in self.board.targets:
             target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
         Logger.install(f"\tCopy root.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
+        self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)

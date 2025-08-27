@@ -1,28 +1,3 @@
-diff '--color=auto' -Naur uboot_btt_pi2_or/arch/arm/dts/rk3566-btt-pi2.dts uboot_btt_pi2/arch/arm/dts/rk3566-btt-pi2.dts
---- uboot_btt_pi2_or/arch/arm/dts/rk3566-btt-pi2.dts	1970-01-01 01:00:00.000000000 +0100
-+++ uboot_btt_pi2/arch/arm/dts/rk3566-btt-pi2.dts	2024-12-25 14:33:13.750360443 +0100
-@@ -0,0 +1,3 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+#include <arm64/rockchip/rk3566-btt-pi2.dts>
-diff '--color=auto' -Naur uboot_btt_pi2_or/arch/arm/dts/rk3566-btt-pi2.dtsi uboot_btt_pi2/arch/arm/dts/rk3566-btt-pi2.dtsi
---- uboot_btt_pi2_or/arch/arm/dts/rk3566-btt-pi2.dtsi	1970-01-01 01:00:00.000000000 +0100
-+++ uboot_btt_pi2/arch/arm/dts/rk3566-btt-pi2.dtsi	2024-12-25 14:33:00.070527818 +0100
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+#include "rk356x-u-boot.dtsi"
-+
-+&gpio4 {
-+	bootph-pre-ram;
-+};
-+
-+&sfc {
-+	flash@0 {
-+		bootph-pre-ram;
-+		bootph-some-ram;
-+	};
-+};
 diff '--color=auto' -Naur uboot_btt_pi2_or/arch/arm/mach-rockchip/rk3568/Kconfig uboot_btt_pi2/arch/arm/mach-rockchip/rk3568/Kconfig
 --- uboot_btt_pi2_or/arch/arm/mach-rockchip/rk3568/Kconfig	2025-06-27 23:33:08.241020412 +0200
 +++ uboot_btt_pi2/arch/arm/mach-rockchip/rk3568/Kconfig	2025-06-27 23:43:47.734346143 +0200
@@ -83,7 +58,7 @@ diff '--color=auto' -Naur uboot_btt_pi2_or/board/btt/btt_pi2/btt_pi2.c uboot_btt
 +};
 +
 +static const struct board_model board_models[] = {
-+	{ 0, "btt/rk3566-btt-pi2-v1.0.1.dtb", "rk3566-btt-pi2-v1.0.1.dtb" },
++	{ 0, "rk3566-bigtreetech-pi2.dtb" },
 +};
 +
 +static int get_board_value(void)
@@ -177,7 +152,7 @@ diff '--color=auto' -Naur uboot_btt_pi2_or/configs/btt-pi2_defconfig uboot_btt_p
 +CONFIG_SPL_FIT_SIGNATURE=y
 +CONFIG_SPL_LOAD_FIT=y
 +CONFIG_LEGACY_IMAGE_FORMAT=y
-+CONFIG_DEFAULT_FDT_FILE="rockchip/rk3566-btt-pi2.dtb"
++CONFIG_DEFAULT_FDT_FILE="rockchip/rk3566-bigtreetech-pi2.dts"
 +# CONFIG_DISPLAY_CPUINFO is not set
 +CONFIG_DISPLAY_BOARDINFO_LATE=y
 +CONFIG_SPL_MAX_SIZE=0x40000
@@ -249,77 +224,4 @@ diff '--color=auto' -Naur uboot_btt_pi2_or/configs/btt-pi2_defconfig uboot_btt_p
 +CONFIG_USB_DWC3=y
 +CONFIG_USB_DWC3_GENERIC=y
 +CONFIG_ERRNO_STR=y
-diff '--color=auto' -Naur uboot_btt_pi2_or/dts/upstream/src/arm64/rockchip/rk3566-btt-pi2.dts uboot_btt_pi2/dts/upstream/src/arm64/rockchip/rk3566-btt-pi2.dts
---- uboot_btt_pi2_or/dts/upstream/src/arm64/rockchip/rk3566-btt-pi2.dts	1970-01-01 01:00:00.000000000 +0100
-+++ uboot_btt_pi2/dts/upstream/src/arm64/rockchip/rk3566-btt-pi2.dts	2024-12-25 14:03:08.870311329 +0100
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include "rk3566-btt-pi2.dtsi"
-+
-+/ {
-+	model = "BigTreeTech Pi2 RK3566";
-+	compatible = "btt,pi2", "rockchip,rk3566";
-+
-+	vccio_phy1: regulator-1v8-vccio-phy {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vccio_phy1";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-min-microvolt = <1800000>;
-+	};
-+};
-+
-+&pmu_io_domains {
-+	vccio5-supply = <&vccio_phy1>;
-+};
-+
-+&gmac1 {
-+	phy-handle = <&rgmii_phy1>;
-+	status = "okay";
-+};
-+
-+&mdio1 {
-+	rgmii_phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <1>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <50000>;
-+		reset-gpios = <&gpio4 RK_PC4 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&sdmmc1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	brcmf: wifi@1 {
-+		compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-fmac";
-+		reg = <1>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PD6 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wake";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wifi_wake_host_h>;
-+	};
-+};
-+
-+&uart1 {
-+	bluetooth {
-+		compatible = "brcm,bcm4345c5";
-+		clocks = <&rk809 1>;
-+		clock-names = "lpo";
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <RK_PC0 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "host-wakeup";
-+		device-wakeup-gpios = <&gpio2 RK_PC1 GPIO_ACTIVE_HIGH>;
-+		shutdown-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_reg_on_h &bt_wake_host_h &host_wake_bt_h>;
-+		vbat-supply = <&vcc_3v3>;
-+		vddio-supply = <&vcc_1v8>;
-+	};
 +};

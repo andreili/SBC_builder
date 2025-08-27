@@ -9,7 +9,9 @@
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
         "BL31_BIN:rk3568_bl31_v1.44.elf",
         "ARCH:aarch64",
-        "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb"
+        "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb",
+        "DTO_FILES:rockchip/rk3566-*.dtbo",
+        "DTO_DIR:rockchip/overlays"
     ],
     "targets":
     [
@@ -49,6 +51,10 @@
                     "store_type": "dd",
                     "block_size": "512b",
                     "img_offset": 16384
+                },
+                {
+                    "file": "u-boot-rockchip-spi.bin",
+                    "store_type": "boot"
                 }
             ],
             "target": [ "" ],
@@ -56,11 +62,11 @@
         },
         {
             "parent": "kernel",
-            "version": "v6.14-rc7",
+            "version": "v6.16-rc2",
             "version_type": "tag",
-            "patch_dir": [ "kernel", "kernel/sunxi-6.14", "kernel/rockchip64-6.14" ],
+            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
             "config_def": "printer_defconfig",
-            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
+            "target": [ "Image", "modules", "dtbs", "modules_install" ],
             "artifacts":
             [
                 {
@@ -70,10 +76,16 @@
                 {
                     "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
-                    "subdir": "dtb/rockchip"
+                    "subdir": "dtb/rockchip",
+                    "destdir": "dtb"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/%{DTO_FILES}%",
+                    "store_type": "none",
+                    "subdir": "dtb/rockchip/overlays"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
         }
     ],
     "install":
@@ -85,13 +97,20 @@
         [
             {
                 "name": "boot",
-                "size": "1g",
+                "size": "1G",
                 "first_sector": "32768"
             },
             {
                 "name": "rw",
-                "size": "2g"
+                "size": "2G"
             }
+        ],
+        "overlays":
+        [
+            "/dtb/%{DTO_DIR}%/rk3566-sfc-nor.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-w1-gpio4-pb2.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-dsi1.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-pcie.dtbo"
         ]
     }
 }

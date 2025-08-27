@@ -72,6 +72,7 @@ class Target:
 
     def build(self, sub_target, out_dir):
         self.source_sync()
+        self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
             opts = self.makeopts.split(" ")
             config = ""
@@ -96,9 +97,11 @@ class Target:
         for art in self.artifacts:
             art_fn = os.path.basename(art["file"])
             if (art["store_type"] == part_name):
-                subdir = ""
                 if "subdir" in art:
                     subdir = art["subdir"] + "/"
-                on_file(f"{tmp_dir}/{subdir}{art_fn}", f"{dir}/{subdir}")
+                    destdir = art["destdir"] + "/"
+                    on_file(f"{tmp_dir}/{subdir}", f"{dir}/{destdir}")
+                else:
+                    on_file(f"{tmp_dir}/{art_fn}", f"{dir}/")
             if (art["store_type"] == "dd"):
                 on_dd(f"{tmp_dir}/{art_fn}", art["block_size"], int(art["img_offset"]))

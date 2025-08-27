@@ -29,4 +29,5 @@ RDEPEND="
 	media-libs/libv4l
 	net-misc/ntp
 	sys-apps/i2c-tools
+	sys-fs/f2fs-tools
 "
