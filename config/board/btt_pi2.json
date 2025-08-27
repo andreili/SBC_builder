@@ -64,9 +64,9 @@
             "parent": "kernel",
             "version": "v6.16-rc2",
             "version_type": "tag",
-            "patch_dir": [ "kernel", "kernel/rockchip64-6.16" ],
+            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
             "config_def": "printer_defconfig",
-            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
+            "target": [ "Image", "modules", "dtbs", "modules_install" ],
             "artifacts":
             [
                 {
