@@ -1,0 +1,62 @@
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi
+index e7ba477e75f9..5db1b3ca294d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-cb2.dtsi
+@@ -280,13 +330,13 @@ rgmii_phy0: phy@0 {
+ 
+ &gpu {
+ 	mali-supply = <&vdd_gpu>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &hdmi {
+ 	avdd-0v9-supply = <&vdda0v9_image>;
+ 	avdd-1v8-supply = <&vcca1v8_image>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &hdmi_in {
+@@ -302,7 +352,7 @@ hdmi_out_con: endpoint {
+ };
+ 
+ &hdmi_sound {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &i2c0 {
+@@ -575,10 +654,6 @@ tft_tp: touchscreen@48 {
+ 	};
+ };
+ 
+-&i2s0_8ch {
+-	status = "okay";
+-};
+-
+ &i2s1_8ch {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2s1m0_sclktx &i2s1m0_lrcktx &i2s1m0_sdi0 &i2s1m0_sdo0>;
+@@ -614,7 +689,7 @@ &pcie2x1 {
+ 	pinctrl-0 = <&pcie_reset_h>;
+ 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
+ 	vpcie3v3-supply = <&vcc3v3_pcie>;
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &pinctrl {
+@@ -889,11 +964,7 @@ &usb_host1_xhci {
+ &vop {
+ 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
+ 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
+-	status = "okay";
+-};
+-
+-&vop_mmu {
+-	status = "okay";
++	vop-supply = <&vdd_logic>;
+ };
+ 
+ &vp0 {

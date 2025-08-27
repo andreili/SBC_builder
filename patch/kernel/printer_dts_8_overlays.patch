@@ -1,0 +1,181 @@
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 4bf84622db47..b1a8b52d33c9 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -124,6 +124,11 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lubancat-1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-nanopi-r3s.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-cb2-manta.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pcie.dtso
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-dsi1.dtso
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-hdmi.dtso
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-sfc-nor.dtso
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-w1-gpio4-pb2.dtso
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
+@@ -248,3 +253,23 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-haikou-video-demo.dtb
+ rk3588-tiger-haikou-haikou-video-demo-dtbs := rk3588-tiger-haikou.dtb \
+ 	rk3588-tiger-haikou-video-demo.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-pcie.dtb
++rk3566-bigtreetech-pi2-pcie-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-pcie.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-dsi1.dtb
++rk3566-bigtreetech-pi2-dsi1-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-dsi1.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-hdmi.dtb
++rk3566-bigtreetech-pi2-hdmi-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-hdmi.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-sfc-nor.dtb
++rk3566-bigtreetech-pi2-sfc-nor-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-sfc-nor.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-w1-gpio4-pb2.dtb
++rk3566-bigtreetech-pi2-w1-gpio4-pb2-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-w1-gpio4-pb2.dtbo
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso b/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso
+new file mode 100644
+index 000000000000..7c4790908638
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++&vop {
++	status = "okay";
++};
++&vop_mmu {
++	status = "okay";
++};
++&display_subsystem {
++	status = "okay";
++};
++&dsi1 {
++	status = "okay";
++};
++&dsi1_panel {
++	status = "okay";
++};
++&dsi1_in_vp1 {
++	status = "okay";
++};
++&dsi_dphy1 {
++	status = "okay";
++};
++&tp_dsi {
++	status = "okay";
++};
++&bl_dsi {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso b/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso
+new file mode 100644
+index 000000000000..08fb4f254955
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++&vop {
++	status = "okay";
++};
++&vop_mmu {
++	status = "okay";
++};
++&display_subsystem {
++	status = "okay";
++};
++&hdmi_sound {
++	status = "okay";
++};
++&i2s0_8ch {
++	status = "okay";
++};
++&hdmi {
++	status = "okay";
++};
++&hdmi_in_vp0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso b/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso
+new file mode 100644
+index 000000000000..9cb6e8f03685
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++&pcie2x1 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-sfc-nor.dtso b/arch/arm64/boot/dts/rockchip/rk3566-sfc-nor.dtso
+new file mode 100644
+index 000000000000..011850ba18db
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-sfc-nor.dtso
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++&sfc {
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <100000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <1>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso b/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso
+new file mode 100644
+index 000000000000..410763276a6b
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/rockchip.h>
++
++&{/} {
++    onewire: onewire {
++        compatible = "w1-gpio";
++        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&gpio_w1>;
++        status = "okay";
++    };
++};
++
++&pinctrl {
++    gpio-w1 {
++        gpio_w1:gpio-w1 {
++            rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
++        };
++    };
++};
