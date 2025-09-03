@@ -168,7 +168,7 @@ index 000000000000..410763276a6b
 +        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
 +        pinctrl-names = "default";
 +        pinctrl-0 = <&gpio_w1>;
-+        status = "okay";
++        status = "disabled";
 +    };
 +};
 +
