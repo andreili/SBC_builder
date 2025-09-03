@@ -131,7 +131,7 @@
                     "#net-misc/networkmanager -tools",
                     "media-libs/libglvnd X",
                     "media-libs/libv4l bpf",
-                    "media-video/ffmpeg x264 x265",
+                    "media-video/ffmpeg x264 x265 v4l",
                     "#media-libs/libv4l -bpf",
                     "sys-devel/gcc fortran",
                     "dev-python/pillow webp",
@@ -142,7 +142,8 @@
                     "sys-apps/busybox static -pam savedconfig",
                     "virtual/libcrypt static-libs",
                     "sys-libs/libxcrypt static-libs",
-                    "sys-fs/e2fsprogs static-libs"
+                    "sys-fs/e2fsprogs static-libs",
+                    "media-video/mpv xv"
                 ]
             },
             { "chroot": "emerge-webrsync" }
