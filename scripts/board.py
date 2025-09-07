@@ -95,8 +95,10 @@ class Board:
                             #when run sub-target - not need to check a deps
                             dep.build("", out_dir)
                     target.build(sub_target, out_dir)
-                    for module in target.modules:
-                        self.__build([module], "")
+                    if (sub_target == ""):
+                        #when run sub-target - not need to build a modules
+                        for module in target.modules:
+                            self.__build([module], "")
                     break
         return is_finded
 
