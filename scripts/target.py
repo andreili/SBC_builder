@@ -99,8 +99,7 @@ class Target:
                 opts_tmp.append(target)
                 self.sources.compile(opts_tmp, self.config_name)
         if (sub_target != "config"):
-            print(f"Copy '{self.artifacts}' to '{out_dir}'")
-            #self.sources.copy_artifacts(self.artifacts, out_dir)
+            self.sources.copy_artifacts(self.artifacts, out_dir)
 
     def install_files(self, dir, tmp_dir, part_name, on_file, on_dd):
         Logger.install(f"'{self.name}': Install artifacts")
