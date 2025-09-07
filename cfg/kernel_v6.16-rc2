@@ -2,9 +2,9 @@
 # Automatically generated file; DO NOT EDIT.
 # Linux/arm64 6.16.0-rc2 Kernel Configuration
 #
-CONFIG_CC_VERSION_TEXT="aarch64-linux-gnu-gcc (Gentoo 15.1.1_p20250705-r1 p2) 15.1.1 20250705"
+CONFIG_CC_VERSION_TEXT="aarch64-linux-gnu-gcc (Gentoo 15.2.0 p5) 15.2.0"
 CONFIG_CC_IS_GCC=y
-CONFIG_GCC_VERSION=150101
+CONFIG_GCC_VERSION=150200
 CONFIG_CLANG_VERSION=0
 CONFIG_AS_IS_GNU=y
 CONFIG_AS_VERSION=24400
@@ -1834,7 +1834,7 @@ CONFIG_CAN_RX_OFFLOAD=y
 # CONFIG_CAN_IFI_CANFD is not set
 # CONFIG_CAN_M_CAN is not set
 # CONFIG_CAN_PEAK_PCIEFD is not set
-# CONFIG_CAN_ROCKCHIP_CANFD is not set
+CONFIG_CAN_ROCKCHIP_CANFD=m
 # CONFIG_CAN_SJA1000 is not set
 # CONFIG_CAN_SOFTING is not set
 
@@ -5278,7 +5278,7 @@ CONFIG_SUN20I_GPADC=y
 # Humidity sensors
 #
 # CONFIG_AM2315 is not set
-# CONFIG_DHT11 is not set
+CONFIG_DHT11=m
 # CONFIG_ENS210 is not set
 # CONFIG_HDC100X is not set
 # CONFIG_HDC2010 is not set
