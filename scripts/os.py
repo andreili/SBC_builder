@@ -249,7 +249,7 @@ class OS:
         self.__relaunch_as_sudo()
         mod_path = f"{ROOT_DIR}/out/modules"
         os.makedirs(mod_path, exist_ok=True)
-        kmod_fn = self.board.parse_variables("%{out_dir}%/kmods/usr/lib/modules")
+        kmod_fn = self.board.parse_variables("%{out_sh}%/kmods/usr/lib/modules")
         kmod = Path(kmod_fn)
         for f in kmod.iterdir():
             sqh_name = f.name
