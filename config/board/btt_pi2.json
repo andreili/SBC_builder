@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "rkbin", "uboot", "kernel"
+        "uboot", "kernel"
     ],
     "variables":
     [
@@ -38,6 +38,10 @@
             "version": "@",
             "version_type": "head",
             "patch_dir": "uboot/btt",
+            "deps":
+            [
+                "rkbin"
+            ],
             "artifacts":
             [
                 {
@@ -61,31 +65,7 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCHV=%{ARCH}% ROCKCHIP_TPL=%{out_dir}%/%{TPL_BIN}% BL31=%{out_dir}%/%{BL31_BIN}%"
         },
         {
-            "parent": "kernel",
-            "version": "v6.16-rc2",
-            "version_type": "tag",
-            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
-            "config_def": "printer_defconfig",
-            "target": [ "Image", "modules", "dtbs", "modules_install" ],
-            "artifacts":
-            [
-                {
-                    "file": "arch/arm64/boot/Image",
-                    "store_type": "boot"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
-                    "store_type": "boot",
-                    "subdir": "dtb/rockchip",
-                    "destdir": "dtb"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/%{DTO_FILES}%",
-                    "store_type": "none",
-                    "subdir": "dtb/rockchip/overlays"
-                }
-            ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
+            "parent": "kernel"
         }
     ],
     "install":

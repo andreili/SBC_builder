@@ -22,7 +22,51 @@
             "url": "https://github.com/torvalds/linux.git",
             "config": true,
             "config_target": "menuconfig",
-            "is_shared": true
+            "is_shared": true,
+            "version": "v6.16-rc2",
+            "version_type": "tag",
+            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
+            "config_def": "printer_defconfig",
+            "target": [ "Image", "modules", "dtbs", "modules_install" ],
+            "common": true,
+            "artifacts":
+            [
+                {
+                    "file": "",
+                    "kmods": true
+                },
+                {
+                    "file": "arch/arm64/boot/Image",
+                    "store_type": "boot"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dtb",
+                    "store_type": "boot",
+                    "subdir": "dtb/rockchip",
+                    "destdir": "dtb"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/rockchip/rk3566-*.dtbo",
+                    "store_type": "none",
+                    "subdir": "dtb/rockchip/overlays"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
+                    "store_type": "boot",
+                    "subdir": "dtb/allwinner",
+                    "destdir": "dtb"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
+                    "store_type": "none",
+                    "subdir": "dtb/allwinner/overlay"
+                }
+            ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
+            "modules":
+            [
+                "rtl8189ES_linux"
+            ]
         }
     },
     {
@@ -39,7 +83,13 @@
         {
             "url": "https://github.com/jwrdegoede/rtl8189ES_linux.git",
             "config": false,
-            "is_shared": false
+            "is_shared": true,
+            "version": "rtl8189fs",
+            "version_type": "branch",
+            "target": [ "modules", "install" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_sh}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel",
+            "artifacts":
+            []
         }
     },
     {

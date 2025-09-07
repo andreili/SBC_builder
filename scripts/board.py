@@ -21,6 +21,12 @@ class Board:
                 Logger.error("Unable to find parent for package!")
             t.load_detail(self.name, target, self.parse_variables)
             self.targets.append(t)
+            for module in t.modules:
+                m = self.__find_meta(targets_meta, module)
+                if (m == 0):
+                    Logger.error("Unable to find parent for module!")
+                m.load_detail(self.name, None, self.parse_variables)
+                self.targets.append(m)
         self.__scan_deps()
 
     def __scan_deps(self):
@@ -74,6 +80,26 @@ class Board:
         for target in self.targets:
             target.source_sync()
 
+    def __build(self, target_list, sub_target):
+        is_finded = False
+        for t_name in target_list:
+            for target in self.targets:
+                if (t_name == target.name):
+                    is_finded = True
+                    if (target.is_shared):
+                        out_dir = self.out_sh
+                    else:
+                        out_dir = self.out_dir
+                    for dep in target.depends:
+                        if (sub_target == ""):
+                            #when run sub-target - not need to check a deps
+                            dep.build("", out_dir)
+                    target.build(sub_target, out_dir)
+                    for module in target.modules:
+                        self.__build([module], "")
+                    break
+        return is_finded
+
     def build(self, target_name):
         sub_target = ""
         if (target_name == "all"):
@@ -83,16 +109,6 @@ class Board:
             target_list = [ targets[0] ]
             if (len(targets) > 1):
                 sub_target = targets[1]
-        is_finded = False
-        for t_name in target_list:
-            for target in self.targets:
-                if (t_name == target.name):
-                    is_finded = True
-                    for dep in target.depends:
-                        if (sub_target == ""):
-                            #when run sub-target - not need to check a deps
-                            dep.build("", self.out_dir)
-                    target.build(sub_target, self.out_dir)
-                    break
+        is_finded = self.__build(target_list, sub_target)
         if (not is_finded):
             Logger.error("Don't find target!")
