@@ -87,6 +87,7 @@
             "version": "rtl8189fs",
             "version_type": "branch",
             "target": [ "modules", "install" ],
+            "patch_dir": [ "rtl8189fs" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_sh}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel",
             "artifacts":
             []
