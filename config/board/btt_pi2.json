@@ -65,7 +65,8 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCHV=%{ARCH}% ROCKCHIP_TPL=%{out_dir}%/%{TPL_BIN}% BL31=%{out_dir}%/%{BL31_BIN}%"
         },
         {
-            "parent": "kernel"
+            "parent": "kernel",
+            "config_def": "btt_pi2_printer_defconfig"
         }
     ],
     "install":

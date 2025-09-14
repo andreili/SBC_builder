@@ -1,0 +1,53 @@
+[
+    {
+        "name": "rk35xx",
+        "depends":
+        [
+            "initrd",
+            "kconfig",
+            "base_arm64"
+        ],
+        "options":
+        [
+            "CONFIG_PERF_EVENTS",
+            "CONFIG_HW_PERF_EVENTS",
+            "CONFIG_ARM_PMUV3",
+            "CONFIG_ARCH_ROCKCHIP",
+            "CONFIG_ROCKCHIP_MBOX",
+            "CONFIG_ROCKCHIP_IOMMU",
+            "CONFIG_ROCKCHIP_IODOMAIN",
+            "CONFIG_REGULATOR",
+            "CONFIG_ROCKCHIP_PM_DOMAINS",
+            "CONFIG_CPU_IDLE",
+            "CONFIG_ARM_PSCI_CPUIDLE",
+            "CONFIG_PM_GENERIC_DOMAINS_OF",
+            "CONFIG_ARM_PSCI_CPUIDLE_DOMAIN",
+            "CONFIG_ARM_PSCI_FW",
+            "CONFIG_SHMEM",
+            "CONFIG_ARM_SCMI_PROTOCOL",
+            "CONFIG_ARM_SCMI_HAVE_SHMEM",
+            "CONFIG_ARM_SCMI_TRANSPORT_SMC",
+            "CONFIG_OF",
+            "CONFIG_NET",
+            "CONFIG_NETDEVICES",
+            "#WiFi",
+            "CONFIG_WLAN",
+            "CONFIG_WLAN_VENDOR_BROADCOM",
+            "CONFIG_CFG80211",
+            "CONFIG_BRCMFMAC",
+            "#BT",
+            "CONFIG_BT",
+            "CONFIG_BT_HCIUART",
+            "CONFIG_SERIAL_DEV_BUS",
+            "CONFIG_BT_HCIUART_SERDEV",
+            "CONFIG_BT_HCIUART_BCM"
+        ]
+    },
+    {
+        "name": "rk356x",
+        "depends":
+        [
+            "rk35xx"
+        ]
+    }
+]

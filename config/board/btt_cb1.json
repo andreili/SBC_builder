@@ -51,7 +51,8 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
         },
         {
-            "parent": "kernel"
+            "parent": "kernel",
+            "config_def": "btt_cb1_printer_defconfig"
         }
     ],
     "install":

@@ -50,7 +50,7 @@ class Target:
         if ("makeopts" in info_js):
             self.makeopts = info_js["makeopts"]
         if ("config_def" in info_js):
-            self.defconfig = info_js["config_def"]
+            self.defconfig_name = info_js["config_def"]
         if ("no_build" in info_js):
             self.no_build = True
         if ("artifacts" in info_js):
@@ -98,7 +98,7 @@ class Target:
                 targets = self.target
             else:
                 if (sub_target == "config"):
-                    opts.append(self.defconfig)
+                    opts.append(self.defconfig_name)
                     opts.append(self.config_target)
                 else:
                     Logger.error("Invalid sub-target!")

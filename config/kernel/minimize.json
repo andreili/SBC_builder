@@ -1,0 +1,43 @@
+[
+    {
+        "name": "minimize",
+        "options":
+        [
+            "CONFIG_EXPERT",
+            "CONFIG_UID16",
+            "CONFIG_BUG",
+            "CONFIG_ELF_CORE",
+            "CONFIG_KALLSYMS",
+            "CONFIG_ARM64_VA_BITS_48",
+            "CONFIG_NR_CPUS=8",
+            "CONFIG_EFI",
+            "CONFIG_SWAP",
+            "CONFIG_SURFACE_PLATFORMS",
+            "CONFIG_LOG_BUF_SHIFT=12",
+            "CONFIG_LOG_CPU_MAX_BUF_SHIFT=11",
+            "CONFIG_FTRACE",
+            "CONFIG_MOUSE_PS2",
+            "CONFIG_SUNXI_SYS_INFO",
+            "CONFIG_DUMP_REG",
+            "CONFIG_ETHERNET",
+            "CONFIG_WLAN_VENDOR_ADMTEK",
+            "CONFIG_WLAN_VENDOR_ATH",
+            "CONFIG_WLAN_VENDOR_ATMEL",
+            "CONFIG_WLAN_VENDOR_BROADCOM",
+            "CONFIG_WLAN_VENDOR_INTEL",
+            "CONFIG_WLAN_VENDOR_INTERSIL",
+            "CONFIG_WLAN_VENDOR_MARVELL",
+            "CONFIG_WLAN_VENDOR_MEDIATEK",
+            "CONFIG_WLAN_VENDOR_MICROCHIP",
+            "CONFIG_WLAN_VENDOR_PURELIFI",
+            "CONFIG_WLAN_VENDOR_RALINK",
+            "CONFIG_WLAN_VENDOR_REALTEK",
+            "CONFIG_WLAN_VENDOR_RSI",
+            "CONFIG_WLAN_VENDOR_SILABS",
+            "CONFIG_WLAN_VENDOR_ST",
+            "CONFIG_WLAN_VENDOR_TI",
+            "CONFIG_WLAN_VENDOR_ZYDAS",
+            "CONFIG_WLAN_VENDOR_QUANTENNA"
+        ]
+    }
+]
