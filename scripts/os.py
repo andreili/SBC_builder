@@ -440,7 +440,10 @@ class OS:
         cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
         for target in self.board.targets:
-            target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
+            if (target.is_shared):
+                target.install_files(out_dir, self.board.out_sh, "boot", self.__copy_file, self.__dd_bin)
+            else:
+                target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
         Logger.install(f"\tCopy root.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
