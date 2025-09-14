@@ -51,40 +51,7 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
         },
         {
-            "parent": "kernel",
-            "version": "v6.16-rc2",
-            "version_type": "tag",
-            "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
-            "config_def": "printer_defconfig",
-            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
-            "artifacts":
-            [
-                {
-                    "file": "arch/arm64/boot/Image",
-                    "store_type": "boot"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
-                    "store_type": "boot",
-                    "subdir": "dtb/allwinner",
-                    "destdir": "dtb"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/allwinner/overlay/%{DTO_FILES}%",
-                    "store_type": "none",
-                    "subdir": "dtb/allwinner/overlay"
-                }
-            ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_dir}%/kmods/usr"
-        },
-        {
-            "parent": "rtl8189ES_linux",
-            "version": "rtl8189fs",
-            "version_type": "branch",
-            "target": [ "modules", "install" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_dir}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel",
-            "artifacts":
-            []
+            "parent": "kernel"
         }
     ],
     "install":

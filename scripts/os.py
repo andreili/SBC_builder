@@ -233,12 +233,12 @@ class OS:
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         self.__sudo(["tar", "xf", arch_fn], cwd=to_path, env=my_env)
 
-    def __make_sqh(self, root_path, to_file):
+    def __make_sqh(self, root_path, to_file, extra=""):
         Logger.os("Create squashed archive...")
         t_file = Path(to_file)
         if (t_file.is_file()):
             shutil.move(to_file, f"{to_file}.bak")
-        self.__sudo(["mksquashfs", root_path, to_file, "-comp", "xz", "-xattrs-exclude", "^system.nfs"])
+        self.__sudo(f"mksquashfs {root_path} {to_file} -comp xz -xattrs-exclude ^system.nfs {extra}", shell=True)
         user = getpass.getuser()
         self.__sudo(["chown", user + ":" + user, to_file])
 
@@ -249,11 +249,11 @@ class OS:
         self.__relaunch_as_sudo()
         mod_path = f"{ROOT_DIR}/out/modules"
         os.makedirs(mod_path, exist_ok=True)
-        kmod_fn = self.board.parse_variables("%{out_dir}%/kmods/usr/lib/modules")
+        kmod_fn = self.board.parse_variables("%{out_sh}%/kmods/usr/lib/modules")
         kmod = Path(kmod_fn)
         for f in kmod.iterdir():
             sqh_name = f.name
-            self.__make_sqh(f"{kmod_fn}/../../..", f"{mod_path}/{sqh_name}.lzm")
+            self.__make_sqh(f"{kmod_fn}/../../..", f"{mod_path}/{sqh_name}.lzm", "-all-root")
             break
 
     def sqh(self):
