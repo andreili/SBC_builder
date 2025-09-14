@@ -1,0 +1,73 @@
+[
+    {
+        "name": "net_base",
+        "options":
+        [
+            "CONFIG_NET_VENDOR_ARC=n",
+            "CONFIG_ARC_EMAC_CORE=n",
+            "CONFIG_NETDEVICES=y",
+            "CONFIG_NET=y",
+            "CONFIG_INET=y",
+            "CONFIG_IPV6=y"
+        ]
+    },
+    {
+        "name": "net_wlan",
+        "depends":
+        [
+            "net_base"
+        ],
+        "options":
+        [
+            "CONFIG_RFKILL=y",
+            "CONFIG_RFKILL_GPIO=y",
+            "CONFIG_WLAN=y",
+            "CONFIG_CFG80211=m",
+            "CONFIG_CFG80211_WEXT=y",
+            "CONFIG_MAC80211=m",
+            "CONFIG_MAC80211_LEDS=y",
+            "#WiFi, minimize",
+            "CONFIG_CFG80211_CERTIFICATION_ONUS=y",
+            "CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=n",
+            "#CONFIG_EXTRA_FIRMWARE=\"regulatory.db regulatory.db.p7s\"",
+            "#CONFIG_EXTRA_FIRMWARE_DIR=\"/lib/firmware\"",
+            "#Crypto built-in for WiFi",
+            "CONFIG_CRYPTO_HMAC=y",
+            "CONFIG_CRYPTO_USER_API_HASH=y",
+            "CONFIG_CRYPTO_AEAD=y",
+            "CONFIG_CRYPTO_CCM=y",
+            "CONFIG_CRYPTO_GCM=y"
+        ]
+    },
+    {
+        "name": "net_brcmfmac",
+        "depends":
+        [
+            "net_wlan"
+        ],
+        "options":
+        [
+            "CONFIG_WLAN_VENDOR_BROADCOM=y",
+            "CONFIG_BRCMFMAC=y"
+        ]
+    },
+    {
+        "name": "net_dwmac",
+        "depends":
+        [
+            "net_base"
+        ],
+        "options":
+        [
+            "CONFIG_ETHERNET=y",
+            "CONFIG_NET_VENDOR_STMICRO=y",
+            "CONFIG_STMMAC_ETH=y",
+            "CONFIG_STMMAC_PLATFORM=y",
+            "CONFIG_DWMAC_DWC_QOS_ETH=y",
+            "CONFIG_DWMAC_ROCKCHIP=y",
+            "CONFIG_PHYLIB=y",
+            "CONFIG_MOTORCOMM_PHY=y",
+            "CONFIG_OF_MDIO=y"
+        ]
+    }
+]

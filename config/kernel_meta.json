@@ -2,6 +2,10 @@
     "includes":
     [
         "minimize",
+        "systems",
+        "network",
+        "usb",
+        "storage",
         "rk35xx",
         "btt_boards"
     ]

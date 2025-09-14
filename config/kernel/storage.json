@@ -1,0 +1,9 @@
+[
+    {
+        "name": "mmc",
+        "options":
+        [
+            "CONFIG_MMC=y"
+        ]
+    }
+]
