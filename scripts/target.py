@@ -58,6 +58,10 @@ class Target:
                 self.artifacts.append(art)
         if ("modules" in info_js):
             self.modules = info_js["modules"]
+        if ("have_defconfig" in info_js):
+            self.have_defconfig = info_js["have_defconfig"]
+        else:
+            self.have_defconfig = False
 
     def load_detail(self, board_name, detail_js, parse_variables):
         self.board_name = board_name
@@ -73,6 +77,8 @@ class Target:
         self.makeopts = parse_variables(self.makeopts)
         for art in self.artifacts:
             art["file"] = parse_variables(art["file"])
+        if (self.have_defconfig):
+            seld.defconfig = Defconfig(self.name)
     
     def source_sync(self):
         Logger.build(f"'{self.name}': Source prepare")
