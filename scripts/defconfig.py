@@ -16,6 +16,7 @@ class CfgSet:
         self.save_path = ""
         self.depends = []
         self.options = []
+        self.opt_tmp = []
         self.name = js_info["name"]
         if ("save_path" in js_info):
             self.save_path = js_info["save_path"]
@@ -64,21 +65,43 @@ class Defconfig:
                 return True
         return False
 
+    def __find_set(self, name):
+        for s in self.sets:
+            if (s.name == name):
+                return s
+        Logger.error(f"Unable to find set '{name}!")
+        return None
+
+    def __append_opt_or_change_value(self, opt):
+        for o in self.opt_tmp:
+            if (o.name == opt.name):
+                o.value = opt.value
+                return
+        self.opt_tmp.append(opt)
+
+    def __scan_opts(self, cfg_set):
+        # recursive add depends
+        for dep in cfg_set.depends:
+            self.__scan_opts(self.__find_set(dep))
+        # get options list
+        for opt in cfg_set.options:
+            # if options already on list - only need to update value
+            self.__append_opt_or_change_value(opt)
+
     def save(self, dir):
         for cfg in self.sets:
             if (cfg.save_path != ""):
-                cfgs = []
-                # recursive add depends
-                for dep in cfg.depends:
-                    print("todo")
-                for opt in cfg.options:
-                    cfgs.append(opt)
+                self.opt_tmp = []
+                self.__scan_opts(cfg)
                 save_fn = f"{dir}/{cfg.save_path}"
-                Logger.build(f"Saving config set '{cfg.name}' to '{save_fn}'")
+                Logger.build(f"Saving config set '{cfg.name}', contains {len(self.opt_tmp)} options")
                 with open(save_fn, "w") as f:
-                    for opt in cfgs:
+                    for opt in self.opt_tmp:
                         if (opt.value != ""):
                             f.write(f"{opt.name}={opt.value}\n")
                         else:
                             f.write(f"{opt.name}\n")
                     f.close()
+
+    def save_custom(self, dir):
+        print("custom - todo")
