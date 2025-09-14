@@ -81,7 +81,6 @@ class Target:
     
     def source_sync(self):
         Logger.build(f"'{self.name}': Source prepare")
-        exit(0)
         self.sources.sync()
         self.sources.do_patch(self.board_name, self.patch_dir)
         if (self.have_defconfig):
