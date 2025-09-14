@@ -104,6 +104,7 @@ CDBOOT=1
 
 run udevadm settle --timeout=120
 run udevadm control --exit
+run depmod -a
 init=${REAL_INIT:-/sbin/init}
 
 # uncomment for debug
