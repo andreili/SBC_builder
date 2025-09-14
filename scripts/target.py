@@ -15,6 +15,7 @@ class Target:
         self.artifacts = []
         self.modules = []
         self.have_config = False
+        self.have_defconfig = False
         for key in meta_js.keys():
             if (self.name != ''):
                 raise "Invalid target definition!"
@@ -60,8 +61,6 @@ class Target:
             self.modules = info_js["modules"]
         if ("have_defconfig" in info_js):
             self.have_defconfig = info_js["have_defconfig"]
-        else:
-            self.have_defconfig = False
 
     def load_detail(self, board_name, detail_js, parse_variables):
         self.board_name = board_name
@@ -78,12 +77,15 @@ class Target:
         for art in self.artifacts:
             art["file"] = parse_variables(art["file"])
         if (self.have_defconfig):
-            seld.defconfig = Defconfig(self.name)
+            self.defconfig = Defconfig(self.name)
     
     def source_sync(self):
         Logger.build(f"'{self.name}': Source prepare")
+        exit(0)
         self.sources.sync()
         self.sources.do_patch(self.board_name, self.patch_dir)
+        if (self.have_defconfig):
+            self.defconfig.save(self.sources.work_dir)
 
     def build(self, sub_target, out_dir):
         self.source_sync()
