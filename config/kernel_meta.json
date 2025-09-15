@@ -10,6 +10,7 @@
         "btt_boards",
         "sunxi",
         "serial",
-        "audio"
+        "audio",
+        "io"
     ]
 }

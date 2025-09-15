@@ -1,0 +1,22 @@
+[
+    {
+        "name": "leds",
+        "options":
+        [
+            "#LEds",
+            "CONFIG_NEW_LEDS=y",
+            "CONFIG_LEDS_CLASS=y",
+            "CONFIG_LEDS_GPIO=y",
+            "CONFIG_LEDS_PWM=y",
+            "CONFIG_LEDS_USER=y",
+            "CONFIG_LEDS_TRIGGERS=y",
+            "CONFIG_LEDS_TRIGGER_MTD=y",
+            "CONFIG_LEDS_TRIGGER_HEARTBEAT=y",
+            "CONFIG_LEDS_TRIGGER_BACKLIGHT=y",
+            "CONFIG_LEDS_TRIGGER_CPU=y",
+            "CONFIG_LEDS_TRIGGER_ACTIVITY=y",
+            "CONFIG_LEDS_TRIGGER_PANIC=y",
+            "CONFIG_LEDS_TRIGGER_NETDEV=y"
+        ]
+    }
+]
