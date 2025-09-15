@@ -22,10 +22,23 @@
         ]
     },
     {
+        "name": "overlays",
+        "options":
+        [
+            "CONFIG_OF=y",
+            "#DT overlays",
+            "CONFIG_OF_DYNAMIC=y",
+            "CONFIG_OF_RESOLVE=y",
+            "CONFIG_OF_OVERLAY=y",
+            "CONFIG_OF_CONFIGFS=y"
+        ]
+    },
+    {
         "name": "arm64",
         "depends":
         [
-            "system_all"
+            "system_all",
+            "overlays"
         ],
         "options":
         [

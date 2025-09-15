@@ -1,0 +1,27 @@
+[
+    {
+        "name": "8250_base",
+        "options":
+        [
+            "CONFIG_SERIAL_8250=y",
+            "CONFIG_SERIAL_OF_PLATFORM=y",
+            "CONFIG_SERIAL_DEV_BUS=y",
+            "CONFIG_SERIAL_DEV_CTRL_TTYPORT=y",
+            "CONFIG_SERIAL_8250_EXTENDED=y",
+            "CONFIG_SERIAL_8250_SHARE_IRQ=y",
+            "CONFIG_SERIAL_8250_DETECT_IRQ=y",
+            "CONFIG_SERIAL_8250_CONSOLE=y"
+        ]
+    },
+    {
+        "name": "8250_dw",
+        "depends":
+        [
+            "8250_base"
+        ],
+        "options":
+        [
+            "CONFIG_SERIAL_8250_DW=y"
+        ]
+    }
+]

@@ -3,6 +3,7 @@
         "name": "minimize",
         "options":
         [
+            "CONFIG_SOUND=n",
             "CONFIG_COMPAT=n",
             "CONFIG_EXPERT=y",
             "CONFIG_UID16=n",

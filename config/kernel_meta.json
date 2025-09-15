@@ -7,6 +7,9 @@
         "usb",
         "storage",
         "rk35xx",
-        "btt_boards"
+        "btt_boards",
+        "sunxi",
+        "serial",
+        "audio"
     ]
 }

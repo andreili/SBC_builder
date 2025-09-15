@@ -1,0 +1,60 @@
+[
+    {
+        "name": "audio_base",
+        "options":
+        [
+            "CONFIG_SOUND=n",
+            "CONFIG_SND=n",
+            "CONFIG_SND_SIMPLE_CARD=y",
+            "CONFIG_SND_SOC=y",
+            "#minimize",
+            "CONFIG_SND_SPI=n",
+            "CONFIG_SND_PCI=n",
+            "CONFIG_SND_HDA=n",
+            "CONFIG_SND_HDA_CODEC_HDMI=n",
+            "CONFIG_SND_USB=n",
+            "CONFIG_SND_USB_AUDIO=n"
+        ]
+    },
+    {
+        "name": "audio_hdmi",
+        "depends":
+        [
+            "audio_base"
+        ],
+        "options":
+        [
+            "CONFIG_SND_HDA=y",
+            "CONFIG_SND_HDA_CODEC_HDMI=y"
+        ]
+    },
+    {
+        "name": "audio_usb",
+        "depends":
+        [
+            "usb_base",
+            "audio_base"
+        ],
+        "options":
+        [
+            "CONFIG_SND_USB=y",
+            "CONFIG_SND_USB_AUDIO=y"
+        ]
+    },
+    {
+        "name": "audio_rk_meta",
+        "depends":
+        [
+            "audio_hdmi",
+            "audio_usb"
+        ],
+        "options":
+        [
+            "CONFIG_SND_SOC_ROCKCHIP=y",
+            "CONFIG_SND_SOC_ROCKCHIP_I2S=y",
+            "CONFIG_SND_SOC_ROCKCHIP_I2S_TDM=y",
+            "CONFIG_SND_SOC_ROCKCHIP_PDM=y",
+            "CONFIG_SND_SOC_ROCKCHIP_SPDIF=y"
+        ]
+    }
+]
