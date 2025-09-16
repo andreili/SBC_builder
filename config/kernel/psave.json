@@ -1,0 +1,45 @@
+[
+    {
+        "name": "psave_cpuidle",
+        "options":
+        [
+            "CONFIG_CPU_IDLE=y",
+            "CONFIG_CPU_IDLE_MULTIPLE_DRIVERS=y",
+            "CONFIG_CPU_IDLE_GOV_MENU=y",
+            "CONFIG_DT_IDLE_STATES=y",
+            "CONFIG_DT_IDLE_GENPD=y"
+        ]
+    },
+    {
+        "name": "psave_cpufreq",
+        "options":
+        [
+            "CONFIG_CPU_FREQ=y",
+            "CONFIG_CPU_FREQ_GOV_COMMON=y",
+            "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y",
+            "CONFIG_CPU_FREQ_GOV_POWERSAVE=y",
+            "CONFIG_CPU_FREQ_GOV_USERSPACE=y",
+            "CONFIG_CPU_FREQ_GOV_ONDEMAND=y",
+            "CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y"
+        ]
+    },
+    {
+        "name": "psave_devfreq",
+        "options":
+        [
+            "CONFIG_PM_DEVFREQ=y",
+            "CONFIG_PM_DEVFREQ_EVENT=y"
+        ]
+    },
+    {
+        "name": "psave_rk",
+        "depends":
+        [
+            "psave_devfreq"
+        ],
+        "options":
+        [
+            "CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI=y"
+        ]
+    }
+]

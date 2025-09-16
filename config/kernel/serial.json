@@ -3,6 +3,7 @@
         "name": "8250_base",
         "options":
         [
+            "CONFIG_TTY=y",
             "CONFIG_SERIAL_8250=y",
             "CONFIG_SERIAL_OF_PLATFORM=y",
             "CONFIG_SERIAL_DEV_BUS=y",
@@ -22,6 +23,21 @@
         "options":
         [
             "CONFIG_SERIAL_8250_DW=y"
+        ]
+    },
+    {
+        "name": "serial_embed",
+        "depends":
+        [
+            "8250_base"
+        ],
+        "options":
+        [
+            "CONFIG_USB_SERIAL=y",
+            "CONFIG_USB_SERIAL_GENERIC=n",
+            "CONFIG_USB_SERIAL_CH341=y",
+            "CONFIG_USB_SERIAL_CP210X=y",
+            "CONFIG_USB_SERIAL_FTDI_SIO=y"
         ]
     }
 ]

@@ -34,11 +34,35 @@
         ]
     },
     {
+        "name": "arm64_errata",
+        "options":
+        [
+            "CONFIG_ARM64_WORKAROUND_CLEAN_CACHE=y",
+            "#Cortex-A53 errata fixes",
+            "CONFIG_ARM64_ERRATUM_826319=y",
+            "CONFIG_ARM64_ERRATUM_827319=y",
+            "CONFIG_ARM64_ERRATUM_824069=y",
+            "CONFIG_ARM64_ERRATUM_819472=y",
+            "CONFIG_ARM64_ERRATUM_843419=y",
+            "#Cortex-A57 errata fixes",
+            "CONFIG_ARM64_ERRATUM_832075=y",
+            "#Cortex-A55 errata fixes",
+            "CONFIG_ARM64_ERRATUM_1024718=y",
+            "CONFIG_ARM64_ERRATUM_1530923=y",
+
+            "CONFIG_ARM64_WORKAROUND_SPECULATIVE_AT=y",
+            "CONFIG_ARM64_WORKAROUND_REPEAT_TLBI=y",
+            "CONFIG_ARM64_WORKAROUND_TSB_FLUSH_FAILURE=y",
+            "CONFIG_ARM64_WORKAROUND_SPECULATIVE_UNPRIV_LOAD=y"
+        ]
+    },
+    {
         "name": "arm64",
         "depends":
         [
             "system_all",
-            "overlays"
+            "overlays",
+            "arm64_errata"
         ],
         "options":
         [

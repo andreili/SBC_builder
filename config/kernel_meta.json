@@ -11,6 +11,8 @@
         "sunxi",
         "serial",
         "audio",
-        "io"
+        "io",
+        "psave",
+        "drm"
     ]
 }

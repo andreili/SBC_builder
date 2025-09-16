@@ -1,0 +1,67 @@
+[
+    {
+        "name": "drm",
+        "options":
+        [
+            "CONFIG_DRM=y",
+            "CONFIG_DRM_DISPLAY_CONNECTOR=y"
+        ]
+    },
+    {
+        "name": "drm_dw_hdmi",
+        "depends":
+        [
+            "drm"
+        ],
+        "options":
+        [
+            "CONFIG_DRM_DISPLAY_HDMI_AUDIO_HELPER=y",
+            "CONFIG_DRM_DW_HDMI=y",
+            "CONFIG_DRM_DW_HDMI_AHB_AUDIO=y",
+            "CONFIG_DRM_DW_HDMI_I2S_AUDIO=y",
+            "CONFIG_DRM_DW_HDMI_CEC=y"
+        ]
+    },
+    {
+        "name": "drm_dsi_base",
+        "depends":
+        [
+            "drm"
+        ],
+        "options":
+        [
+            "CONFIG_BACKLIGHT_CLASS_DEVICE=y",
+            "CONFIG_BACKLIGHT_PWM=y",
+            "CONFIG_DRM_PANEL_SIMPLE=m",
+            "# platform specific, depends on different options",
+            "CONFIG_ROCKCHIP_DW_HDMI=y"
+        ]
+    },
+    {
+        "name": "drm_dw_dsi",
+        "depends":
+        [
+            "drm_dsi_base"
+        ],
+        "options":
+        [
+            "CONFIG_DRM_DW_MIPI_DSI=y",
+            "CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN=m",
+            "CONFIG_DRM_PANEL_DSI_CM=m",
+            "# platform specific, depends on different options",
+            "CONFIG_ROCKCHIP_DW_MIPI_DSI=y"
+        ]
+    },
+    {
+        "name": "drm_rk",
+        "depends":
+        [
+            "drm"
+        ],
+        "options":
+        [
+            "CONFIG_DRM_ROCKCHIP=y",
+            "CONFIG_ROCKCHIP_VOP2=y"
+        ]
+    }
+]
