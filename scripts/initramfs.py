@@ -36,14 +36,15 @@ class Initramfs:
     def __busybox(self, os):
         Logger.build(f"Compile busybox")
         dir = "/media/busybox"
-        shutil.copy(self.busybox_cfg, self.busybox.work_dir + "/.config")
+        os.sudo(os, f"cp {self.busybox_cfg} {self.busybox.work_dir}/.config", self.busybox.work_dir, None, None, True)
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
-        self.__chrooted(self.busybox, os, dir, "make -l10")
+        self.__chrooted(self.busybox, os, dir, "make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
         cfg_or = Path(self.busybox_cfg)
         if (cfg_or.is_file()):
             # backup old configuration
             shutil.copyfile(self.busybox_cfg, f"{self.busybox_cfg}.bak")
+            shutil.copyfile(self.busybox.work_dir + "/.config", self.busybox_cfg)
 
     def __eudev(self, os):
         Logger.build(f"Compile eudev")
@@ -58,7 +59,7 @@ class Initramfs:
         makefile = Path(f"{self.eudev.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.eudev, os, dir, f"./autogen.sh && ./configure {cfg_cmd}")
-        self.__chrooted(self.eudev, os, dir, f"make -l10 && strip --strip-all {udev_bin}")
+        self.__chrooted(self.eudev, os, dir, f"make -j5 && strip --strip-all {udev_bin}")
         shutil.copy(self.eudev.work_dir + f"/{udev_bin}", f"{self.files_dir}/")
 
     def __e2fsp(self, os):
@@ -77,7 +78,7 @@ class Initramfs:
         makefile = Path(f"{self.e2fsp.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
-        self.__chrooted(self.e2fsp, os, dir, f"make -l10 && strip --strip-all {bin1} {bin2}")
+        self.__chrooted(self.e2fsp, os, dir, f"make -j5 && strip --strip-all {bin1} {bin2}")
         shutil.copy(self.e2fsp.work_dir + f"/{bin1}", f"{self.files_dir}/")
         shutil.copy(self.e2fsp.work_dir + f"/{bin2}", f"{self.files_dir}/")
 

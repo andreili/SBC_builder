@@ -148,6 +148,9 @@ class OS:
         self.board.add_var("ROOTFS", self.root_dir)
         self.arch = board.parse_variables("%{ARCH}%")
 
+    def sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
+        self.__sudo(args, cwd, env, stdout, shell)
+
     def __sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         if (os.geteuid() != 0):
             if isinstance(args, str):
