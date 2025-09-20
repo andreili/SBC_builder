@@ -8,6 +8,7 @@
             "CONFIG_NETDEVICES=y",
             "CONFIG_NET=y",
             "CONFIG_INET=y",
+            "CONFIG_PACKET=y",
             "CONFIG_IPV6=y"
         ]
     },

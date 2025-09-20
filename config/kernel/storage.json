@@ -41,5 +41,32 @@
         [
             "CONFIG_MTD_SPI_NOR=y"
         ]
+    },
+    {
+        "name": "pci",
+        "options":
+        [
+            "CONFIG_PCI=y"
+        ]
+    },
+    {
+        "name": "pci_rk_dw",
+        "options":
+        [
+            "CONFIG_PCIE_ROCKCHIP_DW=y",
+            "CONFIG_PCIE_ROCKCHIP_DW_HOST=y"
+        ]
+    },
+    {
+        "name": "nvme_blk",
+        "depends":
+        [
+            "pci"
+        ],
+        "options":
+        [
+            "CONFIG_NVME_CORE=y",
+            "CONFIG_BLK_DEV_NVME=y"
+        ]
     }
 ]

@@ -2,12 +2,47 @@
     {
         "name": "btt_pi2_defconfig",
         "save_path": "arch/arm64/configs/btt_pi2_defconfig",
-        "_depends":
+        "depends":
         [
-            "rk356x"
+            "rk3566",
+            "serial_embed",
+            "media_camera_usb",
+            "fs_min",
+            "fs_misc",
+            "system_debug"
         ],
         "options":
         [
+            "CONFIG_IIO=y",
+            "CONFIG_DHT11=m",
+            "CONFIG_MFD_RK8XX_I2C=y",
+            "CONFIG_RTC_CLASS=y",
+            "CONFIG_RTC_DRV_RK808=y",
+            "CONFIG_INPUT_RK805_PWRKEY=y",
+            "CONFIG_REGULATOR_RK808=y",
+            "CONFIG_LOCALVERSION=\"-arm64\"",
+            "CONFIG_LOCALVERSION_AUTO=n",
+            "CONFIG_CLK_RK3528=y",
+            "CONFIG_CLK_RK3562=y",
+            "CONFIG_ARM_RK3328_DMC_DEVFREQ=y",
+            "#WiFi",
+            "CONFIG_WLAN_VENDOR_BROADCOM=y",
+            "CONFIG_BRCMFMAC=m",
+            "CONFIG_BRCMFMAC_SDIO=y",
+            "CONFIG_B43=n",
+            "CONFIG_B43_SDIO=n",
+            "CONFIG_B43_PHY_G=n",
+            "CONFIG_B43_PHY_N=n",
+            "CONFIG_B43_PHY_LP=n",
+            "CONFIG_B43_PHY_HT=n",
+            "CONFIG_BCMA_DRIVER_PCI=n",
+            "CONFIG_BCMA_HOST_PCI=n",
+            "#touchscreens",
+            "#CONFIG_TOUCHSCREEN_GOODIX=m",
+            "#CONFIG_TOUCHSCREEN_TSC2007=y",
+            "CONFIG_TOUCHSCREEN_EDT_FT5X06=m",
+            "#CONFIG_TOUCHSCREEN_USB_COMPOSITE=m",
+            "CONFIG_REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY=y",
             "CONFIG_DEFAULT_HOSTNAME=\"(none)\""
         ]
     },
@@ -16,16 +51,14 @@
         "save_path": "arch/arm64/configs/btt_pi2_printer_defconfig",
         "depends":
         [
-            "rk3566",
-            "serial_embed"
+            "btt_pi2_defconfig"
         ],
         "options":
         [
-            "CONFIG_LOCALVERSION=\"-arm64\"",
-            "CONFIG_LOCALVERSION_AUTO=n",
-            "CONFIG_CLK_RK3528=y",
-            "CONFIG_CLK_RK3562=y",
-            "CONFIG_ARM_RK3328_DMC_DEVFREQ=y",
+            "#printer devices",
+            "CONFIG_CAN=y",
+            "CONFIG_CAN_GS_USB=y",
+            "CONFIG_CAN_ROCKCHIP_CANFD=m",
             "CONFIG_DEFAULT_HOSTNAME=\"Printer\""
         ]
     }

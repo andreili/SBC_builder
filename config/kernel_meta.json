@@ -13,6 +13,9 @@
         "audio",
         "io",
         "psave",
-        "drm"
+        "drm",
+        "media",
+        "fs",
+        "stats"
     ]
 }

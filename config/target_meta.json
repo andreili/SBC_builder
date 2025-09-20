@@ -27,7 +27,7 @@
             "version_type": "tag",
             "patch_dir": [ "kernel", "kernel/sunxi-6.16", "kernel/rockchip64-6.16" ],
             "config_def": "printer_defconfig",
-            "target": [ "clean", "Image", "modules", "dtbs", "modules_install" ],
+            "target": [ "Image", "modules", "dtbs", "modules_install" ],
             "common": true,
             "have_defconfig": true,
             "artifacts":
