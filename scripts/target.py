@@ -97,8 +97,10 @@ class Target:
             if (sub_target == "") or (not self.have_config):
                 targets = self.target
             else:
-                if (sub_target == "config"):
+                if (sub_target == "defconfig"):
                     opts.append(self.defconfig_name)
+                    opts.append(self.config_target)
+                elif (sub_target == "config"):
                     opts.append(self.config_target)
                 else:
                     Logger.error("Invalid sub-target!")
