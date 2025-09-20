@@ -7,7 +7,7 @@
     [
         "CROSS_C:aarch64-linux-gnu-",
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
-        "BL31_BIN:rk3568_bl31_v1.44.elf",
+        "BL31_BIN:rk3568_bl31_v1.45.elf",
         "ARCH:aarch64",
         "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb",
         "DTO_FILES:rockchip/rk3566-*.dtbo",
