@@ -1,10 +1,10 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# U-Boot 2025.10-rc2 Configuration
+# U-Boot 2025.10-rc4 Configuration
 #
 
 #
-# Compiler: aarch64-linux-gnu-gcc (Gentoo 15.1.1_p20250705-r1 p2) 15.1.1 20250705
+# Compiler: aarch64-linux-gnu-gcc (Gentoo 15.2.0 p5) 15.2.0
 #
 CONFIG_CREATE_ARCH_SYMLINK=y
 CONFIG_HAVE_SETJMP=y
@@ -328,7 +328,7 @@ CONFIG_SYS_LITTLE_ENDIAN=y
 CONFIG_LOCALVERSION=""
 CONFIG_LOCALVERSION_AUTO=y
 CONFIG_CC_IS_GCC=y
-CONFIG_GCC_VERSION=150101
+CONFIG_GCC_VERSION=150200
 CONFIG_CLANG_VERSION=0
 CONFIG_CC_OPTIMIZE_FOR_SIZE=y
 # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
@@ -1170,7 +1170,6 @@ CONFIG_ARM_PSCI_FW=y
 # FPGA support
 #
 # CONFIG_FPGA_ALTERA is not set
-# CONFIG_FPGA_LATTICE is not set
 # CONFIG_FPGA_XILINX is not set
 # CONFIG_DM_FPGA is not set
 # CONFIG_FWU_MDATA is not set
