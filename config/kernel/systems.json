@@ -34,6 +34,30 @@
         ]
     },
     {
+        "name": "linux_base",
+        "depends":
+        [
+            "system_all",
+            "overlays",
+            "stats_perf"
+        ],
+        "options":
+        [
+            "#systemd",
+            "CONFIG_BPF_SYSCALL=y",
+            "CONFIG_CGROUP_BPF=y",
+            "CONFIG_UNIX=y",
+            "#base",
+            "CONFIG_KEXEC_CORE=y",
+            "CONFIG_KEXEC=y",
+            "CONFIG_KEXEC_FILE=y",
+            "CONFIG_HAS_IOMEM=y",
+            "CONFIG_SYSVIPC=y",
+            "CONFIG_SYSVIPC_COMPAT=y",
+            "CONFIG_POSIX_MQUEUE=y"
+        ]
+    },
+    {
         "name": "arm64_errata",
         "options":
         [
@@ -86,10 +110,8 @@
         "name": "arm64",
         "depends":
         [
-            "system_all",
-            "overlays",
-            "arm64_errata",
-            "stats_base"
+            "linux_base",
+            "arm64_errata"
         ],
         "options":
         [
@@ -105,6 +127,8 @@
             "CONFIG_THERMAL_GOV_STEP_WISE=y",
             "CONFIG_THERMAL_GOV_BANG_BANG=y",
             "CONFIG_THERMAL_GOV_USER_SPACE=y",
+            "CONFIG_ARM_GIC=y",
+            "CONFIG_ARM_GIC_V3=y",
             "CONFIG_CRYPTO=y",
             "CONFIG_CRYPTO_HW=y",
             "CONFIG_NLS_ASCII=y",

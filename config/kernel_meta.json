@@ -16,6 +16,7 @@
         "drm",
         "media",
         "fs",
-        "stats"
+        "stats",
+        "power"
     ]
 }

@@ -1,0 +1,19 @@
+[
+    {
+        "name": "power_base",
+        "options":
+        [
+            "CONFIG_REGULATOR=y",
+            "CONFIG_REGULATOR_FIXED_VOLTAGE=y",
+            "CONFIG_REGULATOR_GPIO=y",
+            "CONFIG_RESET_CONTROLLER=y",
+            "CONFIG_POWER_RESET_SYSCON=y",
+            "CONFIG_POWER_RESET_SYSCON_POWEROFF=y",
+            "CONFIG_POWER_RESET_RESTART=y",
+            "CONFIG_POWER_RESET_REGULATOR=y",
+            "CONFIG_POWER_SYSCON_REBOOT_MODE=y",
+            "CONFIG_SENSORS_ARM_SCPI=y",
+            "CONFIG_SENSORS_GPIO_FAN=y"
+        ]
+    }
+]

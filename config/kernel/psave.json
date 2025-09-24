@@ -38,6 +38,18 @@
         ]
     },
     {
+        "name": "psave_scmi",
+        "options":
+        [
+            "CONFIG_ARM_SCMI_PROTOCOL=y",
+            "CONFIG_ARM_SCMI_HAVE_SHMEM=y",
+            "CONFIG_ARM_SCMI_TRANSPORT_SMC=y",
+            "CONFIG_ARM_SCMI_CPUFREQ=y",
+            "CONFIG_COMMON_CLK_SCMI=y",
+            "CONFIG_SENSORS_ARM_SCMI=y"
+        ]
+    },
+    {
         "name": "psave_rk",
         "depends":
         [
@@ -45,6 +57,7 @@
         ],
         "options":
         [
+            "CONFIG_ARM_SCPI_PROTOCOL=y",
             "CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI=y"
         ]
     }

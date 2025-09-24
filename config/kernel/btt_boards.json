@@ -6,10 +6,14 @@
         [
             "rk3566",
             "serial_embed",
-            "media_camera_usb",
             "fs_min",
             "fs_misc",
-            "system_debug"
+            "system_debug",
+            "kbd_min",
+            "mouse_min",
+            "touch_min",
+            "usb_storage",
+            "usb_video"
         ],
         "options":
         [

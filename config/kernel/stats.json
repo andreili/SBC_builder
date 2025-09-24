@@ -24,5 +24,18 @@
             "CONFIG_PID_NS=y",
             "CONFIG_NET_NS=y"
         ]
+    },
+    {
+        "name": "stats_perf",
+        "depends":
+        [
+            "stats_base"
+        ],
+        "options":
+        [
+            "CONFIG_PERCPU_STATS=y",
+            "CONFIG_PERF_EVENTS=y",
+            "CONFIG_HW_PERF_EVENTS=y"
+        ]
     }
 ]
