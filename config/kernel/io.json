@@ -49,7 +49,17 @@
         [
             "#Touchscreen",
             "CONFIG_INPUT_MISC=y",
+            "CONFIG_INPUT_TOUCHSCREEN=y",
             "CONFIG_HID_MULTITOUCH=y"
+        ]
+    },
+    {
+        "name": "gpio_base",
+        "options":
+        [
+            "#GPIO",
+            "CONFIG_OF_GPIO=y",
+            "CONFIG_GPIO_SYSFS=y"
         ]
     }
 ]

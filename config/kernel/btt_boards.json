@@ -13,12 +13,15 @@
             "mouse_min",
             "touch_min",
             "usb_storage",
-            "usb_video"
+            "usb_video",
+            "spi_rk",
+            "w1_base"
         ],
         "options":
         [
             "CONFIG_IIO=y",
             "CONFIG_DHT11=m",
+            "CONFIG_COMMON_CLK_RK808=y",
             "CONFIG_MFD_RK8XX_I2C=y",
             "CONFIG_RTC_CLASS=y",
             "CONFIG_RTC_DRV_RK808=y",

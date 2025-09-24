@@ -66,7 +66,8 @@
         "options":
         [
             "CONFIG_SCSI=y",
-            "CONFIG_USB_STORAGE=y"
+            "CONFIG_USB_STORAGE=y",
+            "CONFIG_USB_UAS=y"
         ]
     },
     {

@@ -1,0 +1,70 @@
+[
+    {
+        "name": "wdt",
+        "options":
+        [
+            "CONFIG_WATCHDOG=y"
+        ]
+    },
+    {
+        "name": "pwm",
+        "options":
+        [
+            "CONFIG_PWM=y"
+        ]
+    },
+    {
+        "name": "hw_rand_rk",
+        "options":
+        [
+            "CONFIG_HW_RANDOM=y",
+            "CONFIG_HW_RANDOM_ROCKCHIP=y"
+        ]
+    },
+    {
+        "name": "nvmem_rk",
+        "options":
+        [
+            "CONFIG_NVMEM=y",
+            "CONFIG_NVMEM_ROCKCHIP_EFUSE=y",
+            "CONFIG_NVMEM_ROCKCHIP_OTP=y"
+        ]
+    },
+    {
+        "name": "dma",
+        "options":
+        [
+            "CONFIG_DMADEVICES=y",
+            "CONFIG_PL330_DMA=y"
+        ]
+    },
+    {
+        "name": "misc",
+        "options":
+        [
+            "#Need to review all",
+            "CONFIG_PINMUX=y",
+            "CONFIG_RPMB=y",
+            "CONFIG_MAILBOX=y",
+            "CONFIG_BLK_WBT=y",
+            "CONFIG_BLK_WBT_MQ=y",
+            "CONFIG_REGMAP_MMIO=y",
+            "CONFIG_GENERIC_IRQ_CHIP=y",
+            "#CONFIG_BT_HCIUART_BCM=y",
+            "CONFIG_PWRSEQ_SIMPLE=y",
+            "CONFIG_SENSORS_PWM_FAN=y",
+            "CONFIG_USB_ACM=m",
+            "CONFIG_UEVENT_HELPER=y",
+            "CONFIG_UEVENT_HELPER_PATH=\"\"",
+            "CONFIG_MEDIA_CEC_SUPPORT=y",
+
+            "CONFIG_NOP_USB_XCEIV=y",
+            "##CONFIG_CAN_MCP251X=y",
+            "##CONFIG_FB_TFT_ST7796S=y",
+            "CONFIG_REGULATOR_FAN53555=y",
+            "CONFIG_EMAC_ROCKCHIP=y",
+            "CONFIG_EEPROM_AT24=y",
+            "#CONFIG_TYPEC=y"
+        ]
+    }
+]

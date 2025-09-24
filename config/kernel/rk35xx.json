@@ -5,10 +5,17 @@
         [
             "arm64",
             "net_base",
-            "drm_fb"
+            "drm_fb",
+            "pwm",
+            "hw_rand_rk",
+            "nvmem_rk",
+            "gpio_base",
+            "dma",
+            "misc"
         ],
         "options":
         [
+            "CONFIG_PWM_ROCKCHIP=y",
             "CONFIG_OF=y",
             "CONFIG_BLK_DEV_LOOP=y",
             "CONFIG_BLK_DEV_SD=y",
@@ -40,7 +47,6 @@
             "CONFIG_ARM_PSCI_FW=y",
             "CONFIG_SHMEM=y",
             "CONFIG_COMMON_CLK=y",
-            "CONFIG_COMMON_CLK_RK808=y",
             "CONFIG_SRAM=y"
         ]
     },
@@ -48,16 +54,24 @@
         "name": "rk35xx",
         "depends":
         [
-            "rk_base"
+            "rk_base",
+            "wdt"
         ],
         "options":
         [
             "CONFIG_CRYPTO_DEV_ROCKCHIP2=y",
+            "CONFIG_DW_WATCHDOG=y",
+            "CONFIG_I2C_RK3X=y",
+            "CONFIG_VIDEO_ROCKCHIP_RGA=y",
+            "CONFIG_ROCKCHIP_SARADC=y",
             "#BT",
             "CONFIG_BT",
             "CONFIG_BT_HCIUART",
             "CONFIG_BT_HCIUART_SERDEV",
-            "CONFIG_BT_HCIUART_BCM"
+            "CONFIG_BT_HCIUART_BCM",
+            "#PHYs",
+            "CONFIG_PHY_ROCKCHIP_INNO_USB2=y",
+            "CONFIG_PHY_ROCKCHIP_EMMC=y"
         ]
     },
     {
@@ -90,7 +104,8 @@
             "drm_panfrost",
             "usb_dwc3",
             "psave_scmi",
-            "power_base"
+            "power_base",
+            "i2c_base"
         ],
         "options":
         [
@@ -105,76 +120,6 @@
         ],
         "options":
         [
-            "CONFIG_PWM=y",
-
-            "CONFIG_I2C_RK3X=y",
-            "CONFIG_PWM_ROCKCHIP=y",
-            "CONFIG_VIDEO_ROCKCHIP_RGA=y",
-            "CONFIG_HW_RANDOM_ROCKCHIP=y",
-            "CONFIG_ROCKCHIP_SARADC=y",
-            "CONFIG_SPI=y",
-            "CONFIG_SPI_MEM=y",
-            "CONFIG_SPI_MASTER=y",
-            "CONFIG_SPI_ROCKCHIP=y",
-            "CONFIG_SPI_ROCKCHIP_SFC=y",
-            "CONFIG_PHY_ROCKCHIP_INNO_USB2=y",
-            "CONFIG_WATCHDOG=y",
-            "CONFIG_DW_WATCHDOG=y",
-            "#specific",
-            "CONFIG_NVMEM_ROCKCHIP_EFUSE=y",
-            "CONFIG_NVMEM_ROCKCHIP_OTP=y",
-            "CONFIG_PHY_ROCKCHIP_EMMC=y",
-
-            "# to review",
-            "CONFIG_I2C=y",
-            "CONFIG_I2C_CHARDEV=y",
-            "CONFIG_I2C_MUX_PINCTRL=y",
-            "CONFIG_I2C_MUX_REG=y",
-            "CONFIG_NVMEM=y",
-            "CONFIG_PINMUX=y",
-            "CONFIG_RPMB=y",
-            "CONFIG_DMADEVICES=y",
-            "CONFIG_MAILBOX=y",
-            "CONFIG_INPUT_TOUCHSCREEN=y",
-            "CONFIG_BLK_WBT=y",
-            "CONFIG_BLK_WBT_MQ=y",
-            "CONFIG_VIDEO_DEV=y",
-            "CONFIG_REGMAP_MMIO=y",
-            "#debug?",
-            "#system",
-            "CONFIG_GENERIC_IRQ_CHIP=y",
-            "CONFIG_PL330_DMA=y",
-            "#CONFIG_BT_HCIUART_BCM=y",
-            "CONFIG_I2C_GPIO=y",
-            "CONFIG_PWRSEQ_SIMPLE=y",
-            "CONFIG_SENSORS_PWM_FAN=y",
-            "CONFIG_OF_GPIO=y",
-            "CONFIG_USB_ACM=m",
-            "#for system software",
-            "CONFIG_UEVENT_HELPER=y",
-            "CONFIG_UEVENT_HELPER_PATH=\"\"",
-            "CONFIG_GPIO_SYSFS=y",
-            "CONFIG_HW_RANDOM=y",
-            "#sensors",
-            "CONFIG_W1=y",
-            "CONFIG_W1_MASTER_GPIO=y",
-            "CONFIG_W1_SLAVE_THERM=y",
-            "#USB",
-            "#vido, audio",
-            "CONFIG_MEDIA_CEC_SUPPORT=y",
-            "#Both",
-
-            "CONFIG_NOP_USB_XCEIV=y",
-            "##CONFIG_CAN_MCP251X=y",
-            "##CONFIG_FB_TFT_ST7796S=y",
-            "CONFIG_REGULATOR_FAN53555=y",
-            "#rk3566/3568, SoC-specific",
-            "CONFIG_EMAC_ROCKCHIP=y",
-            "#EEPROM",
-            "CONFIG_EEPROM_AT24=y",
-            "#eth",
-            "#typeC",
-            "#CONFIG_TYPEC=y"
         ]
     }
 ]
