@@ -49,7 +49,16 @@
         "options":
         [
             "CONFIG_WLAN_VENDOR_BROADCOM=y",
-            "CONFIG_BRCMFMAC=y"
+            "CONFIG_BRCMFMAC=m",
+            "CONFIG_BRCMFMAC_SDIO=y",
+            "CONFIG_B43=n",
+            "CONFIG_B43_SDIO=n",
+            "CONFIG_B43_PHY_G=n",
+            "CONFIG_B43_PHY_N=n",
+            "CONFIG_B43_PHY_LP=n",
+            "CONFIG_B43_PHY_HT=n",
+            "CONFIG_BCMA_DRIVER_PCI=n",
+            "CONFIG_BCMA_HOST_PCI=n"
         ]
     },
     {
@@ -66,9 +75,7 @@
             "CONFIG_STMMAC_PLATFORM=y",
             "CONFIG_DWMAC_DWC_QOS_ETH=y",
             "CONFIG_DWMAC_ROCKCHIP=y",
-            "CONFIG_PHYLIB=y",
-            "CONFIG_MOTORCOMM_PHY=y",
-            "CONFIG_OF_MDIO=y"
+            "CONFIG_PHYLIB=y"
         ]
     }
 ]

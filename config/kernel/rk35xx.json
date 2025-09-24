@@ -64,11 +64,6 @@
             "CONFIG_I2C_RK3X=y",
             "CONFIG_VIDEO_ROCKCHIP_RGA=y",
             "CONFIG_ROCKCHIP_SARADC=y",
-            "#BT",
-            "CONFIG_BT",
-            "CONFIG_BT_HCIUART",
-            "CONFIG_BT_HCIUART_SERDEV",
-            "CONFIG_BT_HCIUART_BCM",
             "#PHYs",
             "CONFIG_PHY_ROCKCHIP_INNO_USB2=y",
             "CONFIG_PHY_ROCKCHIP_EMMC=y"
@@ -79,14 +74,12 @@
         "depends":
         [
             "rk35xx",
-            "net_brcmfmac",
             "net_dwmac",
             "usb_ehci",
             "usb_ohci",
             "mmc",
             "8250_dw",
             "audio_rk_meta",
-            "leds",
             "usb_xhci",
             "serial_embed",
             "mmc_dwc",
