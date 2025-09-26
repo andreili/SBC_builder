@@ -60,7 +60,19 @@
         ],
         "options":
         [
-            "CONFIG_DRM_ROCKCHIP=y",
+            "#rockchip,display-subsystem",
+            "CONFIG_DRM_ROCKCHIP=y"
+        ]
+    },
+    {
+        "name": "drm_rk_vop2",
+        "depends":
+        [
+            "drm_rk"
+        ],
+        "options":
+        [
+            "#rockchip,rk3566-vop",
             "CONFIG_ROCKCHIP_VOP2=y"
         ]
     },

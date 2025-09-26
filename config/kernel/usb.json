@@ -17,6 +17,7 @@
         ],
         "options":
         [
+            "#generic-ehci",
             "CONFIG_USB_EHCI_HCD_PLATFORM=y",
             "CONFIG_USB_EHCI_HCD=y"
         ]
@@ -29,6 +30,7 @@
         ],
         "options":
         [
+            "#generic-ohci",
             "CONFIG_USB_OHCI_HCD_PLATFORM=y",
             "CONFIG_USB_OHCI_HCD=y"
         ]
@@ -53,6 +55,7 @@
         ],
         "options":
         [
+            "#rockchip,rk3568-dwc3, snps,dwc3",
             "CONFIG_USB_DWC3=y",
             "CONFIG_USB_DWC3_HOST=y"
         ]

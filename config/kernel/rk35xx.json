@@ -25,7 +25,6 @@
             "CONFIG_ROCKCHIP_THERMAL=y",
             "CONFIG_ROCKCHIP_GRF=y",
             "CONFIG_GPIO_ROCKCHIP=y",
-            "CONFIG_MFD_SYSCON=y",
             "CONFIG_ROCKCHIP_TIMER=y",
             "CONFIG_CLK_PX30=n",
             "CONFIG_CLK_RK3308=n",
@@ -38,42 +37,22 @@
             "CONFIG_CLK_RK3576=n",
             "CONFIG_CLK_RK3588=n",
             "CONFIG_ARM_PMUV3=y",
-            "CONFIG_ROCKCHIP_IODOMAIN=y",
             "CONFIG_ROCKCHIP_PM_DOMAINS=y",
             "CONFIG_CPU_IDLE=y",
-            "CONFIG_ARM_PSCI_CPUIDLE=y",
             "CONFIG_PM_GENERIC_DOMAINS_OF=y",
-            "CONFIG_ARM_PSCI_CPUIDLE_DOMAIN=y",
-            "CONFIG_ARM_PSCI_FW=y",
             "CONFIG_SHMEM=y",
             "CONFIG_COMMON_CLK=y",
-            "CONFIG_SRAM=y"
+            "#mmio-sram",
+            "CONFIG_SRAM=y",
+            "#syscon",
+            "CONFIG_MFD_SYSCON=y"
         ]
     },
     {
-        "name": "rk35xx",
+        "name": "rk356x",
         "depends":
         [
             "rk_base",
-            "wdt"
-        ],
-        "options":
-        [
-            "CONFIG_CRYPTO_DEV_ROCKCHIP2=y",
-            "CONFIG_DW_WATCHDOG=y",
-            "CONFIG_I2C_RK3X=y",
-            "CONFIG_VIDEO_ROCKCHIP_RGA=y",
-            "CONFIG_ROCKCHIP_SARADC=y",
-            "#PHYs",
-            "CONFIG_PHY_ROCKCHIP_INNO_USB2=y",
-            "CONFIG_PHY_ROCKCHIP_EMMC=y"
-        ]
-    },
-    {
-        "name": "rk3568",
-        "depends":
-        [
-            "rk35xx",
             "net_dwmac",
             "usb_ehci",
             "usb_ohci",
@@ -84,7 +63,6 @@
             "serial_embed",
             "mmc_dwc",
             "psave_rk",
-            "drm_rk",
             "drm_dw_hdmi",
             "drm_dw_dsi",
             "drm_rk_phy",
@@ -98,17 +76,41 @@
             "usb_dwc3",
             "psave_scmi",
             "power_base",
-            "i2c_base"
+            "i2c_base",
+            "wdt"
         ],
         "options":
         [
-            "CONFIG_CLK_RK3568=y"
+            "CONFIG_CRYPTO_DEV_ROCKCHIP2=y",
+            "CONFIG_DW_WATCHDOG=y",
+            "CONFIG_VIDEO_ROCKCHIP_RGA=y",
+            "CONFIG_ROCKCHIP_SARADC=y",
+            "#PHYs",
+            "CONFIG_PHY_ROCKCHIP_INNO_USB2=y",
+            "CONFIG_PHY_ROCKCHIP_EMMC=y",
+            "#rockchip,rk3399-i2c",
+            "CONFIG_I2C_RK3X=y",
+            "#rockchip,rk3568-pmucru rockchip,rk3568-cru",
+            "CONFIG_CLK_RK3568=y",
+            "#rockchip,rk3568-pmu-io-voltage-domain",
+            "CONFIG_ROCKCHIP_IODOMAIN=y"
+        ]
+    },
+    {
+        "name": "rk3568",
+        "depends":
+        [
+            "rk356x"
+        ],
+        "options":
+        [
         ]
     },
     {
         "name": "rk3566",
         "depends":
         [
+            "drm_rk_vop2",
             "rk3568"
         ],
         "options":

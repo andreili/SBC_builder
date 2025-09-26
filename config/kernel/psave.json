@@ -41,8 +41,14 @@
         "name": "psave_scmi",
         "options":
         [
+            "#arm,psci-1.0",
+            "CONFIG_ARM_PSCI_FW=y",
+            "CONFIG_ARM_PSCI_CPUIDLE=y",
+            "CONFIG_ARM_PSCI_CPUIDLE_DOMAIN=y",
             "CONFIG_ARM_SCMI_PROTOCOL=y",
+            "#arm,scmi-shmem",
             "CONFIG_ARM_SCMI_HAVE_SHMEM=y",
+            "#arm,scmi-smc",
             "CONFIG_ARM_SCMI_TRANSPORT_SMC=y",
             "CONFIG_ARM_SCMI_CPUFREQ=y",
             "CONFIG_COMMON_CLK_SCMI=y",
