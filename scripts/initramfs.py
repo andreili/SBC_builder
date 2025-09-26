@@ -36,7 +36,7 @@ class Initramfs:
     def __busybox(self, os):
         Logger.build(f"Compile busybox")
         dir = "/media/busybox"
-        os.sudo(os, f"cp {self.busybox_cfg} {self.busybox.work_dir}/.config", self.busybox.work_dir, None, None, True)
+        os.sudo(f"cp {self.busybox_cfg} {self.busybox.work_dir}/.config", self.busybox.work_dir, None, None, True)
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
         self.__chrooted(self.busybox, os, dir, "make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
@@ -134,7 +134,7 @@ class Initramfs:
         self.__mkshutdown()
 
     def build(self, os):
-        self.__prepare()
+        #self.__prepare()
         self.__busybox(os)
         self.__eudev(os)
         self.__e2fsp(os)
