@@ -1,5 +1,6 @@
 #!/bin/python
-import re, json
+import re, json, os.path
+from rich.progress import Progress
 
 r_kc_source = re.compile(r'^source\s+\"(\S+)/Kconfig\"$')
 r_kc_cfg_start = re.compile(r'^config\s+(\S+)$')
@@ -8,6 +9,13 @@ r_kc_opt_dep = re.compile(r'depends on (.+)$')
 r_kc_opt_cond = re.compile(r'(\|\|)|(&&)|(!)|(\()|(\))|(\S+)')
 r_kc_cfg_if = re.compile(r'^if (\S+)$')
 r_kc_cfg_endif = re.compile(r'^endif$')
+
+r_km_obj_mask = r'[\w\.\-/]+'
+r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
+r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[:\+]=((?: ' + r_km_obj_mask + r')+)')
+r_km_obj_lst = re.compile(r'^(\s+)((?: ' + r_km_obj_mask + r')+)')
+r_km_obj_not_allowed = re.compile(r'(tests\/)')
+r_km_comp = re.compile(r'\.compatible = \"(\S+)\",')
 
 class ConfigCondition:
     def __init__(self, line):
@@ -83,6 +91,8 @@ class ConfigScan:
         self.arch = arch
         self.opts = []
         self.incl_path = []
+        self.sources = []
+        self.compatible = []
         self.vars = [
             [ "SRCARCH", self.arch ],
         ]
@@ -103,7 +113,6 @@ class ConfigScan:
         if_opt = ""
         if (sub_dir == ""):
             print(f"Start scanning for options, directory '{full_path}'...")
-        self.incl_path.append(full_path)
         f = open(f"{full_path}/Kconfig", "rt")
         while (f):
             line = f.readline()
@@ -114,6 +123,9 @@ class ConfigScan:
             if (m_source):
                 # current line - include another config
                 inc_parsed = self.__parse_variables(m_source[1])
+                if (sub_dir == ""):
+                    # for root Kconfig - add all include patches
+                    self.incl_path.append({ "path":inc_parsed, "cond":"" })
                 self.__scan_kconfig(path, inc_parsed)
             m_cfg = r_kc_cfg_start.match(line)
             if (m_cfg):
@@ -137,15 +149,104 @@ class ConfigScan:
             if (m_endif):
                 if_opt = ""
         f.close()
+    def __do_makefile_fn(self, path, sub_dir, cond, fn):
+        if (fn.endswith("/")):
+            # include subdirectory
+            self.__scan_makefiles(path, f"{sub_dir}/{fn[:-1]}", cond)
+        else:
+            # object file name - add to list
+            self.sources.append({ "path":f"{sub_dir}/{fn[:-2]}.c",
+                                  "cond":cond})
+    def __do_makefile_line(self, f, path, sub_dir, cond, line, rec=False):
+        if (rec):
+            m_obj_cfg = r_km_obj_lst.findall(line)
+        else:
+            m_obj_cfg = r_km_obj_cfg.findall(line)
+        if (len(m_obj_cfg) == 0):
+            # can't find any valid elements, skip
+            return
+        m_obj_cfg = m_obj_cfg[0]
+        cond_loc = ""
+        #print(m_obj_cfg)
+        if ((not rec) and (m_obj_cfg[0] != "")):
+            cond_loc = m_obj_cfg[0]
+        else:
+            cond_loc = cond
+        obj = m_obj_cfg[1][1:]
+        #print(f":{cond_loc}:{obj}:{line[-2]}:")
+        if (obj != ""):
+            #print(obj)
+            objs = obj.split(" ")
+            for o in objs:
+                self.__do_makefile_fn(path, sub_dir, cond_loc, o)
+        if ((not rec) and (line[-2] == "\\")):
+            # slash - need to scan next line
+            while (1):
+                line = f.readline()
+                if (len(line) < 3):
+                    break
+                self.__do_makefile_line(f, path, sub_dir, cond_loc, line, True)
+                if (line[-2] != "\\"):
+                    break
+    def __scan_makefiles(self, path, sub_dir="", cond=""):
+        full_path = f"{path}/{sub_dir}"
+        #print(f"\tDir: {full_path}")
+        mk_fn1 = f"{full_path}/Makefile"
+        mk_fn2 = f"{full_path}/Kbuild"
+        if (os.path.isfile(mk_fn1)):
+            f = open(mk_fn1, "rt")
+        elif (os.path.isfile(mk_fn2)):
+            f = open(mk_fn2, "rt")
+        else:
+            print(f"Unable to find build file at '{full_path}'!!!")
+            exit(1)
+        while 1:
+            line = f.readline()
+            if (line == ""):
+                # EOF detector
+                break
+            #print(line)
+            if (r_km_obj_not_allowed.match(line)):
+                continue
+            self.__do_makefile_line(f, path, sub_dir, cond, line)
+        f.close()
+    def __scan_compatible(self, path):
+        progress = Progress()
+        progress.start()
+        task = progress.add_task("Scanning object files...", total=len(self.sources))
+        for obj in self.sources:
+            progress.update(task, advance=1)
+            fn = f"{path}/{obj["path"]}"
+            if (not os.path.isfile(fn)):
+                continue
+            f = open(fn, "r")
+            while (1):
+                line = f.readline()
+                if (line == ""):
+                    # EOF detector
+                    break
+                m_o = r_km_comp.findall(line)
+                if (len(m_o) > 0):
+                    self.compatible.append({
+                        "val": m_o[0],
+                        "cond": obj["cond"]
+                    })
+            f.close()
+        progress.stop()
     def scan(self, path):
         print("Step #1 - Scan Kconfig files")
         self.__scan_kconfig(path, "")
+        print("Step #2 - Scan Makefile for source files")
+        for inc in self.incl_path:
+            self.__scan_makefiles(path, inc["path"], inc["cond"])
+        print("Step #3 - Scan 'compatible' strings")
+        self.__scan_compatible(path)
     def serialize(self):
         opts = []
         for opt in self.opts:
             opts.append(opt.serialize())
         obj = { "arch":self.arch,
-                "incl_path":self.incl_path,
+                "compatible":self.compatible,
                 "opts":opts }
         return obj
     def save(self, path):
