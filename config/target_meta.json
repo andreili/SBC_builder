@@ -64,7 +64,7 @@
                     "subdir": "dtb/allwinner/overlay"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
             "modules":
             [
                 "rtl8189ES_linux"
