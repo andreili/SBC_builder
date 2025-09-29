@@ -76,6 +76,12 @@ class Board:
                 break
         return string
 
+    def targets_list(self):
+        lst = []
+        for target in self.targets:
+            lst.append(target.name)
+        return lst
+
     def sync(self):
         for target in self.targets:
             target.source_sync()
