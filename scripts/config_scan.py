@@ -1,5 +1,5 @@
 #!/bin/python
-import re, json, os.path
+import re, json, os.path, fnmatch
 from rich.progress import Progress
 
 r_kc_source = re.compile(r'^source\s+\"(\S+)/Kconfig\"$')
@@ -16,6 +16,15 @@ r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[:\+]
 r_km_obj_lst = re.compile(r'^(\s+)((?: ' + r_km_obj_mask + r')+)')
 r_km_obj_not_allowed = re.compile(r'(tests\/)')
 r_km_comp = re.compile(r'\.compatible = \"(\S+)\",')
+
+r_dt_inc = re.compile(r'#include \"(\S+\.dtsi)\"')
+r_dt_parent = re.compile(r'(\S+) {$')
+r_dt_comp1 = re.compile(r'(compatible = \")')
+r_dt_comp2 = re.compile(r'(?:\"(\S+)\")+')
+r_dt_skip = [
+    "arm,cortex-*",
+    "cache"
+]
 
 class ConfigCondition:
     def __init__(self, line):
@@ -85,6 +94,12 @@ class ConfigOpt:
             deps += dep.serialize();
         return { "name":self.name,
                  "deps":deps }
+    def deserialize(self, js):
+        self.name = js["name"]
+        for d in js["deps"]:
+            dep = ConfigCondition(d)
+            #dep.deserialize(d)
+            self.deps.append(dep)
 
 class ConfigScan:
     def __init__(self, arch):
@@ -233,6 +248,67 @@ class ConfigScan:
                     })
             f.close()
         progress.stop()
+    def __find_comp(self, val):
+        for comp in self.compatible:
+            if (comp["val"] == val):
+                return comp
+        # check to skip list
+        for sk in r_dt_skip:
+            if (fnmatch.fnmatch(val, sk)):
+                return {"val":"", "cond":""}
+        print(f"Unable to find compatible '{val}', exit!")
+        exit(1)
+    def __parse_dts(self, dir, fn):
+        f = open(fn, "r", encoding='ISO-8859-1')
+        par = ""
+        while (1):
+            line = f.readline()
+            if (line == ""):
+                # EOF detector
+                break
+            m_inc = r_dt_inc.match(line)
+            if (m_inc):
+                new_fn = f"{dir}/{m_inc[1]}"
+                if (not os.path.isfile(new_fn)):
+                    print(f"Unable to find inlude file '{m_inc[1]}'")
+                else:
+                    self.__parse_dts(dir, new_fn)
+            m_par = r_dt_parent.findall(line)
+            if (m_par):
+                par = m_par[0]
+            if (par == '/'):
+                # skip root node properties
+                continue
+            if (r_dt_comp1.findall(line)):
+                m_comp = r_dt_comp2.findall(line)
+                for comp in m_comp:
+                    #find compatible and opt
+                    c = self.__find_comp(comp)
+                    if (c["cond"] != ""):
+                        self.def_opts.append(c["cond"])
+        f.close()
+    def __find_dts(self, dir):
+        for dir_i in os.listdir(dir):
+            fn = f"{dir}/{dir_i}"
+            if (os.path.isfile(fn)):
+                # file
+                self.dts_fn.append([dir, fn])
+            else:
+                # recursive on directories
+                self.__find_dts(fn)
+    def __scan_dts(self):
+        progress = Progress()
+        progress.start()
+        task = progress.add_task("DTS files", total=len(self.dts_fn))
+        for dts_el in self.dts_fn:
+            self.def_opts = []
+            self.__parse_dts(dts_el[0], dts_el[1])
+            progress.update(task, advance=1)
+        progress.stop()
+    def scan_dts(self, path):
+        self.dts_fn = []
+        self.__find_dts(f"{path}/arch/{self.arch}/boot/dts")
+        self.__scan_dts()
     def scan(self, path):
         print("Step #1 - Scan Kconfig files")
         self.__scan_kconfig(path, "")
@@ -241,6 +317,8 @@ class ConfigScan:
             self.__scan_makefiles(path, inc["path"], inc["cond"])
         print("Step #3 - Scan 'compatible' strings")
         self.__scan_compatible(path)
+        print("Step #4 - Scan DTS and make defconfigs")
+        self.scan_dts(path)
     def serialize(self):
         opts = []
         for opt in self.opts:
@@ -249,11 +327,22 @@ class ConfigScan:
                 "compatible":self.compatible,
                 "opts":opts }
         return obj
+    def deserialize(self, js):
+        self.arch = js["arch"]
+        self.compatible = js["compatible"]
+        for o in js["opts"]:
+            opt = ConfigOpt("")
+            opt.deserialize(o)
+            self.opts.append(opt)
     def save(self, path):
         f = open(path, "w")
-        #obj["arch"] = self.arch
         json.dump(self.serialize(), f, indent=1)
         f.close()
+    def load(self, path):
+        with open(path) as json_data:
+            js_data = json.load(json_data)
+            self.deserialize(js_data)
+            json_data.close()
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")

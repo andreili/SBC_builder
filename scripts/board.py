@@ -121,11 +121,15 @@ class Board:
         if (not is_finded):
             Logger.error("Don't find target!")
 
-    def sync_kernel(self):
+    def scan_kernel(self):
         for target in self.targets:
             if (target.name == "kernel"):
                 target.source_sync()
                 cfg_scn = ConfigScan(self.parse_variables("%{KERNEL_ARCH}%"))
-                cfg_scn.scan(target.sources.work_dir)
+                if (1):
+                    cfg_scn.scan(target.sources.work_dir)
+                else:
+                    cfg_scn.load(f"{ROOT_DIR}/config/kernel_cfg.json")
+                    cfg_scn.scan_dts(target.sources.work_dir)
                 cfg_scn.save(f"{ROOT_DIR}/config/kernel_cfg.json")
         exit(0)
