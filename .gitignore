@@ -1,4 +1,5 @@
-git_bare
+git_bare/*
+tmp/*
 out/*
 build
 *.pyc

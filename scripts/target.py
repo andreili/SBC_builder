@@ -78,11 +78,11 @@ class Target:
             art["file"] = parse_variables(art["file"])
         if (self.have_defconfig):
             self.defconfig = Defconfig(self.name)
-    
+
     def source_sync(self):
         Logger.build(f"'{self.name}': Source prepare")
-        self.sources.sync()
-        self.sources.do_patch(self.board_name, self.patch_dir)
+        #self.sources.sync()
+        #self.sources.do_patch(self.board_name, self.patch_dir)
         if (self.have_defconfig):
             self.defconfig.save(self.sources.work_dir)
 

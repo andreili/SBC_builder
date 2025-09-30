@@ -12,10 +12,12 @@ r_kc_cfg_endif = re.compile(r'^endif$')
 
 r_km_obj_mask = r'[\w\.\-/]+'
 r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
-r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[:\+]=((?: ' + r_km_obj_mask + r')+)')
-r_km_obj_lst = re.compile(r'^(\s+)((?: ' + r_km_obj_mask + r')+)')
+r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[ :\+]=((?: *' + r_km_obj_mask + r')*)')
+r_km_obj_lst = re.compile(r'^(\s+)((?:\s*' + r_km_obj_mask + r')+)')
 r_km_obj_not_allowed = re.compile(r'(tests\/)')
-r_km_comp = re.compile(r'\.compatible = \"(\S+)\"')
+r_km_comp = re.compile(r'(?:(?:OF_DECLARE_1|OF_DECLARE_1_RET|OF_DECLARE_2|IRQCHIP_DECLARE|OF_DECLARE)\(\S+,\s+\"(\S+)\",.+\))|' +
+    r'(?:\.compatible\s+=\s+\"(\S+)\")|' +
+    r'(?:of_device_is_compatible\(\S+,\s+\"(\S+)\"\))')
 
 r_dt_inc = re.compile(r'#include \"(\S+\.dtsi)\"')
 r_dt_parent = re.compile(r'(\S+) {$')
@@ -23,7 +25,7 @@ r_dt_comp1 = re.compile(r'(compatible = \")')
 r_dt_comp2 = re.compile(r'(?:\"(\S+)\")+')
 r_dt_skip = [
     "arm,cortex-*",
-    "cache"
+    "cache",
 ]
 
 class ConfigCondition:
@@ -107,7 +109,8 @@ class ConfigScan:
         self.opts = []
         self.incl_path = []
         self.sources = []
-        self.compatible = []
+        self.compatible = dict()
+        self.defconfig = dict()
         self.vars = [
             [ "SRCARCH", self.arch ],
         ]
@@ -173,6 +176,7 @@ class ConfigScan:
             self.sources.append({ "path":f"{sub_dir}/{fn[:-2]}.c",
                                   "cond":cond})
     def __do_makefile_line(self, f, path, sub_dir, cond, line, rec=False):
+        line = self.__parse_variables(line)
         if (rec):
             m_obj_cfg = r_km_obj_lst.findall(line)
         else:
@@ -187,8 +191,12 @@ class ConfigScan:
             cond_loc = m_obj_cfg[0]
         else:
             cond_loc = cond
-        obj = m_obj_cfg[1][1:]
-        #print(f":{cond_loc}:{obj}:{line[-2]}:")
+        obj = m_obj_cfg[1]
+        if (len(obj) == 0):
+            return
+        while (obj[0] == " "):
+            obj = obj[1:]
+        #print(f":{cond_loc}:{obj}:{line[-2]}+{rec}:")
         if (obj != ""):
             #print(obj)
             objs = obj.split(" ")
@@ -204,10 +212,13 @@ class ConfigScan:
                 if (line[-2] != "\\"):
                     break
     def __scan_makefiles(self, path, sub_dir="", cond=""):
-        full_path = f"{path}/{sub_dir}"
+        if (sub_dir == ""):
+            full_path = path
+        else:
+            full_path = f"{path}/{sub_dir}"
         #print(f"\tDir: {full_path}")
-        mk_fn1 = f"{full_path}/Makefile"
-        mk_fn2 = f"{full_path}/Kbuild"
+        mk_fn1 = f"{full_path}/Kbuild"
+        mk_fn2 = f"{full_path}/Makefile"
         if (os.path.isfile(mk_fn1)):
             f = open(mk_fn1, "rt")
         elif (os.path.isfile(mk_fn2)):
@@ -225,6 +236,12 @@ class ConfigScan:
                 continue
             self.__do_makefile_line(f, path, sub_dir, cond, line)
         f.close()
+    def __insert_comp(self, key, value):
+        if (key in self.compatible) and (self.compatible[key] != value):
+            #print(f"Compatible already have node '{key}={self.compatible[key]}', new node '{key}={value}")
+            self.compatible[key] = self.compatible[key] + "&&" + value
+        else:
+            self.compatible[key] = value
     def __scan_compatible(self, path):
         progress = Progress()
         progress.start()
@@ -242,22 +259,19 @@ class ConfigScan:
                     break
                 m_o = r_km_comp.findall(line)
                 if (len(m_o) > 0):
-                    self.compatible.append({
-                        "val": m_o[0],
-                        "cond": obj["cond"]
-                    })
+                    for o in m_o[0]:
+                        if (o != ""):
+                            self.__insert_comp(o, obj["cond"])
             f.close()
         progress.stop()
     def __find_comp(self, val):
-        for comp in self.compatible:
-            if (comp["val"] == val):
-                return comp
+        if (val in self.compatible):
+            return self.compatible[val]
         # check to skip list
         for sk in r_dt_skip:
             if (fnmatch.fnmatch(val, sk)):
-                return {"val":"", "cond":""}
-        print(f"Unable to find compatible '{val}', exit!")
-        exit(1)
+                return ""
+        return False
     def __parse_dts(self, dir, fn):
         f = open(fn, "r", encoding='ISO-8859-1')
         par = ""
@@ -280,19 +294,29 @@ class ConfigScan:
                 # skip root node properties
                 continue
             if (r_dt_comp1.findall(line)):
+                finded = False
                 m_comp = r_dt_comp2.findall(line)
                 for comp in m_comp:
                     #find compatible and opt
                     c = self.__find_comp(comp)
-                    if (c["cond"] != ""):
-                        self.def_opts.append(c["cond"])
+                    if (c == False):
+                        continue
+                    finded = True
+                    if (c != ""):
+                        self.def_opts.append(c)
+                if (not finded):
+                    ll = " ".join(m_comp)
+                    self.def_opts.append(f"#{ll}")
+                    print(f"Unable to find compatible '{m_comp}'!")
+                    #exit(1)
         f.close()
     def __find_dts(self, dir):
         for dir_i in os.listdir(dir):
             fn = f"{dir}/{dir_i}"
             if (os.path.isfile(fn)):
                 # file
-                self.dts_fn.append([dir, fn])
+                if (fnmatch.fnmatch(fn, "*.dts")):
+                    self.dts_fn.append([dir, fn])
             else:
                 # recursive on directories
                 self.__find_dts(fn)
@@ -302,7 +326,9 @@ class ConfigScan:
         task = progress.add_task("DTS files", total=len(self.dts_fn))
         for dts_el in self.dts_fn:
             self.def_opts = []
+            dts_n = os.path.splitext(os.path.basename(dts_el[1]))[0]
             self.__parse_dts(dts_el[0], dts_el[1])
+            self.defconfig[dts_n] = self.def_opts
             progress.update(task, advance=1)
         progress.stop()
     def scan_dts(self, path):
@@ -313,8 +339,9 @@ class ConfigScan:
         print("Step #1 - Scan Kconfig files")
         self.__scan_kconfig(path, "")
         print("Step #2 - Scan Makefile for source files")
-        for inc in self.incl_path:
-            self.__scan_makefiles(path, inc["path"], inc["cond"])
+        self.__scan_makefiles(path, "", "")
+        #for inc in self.incl_path:
+        #    self.__scan_makefiles(path, inc["path"], inc["cond"])
         print("Step #3 - Scan 'compatible' strings")
         self.__scan_compatible(path)
         #print("Step #4 - Scan DTS and make defconfigs")
@@ -325,6 +352,7 @@ class ConfigScan:
             opts.append(opt.serialize())
         obj = { "arch":self.arch,
                 "compatible":self.compatible,
+                "defconfig": self.defconfig,
                 #"sources":self.sources,
                 "opts":opts }
         return obj
