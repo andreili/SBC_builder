@@ -15,7 +15,7 @@ r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
 r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[:\+]=((?: ' + r_km_obj_mask + r')+)')
 r_km_obj_lst = re.compile(r'^(\s+)((?: ' + r_km_obj_mask + r')+)')
 r_km_obj_not_allowed = re.compile(r'(tests\/)')
-r_km_comp = re.compile(r'\.compatible = \"(\S+)\",')
+r_km_comp = re.compile(r'\.compatible = \"(\S+)\"')
 
 r_dt_inc = re.compile(r'#include \"(\S+\.dtsi)\"')
 r_dt_parent = re.compile(r'(\S+) {$')
@@ -325,6 +325,7 @@ class ConfigScan:
             opts.append(opt.serialize())
         obj = { "arch":self.arch,
                 "compatible":self.compatible,
+                #"sources":self.sources,
                 "opts":opts }
         return obj
     def deserialize(self, js):
