@@ -2,8 +2,8 @@
 import re, json, os.path, fnmatch
 from rich.progress import Progress
 
-r_kc_source = re.compile(r'^source\s+\"(\S+)/Kconfig\"$')
-r_kc_cfg_start = re.compile(r'^config\s+(\S+)$')
+r_kc_source = re.compile(r'^source\s+\"(\S+)/Kconfig\"')
+r_kc_cfg_start = re.compile(r'^(?:config|menuconfig)\s+(\S+)')
 r_kc_cfg_body = re.compile(r'^\t(.+)$')
 r_kc_opt_dep = re.compile(r'depends on (.+)$')
 r_kc_opt_cond = re.compile(r'(\|\|)|(&&)|(!)|(\()|(\))|(\S+)')
@@ -317,8 +317,8 @@ class ConfigScan:
             self.__scan_makefiles(path, inc["path"], inc["cond"])
         print("Step #3 - Scan 'compatible' strings")
         self.__scan_compatible(path)
-        print("Step #4 - Scan DTS and make defconfigs")
-        self.scan_dts(path)
+        #print("Step #4 - Scan DTS and make defconfigs")
+        #self.scan_dts(path)
     def serialize(self):
         opts = []
         for opt in self.opts:

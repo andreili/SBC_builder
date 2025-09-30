@@ -59420,6 +59420,10 @@
    "deps": ""
   },
   {
+   "name": "BPF_PRELOAD",
+   "deps": "(BPF)&&(BPF_SYSCALL)&&(!COMPILE_TEST)"
+  },
+  {
    "name": "BPF_PRELOAD_UMD",
    "deps": "BPF_PRELOAD"
   },
@@ -59708,6 +59712,10 @@
    "deps": ""
   },
   {
+   "name": "CGROUPS",
+   "deps": ""
+  },
+  {
    "name": "PAGE_COUNTER",
    "deps": "CGROUPS"
   },
@@ -59738,6 +59746,10 @@
   {
    "name": "CGROUP_WRITEBACK",
    "deps": "CGROUPS&&(MEMCG&&BLK_CGROUP)"
+  },
+  {
+   "name": "CGROUP_SCHED",
+   "deps": "CGROUPS"
   },
   {
    "name": "GROUP_SCHED_WEIGHT",
@@ -59830,6 +59842,10 @@
   {
    "name": "SOCK_CGROUP_DATA",
    "deps": "CGROUP_SCHED"
+  },
+  {
+   "name": "NAMESPACES",
+   "deps": "CGROUP_SCHED&&(MULTIUSER)"
   },
   {
    "name": "UTS_NS",
@@ -60021,6 +60037,10 @@
   },
   {
    "name": "HAVE_PCSPKR_PLATFORM",
+   "deps": ""
+  },
+  {
+   "name": "EXPERT",
    "deps": ""
   },
   {
@@ -60776,6 +60796,10 @@
    "deps": ""
   },
   {
+   "name": "COMPAT",
+   "deps": "(ARM64_4K_PAGES||EXPERT)"
+  },
+  {
    "name": "KUSER_HELPERS",
    "deps": "COMPAT"
   },
@@ -60790,6 +60814,10 @@
   {
    "name": "COMPAT_ALIGNMENT_FIXUPS",
    "deps": "COMPAT"
+  },
+  {
+   "name": "ARMV8_DEPRECATED",
+   "deps": "COMPAT&&(SYSCTL)"
   },
   {
    "name": "SWP_EMULATION",
@@ -61300,6 +61328,10 @@
    "deps": ""
   },
   {
+   "name": "ACPI",
+   "deps": "(ARCH_SUPPORTS_ACPI)"
+  },
+  {
    "name": "ACPI_LEGACY_TABLES_LOOKUP",
    "deps": "ACPI"
   },
@@ -61560,6 +61592,10 @@
    "deps": "(ACPI_APEI)"
   },
   {
+   "name": "ACPI_DPTF",
+   "deps": "(X86)"
+  },
+  {
    "name": "DPTF_POWER",
    "deps": "ACPI_DPTF"
   },
@@ -61617,6 +61653,10 @@
   },
   {
    "name": "ACPI_MRRM",
+   "deps": ""
+  },
+  {
+   "name": "PMIC_OPREGION",
    "deps": ""
   },
   {
@@ -61794,6 +61834,14 @@
   {
    "name": "HAVE_KVM_ARCH_GMEM_INVALIDATE",
    "deps": ""
+  },
+  {
+   "name": "VIRTUALIZATION",
+   "deps": ""
+  },
+  {
+   "name": "KVM",
+   "deps": "VIRTUALIZATION"
   },
   {
    "name": "NVHE_EL2_DEBUG",
@@ -62800,6 +62848,10 @@
    "deps": ""
   },
   {
+   "name": "GCC_PLUGINS",
+   "deps": "(HAVE_GCC_PLUGINS)&&(CC_IS_GCC)"
+  },
+  {
    "name": "GCC_PLUGIN_LATENT_ENTROPY",
    "deps": "GCC_PLUGINS"
   },
@@ -62849,6 +62901,10 @@
   },
   {
    "name": "MODULE_SIG_FORMAT",
+   "deps": ""
+  },
+  {
+   "name": "MODULES",
    "deps": ""
   },
   {
@@ -63005,6 +63061,10 @@
   },
   {
    "name": "INIT_ALL_POSSIBLE",
+   "deps": ""
+  },
+  {
+   "name": "BLOCK",
    "deps": ""
   },
   {
@@ -63256,6 +63316,10 @@
    "deps": ""
   },
   {
+   "name": "SWAP",
+   "deps": "(MMU&&BLOCK&&!ARCH_NO_SWAP)"
+  },
+  {
    "name": "ZSWAP",
    "deps": "(SWAP)"
   },
@@ -63456,6 +63520,10 @@
    "deps": ""
   },
   {
+   "name": "MEMORY_HOTPLUG",
+   "deps": "(SPARSEMEM)&&(ARCH_ENABLE_MEMORY_HOTPLUG)&&(64BIT)"
+  },
+  {
    "name": "MHP_DEFAULT_ONLINE_TYPE_OFFLINE",
    "deps": "MEMORY_HOTPLUG"
   },
@@ -63590,6 +63658,10 @@
   {
    "name": "MM_ID",
    "deps": "MEMORY_HOTPLUG"
+  },
+  {
+   "name": "TRANSPARENT_HUGEPAGE",
+   "deps": "MEMORY_HOTPLUG&&(HAVE_ARCH_TRANSPARENT_HUGEPAGE&&!PREEMPT_RT)"
   },
   {
    "name": "THP_SWAP",
@@ -63808,6 +63880,10 @@
    "deps": "TRANSPARENT_HUGEPAGE"
   },
   {
+   "name": "USERFAULTFD",
+   "deps": "TRANSPARENT_HUGEPAGE&&(MMU)"
+  },
+  {
    "name": "PTE_MARKER_UFFD_WP",
    "deps": "USERFAULTFD&&(HAVE_ARCH_USERFAULTFD_WP)"
   },
@@ -63902,6 +63978,10 @@
   {
    "name": "DAMON_LRU_SORT",
    "deps": "(DAMON_PADDR)"
+  },
+  {
+   "name": "NET",
+   "deps": ""
   },
   {
    "name": "WANT_COMPAT_NETLINK_MESSAGES",
@@ -64240,6 +64320,10 @@
    "deps": "(INET_DIAG)"
   },
   {
+   "name": "TCP_CONG_ADVANCED",
+   "deps": ""
+  },
+  {
    "name": "TCP_CONG_BIC",
    "deps": "TCP_CONG_ADVANCED"
   },
@@ -64321,6 +64405,10 @@
   },
   {
    "name": "TCP_MD5SIG",
+   "deps": ""
+  },
+  {
+   "name": "IPV6",
    "deps": ""
   },
   {
@@ -64473,6 +64561,10 @@
   },
   {
    "name": "NETWORK_PHY_TIMESTAMPING",
+   "deps": "INET"
+  },
+  {
+   "name": "NETFILTER",
    "deps": "INET"
   },
   {
@@ -65144,6 +65236,10 @@
    "deps": "NETFILTER_XTABLES&&(NETFILTER_ADVANCED)"
   },
   {
+   "name": "IP_SET",
+   "deps": "(INET&&NETFILTER)"
+  },
+  {
    "name": "IP_SET_MAX",
    "deps": "IP_SET&&(IP_SET)"
   },
@@ -65210,6 +65306,10 @@
   {
    "name": "IP_SET_LIST_SET",
    "deps": "IP_SET&&(IP_SET)"
+  },
+  {
+   "name": "IP_VS",
+   "deps": "(INET&&NETFILTER)&&((NF_CONNTRACK||NF_CONNTRACK=n))"
   },
   {
    "name": "IP_VS_IPV6",
@@ -65600,6 +65700,10 @@
    "deps": "IP6_NF_IPTABLES"
   },
   {
+   "name": "NF_TABLES_BRIDGE",
+   "deps": "(BRIDGE&&NETFILTER&&NF_TABLES)"
+  },
+  {
    "name": "NFT_BRIDGE_META",
    "deps": "NF_TABLES_BRIDGE"
   },
@@ -65614,6 +65718,10 @@
   {
    "name": "BRIDGE_NF_EBTABLES_LEGACY",
    "deps": "NF_TABLES_BRIDGE&&(BRIDGE&&NETFILTER_XTABLES)"
+  },
+  {
+   "name": "BRIDGE_NF_EBTABLES",
+   "deps": "NF_TABLES_BRIDGE&&(BRIDGE&&NETFILTER&&NETFILTER_XTABLES)"
   },
   {
    "name": "BRIDGE_EBT_BROUTE",
@@ -65696,6 +65804,10 @@
    "deps": "BRIDGE_NF_EBTABLES"
   },
   {
+   "name": "IP_SCTP",
+   "deps": "(INET)&&(IPV6||IPV6=n)"
+  },
+  {
    "name": "SCTP_DBG_OBJCNT",
    "deps": "IP_SCTP&&(PROC_FS)"
   },
@@ -65744,6 +65856,10 @@
    "deps": "(GCOV_KERNEL)"
   },
   {
+   "name": "TIPC",
+   "deps": "(INET)&&(IPV6||IPV6=n)"
+  },
+  {
    "name": "TIPC_MEDIA_IB",
    "deps": "(TIPC&&INFINIBAND_IPOIB)&&(TIPC)"
   },
@@ -65782,6 +65898,10 @@
   {
    "name": "ATM_BR2684_IPFILTER",
    "deps": "(ATM_BR2684)"
+  },
+  {
+   "name": "L2TP",
+   "deps": "((IPV6||IPV6=n))&&(INET)"
   },
   {
    "name": "L2TP_DEBUGFS",
@@ -65830,6 +65950,10 @@
   {
    "name": "BRIDGE_CFM",
    "deps": "(BRIDGE)"
+  },
+  {
+   "name": "NET_DSA",
+   "deps": "(BRIDGE||BRIDGE=n)&&(HSR||HSR=n)&&(INET&&NETDEVICES)"
   },
   {
    "name": "NET_DSA_TAG_NONE",
@@ -65964,8 +66088,16 @@
    "deps": ""
   },
   {
+   "name": "6LOWPAN",
+   "deps": "(IPV6)"
+  },
+  {
    "name": "6LOWPAN_DEBUGFS",
    "deps": "(6LOWPAN)&&(DEBUG_FS)"
+  },
+  {
+   "name": "6LOWPAN_NHC",
+   "deps": "(6LOWPAN)"
   },
   {
    "name": "6LOWPAN_NHC_DEST",
@@ -66020,6 +66152,10 @@
    "deps": "6LOWPAN_NHC"
   },
   {
+   "name": "IEEE802154",
+   "deps": ""
+  },
+  {
    "name": "IEEE802154_NL802154_EXPERIMENTAL",
    "deps": "IEEE802154"
   },
@@ -66034,6 +66170,10 @@
   {
    "name": "MAC802154",
    "deps": "(IEEE802154)"
+  },
+  {
+   "name": "NET_SCHED",
+   "deps": ""
   },
   {
    "name": "NET_SCH_HTB",
@@ -66158,6 +66298,10 @@
   {
    "name": "NET_SCH_BPF",
    "deps": "NET_SCHED&&(BPF_SYSCALL&&BPF_JIT&&DEBUG_INFO_BTF)"
+  },
+  {
+   "name": "NET_SCH_DEFAULT",
+   "deps": "NET_SCHED"
   },
   {
    "name": "DEFAULT_NET_SCH",
@@ -66444,6 +66588,10 @@
    "deps": ""
   },
   {
+   "name": "MPLS",
+   "deps": ""
+  },
+  {
    "name": "NET_MPLS_GSO",
    "deps": "MPLS"
   },
@@ -66454,6 +66602,10 @@
   {
    "name": "MPLS_IPTUNNEL",
    "deps": "MPLS&&(LWTUNNEL&&MPLS_ROUTING)"
+  },
+  {
+   "name": "NET_NSH",
+   "deps": ""
   },
   {
    "name": "HSR",
@@ -66552,6 +66704,10 @@
    "deps": "(INET&&TRACEPOINTS)"
   },
   {
+   "name": "HAMRADIO",
+   "deps": "(NET)"
+  },
+  {
    "name": "AX25",
    "deps": "(HAMRADIO)"
   },
@@ -66616,6 +66772,10 @@
    "deps": "(AX25&&HAS_IOPORT)"
   },
   {
+   "name": "CAN",
+   "deps": ""
+  },
+  {
    "name": "CAN_RAW",
    "deps": "CAN"
   },
@@ -66634,6 +66794,10 @@
   {
    "name": "CAN_ISOTP",
    "deps": "CAN"
+  },
+  {
+   "name": "BT",
+   "deps": "(!S390)&&(RFKILL||!RFKILL)"
   },
   {
    "name": "BT_BREDR",
@@ -66932,6 +67096,10 @@
    "deps": ""
   },
   {
+   "name": "MCTP",
+   "deps": "(NET)"
+  },
+  {
    "name": "MCTP_TEST",
    "deps": ""
   },
@@ -66942,6 +67110,10 @@
   {
    "name": "FIB_RULES",
    "deps": ""
+  },
+  {
+   "name": "WIRELESS",
+   "deps": "(!S390)"
   },
   {
    "name": "WIRELESS_EXT",
@@ -67056,6 +67228,10 @@
    "deps": "(MAC80211&&TRACING)"
   },
   {
+   "name": "MAC80211_DEBUG_MENU",
+   "deps": "(MAC80211)"
+  },
+  {
    "name": "MAC80211_NOINLINE",
    "deps": "(MAC80211_DEBUG_MENU)"
   },
@@ -67124,6 +67300,10 @@
    "deps": ""
   },
   {
+   "name": "RFKILL",
+   "deps": ""
+  },
+  {
    "name": "RFKILL_LEDS",
    "deps": "(RFKILL)&&(LEDS_TRIGGERS=y||RFKILL=LEDS_TRIGGERS)"
   },
@@ -67134,6 +67314,10 @@
   {
    "name": "RFKILL_GPIO",
    "deps": "(RFKILL)&&(GPIOLIB||COMPILE_TEST)"
+  },
+  {
+   "name": "NET_9P",
+   "deps": ""
   },
   {
    "name": "NET_9P_FD",
@@ -67160,6 +67344,10 @@
    "deps": "NET_9P"
   },
   {
+   "name": "CAIF",
+   "deps": ""
+  },
+  {
    "name": "CAIF_DEBUG",
    "deps": "(CAIF)"
   },
@@ -67182,6 +67370,10 @@
   {
    "name": "CEPH_LIB_USE_DNS_RESOLVER",
    "deps": "(CEPH_LIB)"
+  },
+  {
+   "name": "NFC",
+   "deps": "(RFKILL||!RFKILL)"
   },
   {
    "name": "NFC_DIGITAL",
@@ -67340,6 +67532,14 @@
    "deps": "(SPI&&NFC_DIGITAL)"
   },
   {
+   "name": "PSAMPLE",
+   "deps": ""
+  },
+  {
+   "name": "NET_IFE",
+   "deps": ""
+  },
+  {
    "name": "LWTUNNEL",
    "deps": "WIRELESS"
   },
@@ -67412,6 +67612,10 @@
    "deps": ""
   },
   {
+   "name": "EISA",
+   "deps": "(HAVE_EISA)"
+  },
+  {
    "name": "EISA_VLB_PRIMING",
    "deps": "(X86&&EISA)"
   },
@@ -67438,6 +67642,10 @@
   {
    "name": "GENERIC_PCI_IOMAP",
    "deps": ""
+  },
+  {
+   "name": "PCI",
+   "deps": "(HAVE_PCI)&&(MMU)"
   },
   {
    "name": "PCI_DOMAINS",
@@ -67626,6 +67834,10 @@
   {
    "name": "VGA_ARB_MAX_GPUS",
    "deps": "PCI&&(VGA_ARB)"
+  },
+  {
+   "name": "HOTPLUG_PCI",
+   "deps": "(PCI&&SYSFS)"
   },
   {
    "name": "HOTPLUG_PCI_COMPAQ",
@@ -68164,6 +68376,10 @@
    "deps": ""
   },
   {
+   "name": "CXL_BUS",
+   "deps": "(PCI)"
+  },
+  {
    "name": "CXL_PCI",
    "deps": "CXL_BUS"
   },
@@ -68222,6 +68438,10 @@
   {
    "name": "CXL_MCE",
    "deps": "CXL_BUS&&(X86_MCE&&MEMORY_FAILURE)"
+  },
+  {
+   "name": "PCCARD",
+   "deps": ""
   },
   {
    "name": "PCMCIA",
@@ -68338,6 +68558,10 @@
   {
    "name": "HAVE_RAPIDIO",
    "deps": ""
+  },
+  {
+   "name": "RAPIDIO",
+   "deps": "(HAVE_RAPIDIO||PCI)"
   },
   {
    "name": "RAPIDIO_TSI721",
@@ -68780,6 +69004,10 @@
    "deps": "(RISCV)&&(ARCH_STARFIVE)&&(64BIT)"
   },
   {
+   "name": "CONNECTOR",
+   "deps": "(NET)"
+  },
+  {
    "name": "PROC_EVENTS",
    "deps": "CONNECTOR&&(CONNECTOR=y)"
   },
@@ -68990,6 +69218,10 @@
   {
    "name": "FW_CS_DSP_KUNIT_TEST",
    "deps": "(KUNIT&&REGMAP&&FW_CS_DSP)"
+  },
+  {
+   "name": "GOOGLE_FIRMWARE",
+   "deps": ""
   },
   {
    "name": "GOOGLE_SMI",
@@ -69240,12 +69472,20 @@
    "deps": "(ZYNQMP_FIRMWARE&&DEBUG_FS)"
   },
   {
+   "name": "FWCTL",
+   "deps": ""
+  },
+  {
    "name": "FWCTL_MLX5",
    "deps": "FWCTL&&(MLX5_CORE)"
   },
   {
    "name": "FWCTL_PDS",
    "deps": "FWCTL&&(PDS_CORE)"
+  },
+  {
+   "name": "GNSS",
+   "deps": ""
   },
   {
    "name": "GNSS_SERIAL",
@@ -69266,6 +69506,10 @@
   {
    "name": "GNSS_USB",
    "deps": "GNSS&&(USB)"
+  },
+  {
+   "name": "MTD",
+   "deps": ""
   },
   {
    "name": "MTD_TESTS",
@@ -69760,6 +70004,10 @@
    "deps": ""
   },
   {
+   "name": "MTD_ONENAND",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "MTD_ONENAND_VERIFY_WRITE",
    "deps": "MTD_ONENAND"
   },
@@ -69782,6 +70030,10 @@
   {
    "name": "MTD_ONENAND_2X_PROGRAM",
    "deps": "MTD_ONENAND"
+  },
+  {
+   "name": "MTD_RAW_NAND",
+   "deps": ""
   },
   {
    "name": "MTD_NAND_DENALI",
@@ -70076,6 +70328,10 @@
    "deps": "MTD_RAW_NAND&&(MTD_NAND_DISKONCHIP)"
   },
   {
+   "name": "MTD_SPI_NAND",
+   "deps": "(SPI_MASTER)"
+  },
+  {
    "name": "MTD_NAND_ECC",
    "deps": ""
   },
@@ -70112,6 +70368,10 @@
    "deps": "(MTD&&ARM)"
   },
   {
+   "name": "MTD_SPI_NOR",
+   "deps": "(MTD)&&(MTD&&SPI_MASTER)"
+  },
+  {
    "name": "MTD_SPI_NOR_USE_4K_SECTORS",
    "deps": "MTD_SPI_NOR"
   },
@@ -70134,6 +70394,10 @@
   {
    "name": "SPI_NXP_SPIFI",
    "deps": "(OF&&(ARCH_LPC18XX||COMPILE_TEST))&&(HAS_IOMEM)"
+  },
+  {
+   "name": "MTD_UBI",
+   "deps": ""
   },
   {
    "name": "MTD_UBI_WL_THRESHOLD",
@@ -70164,6 +70428,10 @@
    "deps": "MTD_UBI&&(NVMEM)"
   },
   {
+   "name": "MTD_HYPERBUS",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "HBMC_AM654",
    "deps": "MTD_HYPERBUS&&(ARCH_K3||COMPILE_TEST)"
   },
@@ -70181,6 +70449,10 @@
   },
   {
    "name": "BUILTIN_DTB_ALL",
+   "deps": ""
+  },
+  {
+   "name": "OF",
    "deps": ""
   },
   {
@@ -70252,6 +70524,10 @@
    "deps": ""
   },
   {
+   "name": "PARPORT",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "PARPORT_PC",
    "deps": "PARPORT&&(ARCH_MIGHT_HAVE_PC_PARPORT||PCI)&&(HAS_IOPORT)"
   },
@@ -70304,6 +70580,10 @@
    "deps": "PARPORT"
   },
   {
+   "name": "PNP",
+   "deps": "(HAS_IOMEM)&&(ISA||ACPI)"
+  },
+  {
    "name": "PNP_DEBUG_MESSAGES",
    "deps": "(PNP)"
   },
@@ -70322,6 +70602,10 @@
   {
    "name": "PNPACPI",
    "deps": ""
+  },
+  {
+   "name": "BLK_DEV",
+   "deps": "(BLOCK)"
   },
   {
    "name": "BLK_DEV_NULL_BLK",
@@ -70924,6 +71208,10 @@
    "deps": "(PCI)&&(OF_OVERLAY)"
   },
   {
+   "name": "C2PORT",
+   "deps": ""
+  },
+  {
    "name": "C2PORT_DURAMAR_2150",
    "deps": "C2PORT&&(X86)"
   },
@@ -71022,6 +71310,10 @@
   {
    "name": "VMWARE_VMCI",
    "deps": "((X86||ARM64)&&!CPU_BIG_ENDIAN&&PCI)"
+  },
+  {
+   "name": "GENWQE",
+   "deps": "(PCI&&64BIT)"
   },
   {
    "name": "GENWQE_PLATFORM_ERROR_RECOVERY",
@@ -71202,6 +71494,10 @@
   {
    "name": "SCSI_SRP_ATTRS",
    "deps": "(SCSI)"
+  },
+  {
+   "name": "SCSI_LOWLEVEL",
+   "deps": "(SCSI!=n)"
   },
   {
    "name": "ISCSI_TCP",
@@ -71740,6 +72036,10 @@
    "deps": "(PCI&&SCSI)&&(SCSI_FC_ATTRS)"
   },
   {
+   "name": "SCSI_LOWLEVEL_PCMCIA",
+   "deps": "(SCSI!=n&&PCMCIA!=n)"
+  },
+  {
    "name": "PCMCIA_AHA152X",
    "deps": "(HAS_IOPORT)"
   },
@@ -71760,6 +72060,10 @@
    "deps": "(HAS_IOPORT)"
   },
   {
+   "name": "SCSI_DH",
+   "deps": "(SCSI)"
+  },
+  {
    "name": "SCSI_DH_RDAC",
    "deps": "(SCSI_DH&&SCSI)"
   },
@@ -71778,6 +72082,10 @@
   {
    "name": "HAVE_PATA_PLATFORM",
    "deps": ""
+  },
+  {
+   "name": "ATA",
+   "deps": "(HAS_IOMEM)&&(BLOCK)"
   },
   {
    "name": "ATA_NONSTANDARD",
@@ -72316,6 +72624,10 @@
    "deps": "ATA_BMDMA&&((ISA||PCI)&&HAS_IOPORT)"
   },
   {
+   "name": "MD",
+   "deps": "(BLOCK)"
+  },
+  {
    "name": "BLK_DEV_MD",
    "deps": "MD"
   },
@@ -72536,6 +72848,10 @@
    "deps": "(64BIT)&&(BLK_DEV_DM)"
   },
   {
+   "name": "TARGET_CORE",
+   "deps": "(BLOCK)"
+  },
+  {
    "name": "TCM_IBLOCK",
    "deps": "TARGET_CORE"
   },
@@ -72574,6 +72890,10 @@
   {
    "name": "REMOTE_TARGET",
    "deps": "(SCSI)"
+  },
+  {
+   "name": "FUSION",
+   "deps": "(PCI&&HAS_IOPORT)"
   },
   {
    "name": "FUSION_SPI",
@@ -72642,6 +72962,10 @@
   {
    "name": "FIREWIRE_NOSY",
    "deps": "(PCI)"
+  },
+  {
+   "name": "MACINTOSH_DRIVERS",
+   "deps": "(PPC||MAC||X86)"
   },
   {
    "name": "ADB",
@@ -72764,6 +73088,10 @@
    "deps": "MACINTOSH_DRIVERS&&(SENSORS_AMS&&I2C)"
   },
   {
+   "name": "NETDEVICES",
+   "deps": "(NET)"
+  },
+  {
    "name": "MII",
    "deps": "NETDEVICES"
   },
@@ -72802,6 +73130,10 @@
   {
    "name": "IFB",
    "deps": "NET_CORE&&(NET_ACT_MIRRED||NFT_FWD_NETDEV)"
+  },
+  {
+   "name": "NET_TEAM",
+   "deps": ""
   },
   {
    "name": "NET_TEAM_MODE_BROADCAST",
@@ -72956,6 +73288,10 @@
    "deps": "NET_CORE"
   },
   {
+   "name": "ARCNET",
+   "deps": "(NETDEVICES&&(ISA||PCI||PCMCIA)&&HAS_IOPORT)"
+  },
+  {
    "name": "ARCNET_1201",
    "deps": "ARCNET"
   },
@@ -72998,6 +73334,10 @@
   {
    "name": "ARCNET_COM20020_CS",
    "deps": "ARCNET&&(ARCNET_COM20020&&PCMCIA)"
+  },
+  {
+   "name": "ATM_DRIVERS",
+   "deps": "(NETDEVICES&&ATM)"
   },
   {
    "name": "ATM_DUMMY",
@@ -73120,12 +73460,20 @@
    "deps": "(PCI)"
   },
   {
+   "name": "CAIF_DRIVERS",
+   "deps": "(CAIF)"
+  },
+  {
    "name": "CAIF_TTY",
    "deps": "CAIF_DRIVERS&&(CAIF&&TTY)"
   },
   {
    "name": "CAIF_VIRTIO",
    "deps": "CAIF_DRIVERS&&(CAIF&&HAS_DMA)"
+  },
+  {
+   "name": "B53",
+   "deps": "(NET_DSA)"
   },
   {
    "name": "B53_SPI_DRIVER",
@@ -73178,6 +73526,10 @@
   {
    "name": "NET_DSA_MV88E6060",
    "deps": ""
+  },
+  {
+   "name": "NET_DSA_MICROCHIP_KSZ_COMMON",
+   "deps": "(NET_DSA)"
   },
   {
    "name": "NET_DSA_MICROCHIP_KSZ9477_I2C",
@@ -73264,6 +73616,10 @@
    "deps": "(NET_DSA)"
   },
   {
+   "name": "NET_DSA_REALTEK",
+   "deps": "(NET_DSA)"
+  },
+  {
    "name": "NET_DSA_REALTEK_MDIO",
    "deps": "NET_DSA_REALTEK&&(OF)"
   },
@@ -73310,6 +73666,10 @@
   {
    "name": "NET_DSA_VITESSE_VSC73XX_PLATFORM",
    "deps": "(HAS_IOMEM)"
+  },
+  {
+   "name": "ETHERNET",
+   "deps": "(NET)"
   },
   {
    "name": "MDIO",
@@ -74062,6 +74422,10 @@
   {
    "name": "GIANFAR",
    "deps": "NET_VENDOR_FREESCALE&&(HAS_DMA)"
+  },
+  {
+   "name": "FSL_DPAA_ETH",
+   "deps": "(FSL_DPAA&&FSL_FMAN)"
   },
   {
    "name": "FSL_DPAA2_ETH",
@@ -75164,6 +75528,10 @@
    "deps": "NET_VENDOR_QUALCOMM&&(HAS_DMA&&HAS_IOMEM)"
   },
   {
+   "name": "RMNET",
+   "deps": ""
+  },
+  {
    "name": "NET_VENDOR_RDC",
    "deps": "(PCI)"
   },
@@ -75800,6 +76168,10 @@
    "deps": ""
   },
   {
+   "name": "PHYLIB",
+   "deps": ""
+  },
+  {
    "name": "SWPHY",
    "deps": "PHYLIB"
   },
@@ -76120,6 +76492,10 @@
    "deps": "PHYLIB&&(SPI)"
   },
   {
+   "name": "PSE_CONTROLLER",
+   "deps": "(REGULATOR)"
+  },
+  {
    "name": "PSE_REGULATOR",
    "deps": "PSE_CONTROLLER"
   },
@@ -76130,6 +76506,10 @@
   {
    "name": "PSE_TPS23881",
    "deps": "PSE_CONTROLLER&&(I2C)"
+  },
+  {
+   "name": "CAN_DEV",
+   "deps": "(CAN)"
   },
   {
    "name": "CAN_VCAN",
@@ -76196,12 +76576,20 @@
    "deps": "CAN_NETLINK&&(ARCH_ZYNQ||ARM64||MICROBLAZE||COMPILE_TEST)&&(COMMON_CLK&&HAS_IOMEM)"
   },
   {
+   "name": "CAN_C_CAN",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "CAN_C_CAN_PLATFORM",
    "deps": "CAN_C_CAN"
   },
   {
    "name": "CAN_C_CAN_PCI",
    "deps": "CAN_C_CAN&&(PCI)"
+  },
+  {
+   "name": "CAN_CC770",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "CAN_CC770_ISA",
@@ -76230,6 +76618,10 @@
   {
    "name": "CAN_IFI_CANFD",
    "deps": "(HAS_IOMEM)"
+  },
+  {
+   "name": "CAN_M_CAN",
+   "deps": ""
   },
   {
    "name": "CAN_M_CAN_PCI",
@@ -76266,6 +76658,10 @@
   {
    "name": "CAN_ROCKCHIP_CANFD",
    "deps": "(OF)&&(ARCH_ROCKCHIP||COMPILE_TEST)"
+  },
+  {
+   "name": "CAN_SJA1000",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "CAN_EMS_PCI",
@@ -76672,6 +77068,10 @@
    "deps": "(PCI)"
   },
   {
+   "name": "USB_NET_DRIVERS",
+   "deps": "(USB&&NET)"
+  },
+  {
    "name": "USB_CATC",
    "deps": "USB_NET_DRIVERS"
   },
@@ -76850,6 +77250,10 @@
   {
    "name": "USB_RTL8153_ECM",
    "deps": "USB_NET_DRIVERS&&(USB_NET_CDCETHER&&(USB_RTL8152||USB_RTL8152=n))"
+  },
+  {
+   "name": "WLAN",
+   "deps": "(!S390)&&(NET)"
   },
   {
    "name": "WLAN_VENDOR_ADMTEK",
@@ -77708,6 +78112,10 @@
    "deps": ""
   },
   {
+   "name": "RT2X00",
+   "deps": "(MAC80211&&HAS_DMA)"
+  },
+  {
    "name": "RT2400PCI",
    "deps": "RT2X00&&(PCI)"
   },
@@ -77844,6 +78252,10 @@
    "deps": "(RTL8187&&MAC80211_LEDS&&(LEDS_CLASS=y||LEDS_CLASS=RTL8187))"
   },
   {
+   "name": "RTL_CARDS",
+   "deps": "(MAC80211&&(PCI||USB))"
+  },
+  {
    "name": "RTL8192CE",
    "deps": "RTL_CARDS&&(PCI)"
   },
@@ -77922,6 +78334,10 @@
   {
    "name": "RTL8XXXU_UNTESTED",
    "deps": "(RTL8XXXU)"
+  },
+  {
+   "name": "RTW88",
+   "deps": "(MAC80211)"
   },
   {
    "name": "RTW88_CORE",
@@ -78058,6 +78474,10 @@
   {
    "name": "RTW88_LEDS",
    "deps": "RTW88&&(LEDS_CLASS=y||LEDS_CLASS=MAC80211)"
+  },
+  {
+   "name": "RTW89",
+   "deps": "(MAC80211)"
   },
   {
    "name": "RTW89_CORE",
@@ -78248,6 +78668,10 @@
    "deps": "(CFG80211)"
   },
   {
+   "name": "WAN",
+   "deps": ""
+  },
+  {
    "name": "HDLC",
    "deps": "WAN"
   },
@@ -78274,6 +78698,10 @@
   {
    "name": "HDLC_X25",
    "deps": "WAN&&(HDLC&&(LAPB=m&&HDLC=m||LAPB=y))"
+  },
+  {
+   "name": "FRAMER",
+   "deps": ""
   },
   {
    "name": "GENERIC_FRAMER",
@@ -78330,6 +78758,10 @@
   {
    "name": "LAPBETHER",
    "deps": "WAN&&(LAPB&&X25)"
+  },
+  {
+   "name": "IEEE802154_DRIVERS",
+   "deps": "(NETDEVICES&&IEEE802154)"
   },
   {
    "name": "IEEE802154_FAKELB",
@@ -78444,6 +78876,10 @@
    "deps": "NET_CORE&&(ISA)"
   },
   {
+   "name": "ISDN",
+   "deps": "(NET&&NETDEVICES)"
+  },
+  {
    "name": "ISDN_CAPI",
    "deps": ""
   },
@@ -78453,6 +78889,10 @@
   },
   {
    "name": "ISDN_CAPI_MIDDLEWARE",
+   "deps": ""
+  },
+  {
+   "name": "MISDN",
    "deps": ""
   },
   {
@@ -78566,6 +79006,10 @@
   {
    "name": "INPUT_APMPOWER",
    "deps": "INPUT&&(INPUT&&APM_EMULATION)"
+  },
+  {
+   "name": "INPUT_KEYBOARD",
+   "deps": ""
   },
   {
    "name": "KEYBOARD_ADC",
@@ -78836,6 +79280,10 @@
    "deps": "INPUT_KEYBOARD&&(I2C)"
   },
   {
+   "name": "INPUT_MOUSE",
+   "deps": ""
+  },
+  {
    "name": "MOUSE_PS2",
    "deps": "INPUT_MOUSE"
   },
@@ -78978,6 +79426,10 @@
   {
    "name": "MOUSE_SYNAPTICS_USB",
    "deps": "INPUT_MOUSE&&(USB_ARCH_HAS_HCD)"
+  },
+  {
+   "name": "INPUT_JOYSTICK",
+   "deps": "(!UML)"
   },
   {
    "name": "JOYSTICK_ANALOG",
@@ -79144,6 +79596,10 @@
    "deps": "INPUT_JOYSTICK&&(I2C)"
   },
   {
+   "name": "INPUT_TABLET",
+   "deps": ""
+  },
+  {
    "name": "TABLET_USB_ACECAD",
    "deps": "INPUT_TABLET&&(USB_ARCH_HAS_HCD)"
   },
@@ -79166,6 +79622,10 @@
   {
    "name": "TABLET_SERIAL_WACOM4",
    "deps": "INPUT_TABLET"
+  },
+  {
+   "name": "INPUT_TOUCHSCREEN",
+   "deps": ""
   },
   {
    "name": "TOUCHSCREEN_88PM860X",
@@ -79690,6 +80150,10 @@
   {
    "name": "TOUCHSCREEN_HIMAX_HX83112B",
    "deps": "INPUT_TOUCHSCREEN&&(I2C)"
+  },
+  {
+   "name": "INPUT_MISC",
+   "deps": ""
   },
   {
    "name": "INPUT_88PM860X_ONKEY",
@@ -81280,6 +81744,10 @@
    "deps": "TTY&&(RPMSG)"
   },
   {
+   "name": "SERIAL_DEV_BUS",
+   "deps": ""
+  },
+  {
    "name": "SERIAL_DEV_CTRL_TTYPORT",
    "deps": "SERIAL_DEV_BUS"
   },
@@ -81314,6 +81782,10 @@
   {
    "name": "POWERNV_OP_PANEL",
    "deps": "(PPC_POWERNV)"
+  },
+  {
+   "name": "IPMI_HANDLER",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "IPMI_DMI_DECODE",
@@ -81418,6 +81890,10 @@
   {
    "name": "NWFLASH",
    "deps": "(ARCH_NETWINDER)"
+  },
+  {
+   "name": "HW_RANDOM",
+   "deps": ""
   },
   {
    "name": "HW_RANDOM_TIMERIOMEM",
@@ -81670,6 +82146,10 @@
   {
    "name": "UV_MMTIMER",
    "deps": "(X86_UV)"
+  },
+  {
+   "name": "TCG_TPM",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "TCG_TPM2_HMAC",
@@ -82556,6 +83036,10 @@
    "deps": "(HAS_IOMEM)"
   },
   {
+   "name": "I3C",
+   "deps": ""
+  },
+  {
    "name": "CDNS_I3C_MASTER",
    "deps": "(HAS_IOMEM)&&(!(ALPHA||PARISC))"
   },
@@ -82578,6 +83062,10 @@
   {
    "name": "MIPI_I3C_HCI_PCI",
    "deps": "(MIPI_I3C_HCI)&&(PCI)"
+  },
+  {
+   "name": "SPI",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "SPI_DEBUG",
@@ -83200,6 +83688,10 @@
    "deps": "SPI_OFFLOAD&&(PWM)"
   },
   {
+   "name": "SPMI",
+   "deps": ""
+  },
+  {
    "name": "SPMI_APPLE",
    "deps": "SPMI&&(ARCH_APPLE||COMPILE_TEST)"
   },
@@ -83214,6 +83706,10 @@
   {
    "name": "SPMI_MTK_PMIF",
    "deps": "SPMI&&(ARCH_MEDIATEK||COMPILE_TEST)"
+  },
+  {
+   "name": "HSI",
+   "deps": ""
   },
   {
    "name": "HSI_BOARDINFO",
@@ -83240,6 +83736,10 @@
    "deps": "(HSI)"
   },
   {
+   "name": "PPS",
+   "deps": ""
+  },
+  {
    "name": "PPS_DEBUG",
    "deps": "PPS"
   },
@@ -83261,6 +83761,10 @@
   },
   {
    "name": "PPS_CLIENT_GPIO",
+   "deps": ""
+  },
+  {
+   "name": "PPS_GENERATOR",
    "deps": ""
   },
   {
@@ -83342,6 +83846,10 @@
   {
    "name": "PTP_S390",
    "deps": "(PTP_1588_CLOCK)&&(S390)"
+  },
+  {
+   "name": "PINCTRL",
+   "deps": ""
   },
   {
    "name": "GENERIC_PINCTRL_GROUPS",
@@ -84100,6 +84608,10 @@
    "deps": "(MFD_MT6397||COMPILE_TEST)&&(OF)"
   },
   {
+   "name": "PINCTRL_MESON",
+   "deps": "(ARCH_MESON||COMPILE_TEST)&&(OF)"
+  },
+  {
    "name": "PINCTRL_MESON8",
    "deps": "PINCTRL_MESON&&(ARM)"
   },
@@ -84856,6 +85368,10 @@
    "deps": "(OF&&(SOC_DRA7XX||COMPILE_TEST))"
   },
   {
+   "name": "PINCTRL_UNIPHIER",
+   "deps": "(ARCH_UNIPHIER||COMPILE_TEST)&&(OF&&MFD_SYSCON)"
+  },
+  {
    "name": "PINCTRL_UNIPHIER_LD4",
    "deps": "PINCTRL_UNIPHIER"
   },
@@ -84926,6 +85442,10 @@
   {
    "name": "PINCTRL_WM8850",
    "deps": "ARCH_VT8500&&(ARCH_WM8850)"
+  },
+  {
+   "name": "GPIOLIB",
+   "deps": ""
   },
   {
    "name": "GPIOLIB_FASTPATH_LIMIT",
@@ -85748,6 +86268,10 @@
    "deps": ""
   },
   {
+   "name": "W1",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "W1_CON",
    "deps": "W1&&(CONNECTOR)"
   },
@@ -85862,6 +86386,10 @@
   {
    "name": "W1_SLAVE_DS28E17",
    "deps": "(I2C)"
+  },
+  {
+   "name": "POWER_RESET",
+   "deps": ""
   },
   {
    "name": "POWER_RESET_AS3722",
@@ -86020,8 +86548,16 @@
    "deps": "POWER_RESET&&((GPIO_MLXBF2||GPIO_MLXBF3)&&ACPI)"
   },
   {
+   "name": "POWER_SEQUENCING",
+   "deps": ""
+  },
+  {
    "name": "POWER_SEQUENCING_QCOM_WCN",
    "deps": "POWER_SEQUENCING&&(OF)"
+  },
+  {
+   "name": "POWER_SUPPLY",
+   "deps": ""
   },
   {
    "name": "POWER_SUPPLY_DEBUG",
@@ -86486,6 +87022,10 @@
   {
    "name": "FUEL_GAUGE_MM8013",
    "deps": "POWER_SUPPLY&&(I2C)"
+  },
+  {
+   "name": "HWMON",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "HWMON_VID",
@@ -87148,6 +87688,10 @@
    "deps": ""
   },
   {
+   "name": "PMBUS",
+   "deps": "(I2C)"
+  },
+  {
    "name": "SENSORS_PMBUS",
    "deps": "PMBUS"
   },
@@ -87728,6 +88272,10 @@
    "deps": "ACPI&&(ACPI_WMI)"
   },
   {
+   "name": "THERMAL",
+   "deps": ""
+  },
+  {
    "name": "THERMAL_NETLINK",
    "deps": "THERMAL&&(NET)"
   },
@@ -88086,6 +88634,10 @@
   {
    "name": "LOONGSON2_THERMAL",
    "deps": "CPU_THERMAL&&(LOONGARCH||COMPILE_TEST)&&(OF)"
+  },
+  {
+   "name": "WATCHDOG",
+   "deps": ""
   },
   {
    "name": "WATCHDOG_CORE",
@@ -88876,6 +89428,10 @@
    "deps": "(HAS_IOMEM&&HAS_DMA)"
   },
   {
+   "name": "SSB",
+   "deps": "(SSB_POSSIBLE)"
+  },
+  {
    "name": "SSB_SPROM",
    "deps": "SSB"
   },
@@ -88958,6 +89514,10 @@
   {
    "name": "BCMA_POSSIBLE",
    "deps": "(HAS_IOMEM&&HAS_DMA)"
+  },
+  {
+   "name": "BCMA",
+   "deps": "(BCMA_POSSIBLE)"
   },
   {
    "name": "BCMA_BLOCKIO",
@@ -89892,6 +90452,10 @@
    "deps": "HAS_IOMEM&&((X86&&ACPI))"
   },
   {
+   "name": "REGULATOR",
+   "deps": ""
+  },
+  {
    "name": "REGULATOR_DEBUG",
    "deps": "REGULATOR"
   },
@@ -90676,6 +91240,10 @@
    "deps": "REGULATOR&&(I2C)"
   },
   {
+   "name": "RC_CORE",
+   "deps": "(INPUT)"
+  },
+  {
    "name": "BPF_LIRC_MODE2",
    "deps": "RC_CORE&&(BPF_SYSCALL)&&(RC_CORE=y)&&(LIRC)"
   },
@@ -90686,6 +91254,10 @@
   {
    "name": "RC_MAP",
    "deps": "(RC_CORE)"
+  },
+  {
+   "name": "RC_DECODERS",
+   "deps": "RC_CORE"
   },
   {
    "name": "IR_IMON_DECODER",
@@ -90729,6 +91301,10 @@
   },
   {
    "name": "IR_XMP_DECODER",
+   "deps": "RC_DECODERS"
+  },
+  {
+   "name": "RC_DEVICES",
    "deps": "RC_DECODERS"
   },
   {
@@ -90908,6 +91484,10 @@
    "deps": "(CEC_PIN&&DEBUG_FS)"
   },
   {
+   "name": "MEDIA_CEC_SUPPORT",
+   "deps": ""
+  },
+  {
    "name": "CEC_CH7322",
    "deps": "(I2C)"
   },
@@ -90966,6 +91546,10 @@
   {
    "name": "USB_RAINSHADOW_CEC",
    "deps": ""
+  },
+  {
+   "name": "MEDIA_SUPPORT",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "MEDIA_SUPPORT_FILTER",
@@ -91098,6 +91682,14 @@
   {
    "name": "DVB_ULE_DEBUG",
    "deps": "(DVB_CORE)"
+  },
+  {
+   "name": "MEDIA_USB_SUPPORT",
+   "deps": ""
+  },
+  {
+   "name": "USB_GSPCA",
+   "deps": "(VIDEO_DEV)&&(INPUT||INPUT=n)"
   },
   {
    "name": "USB_GSPCA_BENQ",
@@ -91616,6 +92208,10 @@
    "deps": "(VIDEO_DEV&&SPI)"
   },
   {
+   "name": "MEDIA_PCI_SUPPORT",
+   "deps": "PCI"
+  },
+  {
    "name": "VIDEO_MGB4",
    "deps": "(VIDEO_DEV&&PCI&&I2C&&DMADEVICES&&SPI&&MTD&&IIO)&&(COMMON_CLK)"
   },
@@ -91880,6 +92476,10 @@
    "deps": "(ACPI||COMPILE_TEST)&&(I2C)"
   },
   {
+   "name": "RADIO_ADAPTERS",
+   "deps": "(VIDEO_DEV)&&(MEDIA_RADIO_SUPPORT)"
+  },
+  {
    "name": "RADIO_MAXIRADIO",
    "deps": "RADIO_ADAPTERS&&(PCI&&HAS_IOPORT)"
   },
@@ -91972,6 +92572,10 @@
    "deps": "(I2C&&RADIO_SI4713)"
   },
   {
+   "name": "V4L_RADIO_ISA_DRIVERS",
+   "deps": "RADIO_ADAPTERS&&(ISA||COMPILE_TEST)&&(HAS_IOPORT)"
+  },
+  {
    "name": "RADIO_AZTECH",
    "deps": "V4L_RADIO_ISA_DRIVERS&&(ISA||COMPILE_TEST)&&(HAS_IOPORT)"
   },
@@ -92058,6 +92662,10 @@
   {
    "name": "RADIO_ZOLTRIX_PORT",
    "deps": "V4L_RADIO_ISA_DRIVERS&&(RADIO_ZOLTRIX=y)"
+  },
+  {
+   "name": "MEDIA_PLATFORM_DRIVERS",
+   "deps": ""
   },
   {
    "name": "V4L_PLATFORM_DRIVERS",
@@ -92560,6 +93168,10 @@
    "deps": "(DVB_CORE&&HAS_DMA)&&(MMC)&&(!RC_CORE||RC_CORE)"
   },
   {
+   "name": "V4L_TEST_DRIVERS",
+   "deps": "(VIDEO_DEV)"
+  },
+  {
    "name": "VIDEO_VIM2M",
    "deps": "V4L_TEST_DRIVERS&&(VIDEO_DEV)"
   },
@@ -92594,6 +93206,10 @@
   {
    "name": "VISL_DEBUGFS",
    "deps": "(VIDEO_VISL)&&(DEBUG_FS)"
+  },
+  {
+   "name": "DVB_TEST_DRIVERS",
+   "deps": "V4L_TEST_DRIVERS&&(DVB_CORE&&MEDIA_SUPPORT&&I2C)"
   },
   {
    "name": "DVB_VIDTV",
@@ -92702,6 +93318,10 @@
   {
    "name": "VIDEO_IR_I2C",
    "deps": "VIDEO_DEV&&(I2C&&RC_CORE)"
+  },
+  {
+   "name": "VIDEO_CAMERA_SENSOR",
+   "deps": "VIDEO_DEV&&(MEDIA_CAMERA_SUPPORT&&I2C)"
   },
   {
    "name": "VIDEO_APTINA_PLL",
@@ -94008,6 +94628,10 @@
    "deps": ""
   },
   {
+   "name": "AUXDISPLAY",
+   "deps": ""
+  },
+  {
    "name": "CHARLCD",
    "deps": "AUXDISPLAY"
   },
@@ -94026,6 +94650,10 @@
   {
    "name": "LCD2S",
    "deps": "AUXDISPLAY&&(I2C)"
+  },
+  {
+   "name": "PARPORT_PANEL",
+   "deps": "AUXDISPLAY&&(PARPORT)"
   },
   {
    "name": "PANEL_PARPORT",
@@ -94152,6 +94780,10 @@
    "deps": "HAS_IOMEM"
   },
   {
+   "name": "AGP",
+   "deps": "(ALPHA||PARISC||PPC||X86)&&(PCI)"
+  },
+  {
    "name": "AGP_ALI",
    "deps": "(AGP&&X86_32)"
   },
@@ -94230,6 +94862,10 @@
   {
    "name": "NOVA_CORE",
    "deps": "(PCI)&&(RUST)&&(RUST_FW_LOADER_ABSTRACTIONS)"
+  },
+  {
+   "name": "DRM",
+   "deps": "((AGP||AGP=n)&&!EMULATED_CMPXCHG&&HAS_DMA)"
   },
   {
    "name": "DRM_MIPI_DBI",
@@ -96112,6 +96748,10 @@
    "deps": ""
   },
   {
+   "name": "FB",
+   "deps": ""
+  },
+  {
    "name": "FB_HECUBA",
    "deps": "(FB)"
   },
@@ -96792,6 +97432,10 @@
    "deps": ""
   },
   {
+   "name": "FB_OMAP2",
+   "deps": "(FB)&&(FB_DEVICE)&&(DRM_OMAP=n)&&(GPIOLIB)"
+  },
+  {
    "name": "FB_OMAP2_DEBUG_SUPPORT",
    "deps": "FB_OMAP2&&(FB_OMAP2)"
   },
@@ -96912,6 +97556,10 @@
    "deps": "(SPI)&&(BACKLIGHT_CLASS_DEVICE)&&(DRM_PANEL_NEC_NL8048HL11=n)"
   },
   {
+   "name": "MMP_DISP",
+   "deps": "(CPU_PXA910||CPU_MMP2||COMPILE_TEST)"
+  },
+  {
    "name": "MMP_DISP_CONTROLLER",
    "deps": "(HAVE_CLK&&HAS_IOMEM)&&(CPU_PXA910||CPU_MMP2||COMPILE_TEST)"
   },
@@ -96981,6 +97629,10 @@
   },
   {
    "name": "FB_PROVIDE_GET_FB_UNMAPPED_AREA",
+   "deps": "(FB)"
+  },
+  {
+   "name": "FB_FOREIGN_ENDIAN",
    "deps": "(FB)"
   },
   {
@@ -97292,6 +97944,10 @@
    "deps": "HAS_IOMEM"
   },
   {
+   "name": "DRM_ACCEL",
+   "deps": "DRM"
+  },
+  {
    "name": "DRM_ACCEL_AMDXDNA",
    "deps": "(AMD_IOMMU)&&(DRM_ACCEL)&&(PCI&&HAS_IOMEM)&&(X86_64)"
   },
@@ -97310,6 +97966,10 @@
   {
    "name": "DRM_ACCEL_QAIC",
    "deps": "(DRM_ACCEL)&&(PCI&&HAS_IOMEM)&&(MHI_BUS)"
+  },
+  {
+   "name": "SOUND",
+   "deps": "(HAS_IOMEM||INDIRECT_IOMEM)"
   },
   {
    "name": "SOUND_OSS_CORE",
@@ -97334,6 +97994,10 @@
   {
    "name": "DMASOUND",
    "deps": ""
+  },
+  {
+   "name": "SND",
+   "deps": "SOUND"
   },
   {
    "name": "SND_TIMER",
@@ -97552,56 +98216,60 @@
    "deps": ""
   },
   {
+   "name": "SND_DRIVERS",
+   "deps": ""
+  },
+  {
    "name": "SND_PCSP",
-   "deps": "SND_DRIVERS&&(PCSPKR_PLATFORM&&X86&&HIGH_RES_TIMERS)&&(INPUT)"
+   "deps": "(PCSPKR_PLATFORM&&X86&&HIGH_RES_TIMERS)&&(INPUT)"
   },
   {
    "name": "SND_DUMMY",
-   "deps": "SND_DRIVERS"
+   "deps": ""
   },
   {
    "name": "SND_ALOOP",
-   "deps": "SND_DRIVERS"
+   "deps": ""
   },
   {
    "name": "SND_PCMTEST",
-   "deps": "SND_DRIVERS&&(DEBUG_FS)"
+   "deps": "(DEBUG_FS)"
   },
   {
    "name": "SND_VIRMIDI",
-   "deps": "SND_DRIVERS&&(SND_SEQUENCER)"
+   "deps": "(SND_SEQUENCER)"
   },
   {
    "name": "SND_MTPAV",
-   "deps": "SND_DRIVERS&&(HAS_IOPORT)"
+   "deps": "(HAS_IOPORT)"
   },
   {
    "name": "SND_MTS64",
-   "deps": "SND_DRIVERS&&(PARPORT)"
+   "deps": "(PARPORT)"
   },
   {
    "name": "SND_SERIAL_U16550",
-   "deps": "SND_DRIVERS&&(HAS_IOPORT)"
+   "deps": "(HAS_IOPORT)"
   },
   {
    "name": "SND_SERIAL_GENERIC",
-   "deps": "SND_DRIVERS&&(SERIAL_DEV_BUS)&&(OF)"
+   "deps": "(SERIAL_DEV_BUS)&&(OF)"
   },
   {
    "name": "SND_MPU401",
-   "deps": "SND_DRIVERS&&(HAS_IOPORT)"
+   "deps": "(HAS_IOPORT)"
   },
   {
    "name": "SND_PORTMAN2X4",
-   "deps": "SND_DRIVERS&&(PARPORT)"
+   "deps": "(PARPORT)"
   },
   {
    "name": "SND_AC97_POWER_SAVE",
-   "deps": "SND_DRIVERS&&(SND_AC97_CODEC)"
+   "deps": "(SND_AC97_CODEC)"
   },
   {
    "name": "SND_AC97_POWER_SAVE_DEFAULT",
-   "deps": "SND_DRIVERS&&(SND_AC97_POWER_SAVE)"
+   "deps": "(SND_AC97_POWER_SAVE)"
   },
   {
    "name": "SND_WSS_LIB",
@@ -97618,6 +98286,10 @@
   {
    "name": "SND_SB16_DSP",
    "deps": ""
+  },
+  {
+   "name": "SND_ISA",
+   "deps": "(ISA||COMPILE_TEST)&&(ISA_DMA_API)&&(HAS_IOPORT)"
   },
   {
    "name": "SND_ADLIB",
@@ -97754,6 +98426,10 @@
   {
    "name": "SND_MSND_CLASSIC",
    "deps": "SND_ISA&&(X86)"
+  },
+  {
+   "name": "SND_PCI",
+   "deps": "(PCI)"
   },
   {
    "name": "SND_AD1889",
@@ -98264,6 +98940,10 @@
    "deps": "(SND_SST_ATOM_HIFI2_PLATFORM_ACPI&&SND_SOC_SOF_BAYTRAIL)"
   },
   {
+   "name": "SND_PPC",
+   "deps": "(PPC)"
+  },
+  {
    "name": "SND_POWERMAC",
    "deps": "SND_PPC&&(I2C&&INPUT&&PPC_PMAC)"
   },
@@ -98286,6 +98966,10 @@
   {
    "name": "AC97_BUS_COMPAT",
    "deps": "(AC97_BUS_NEW)&&(!AC97_BUS)"
+  },
+  {
+   "name": "SND_AOA",
+   "deps": "(PPC_PMAC)"
   },
   {
    "name": "SND_AOA_FABRIC_LAYOUT",
@@ -98312,6 +98996,10 @@
    "deps": "(SND_AOA_SOUNDBUS&&PCI)"
   },
   {
+   "name": "SND_ARM",
+   "deps": "(ARM)"
+  },
+  {
    "name": "SND_ARMAACI",
    "deps": "SND_ARM&&(ARM_AMBA)"
   },
@@ -98332,12 +99020,20 @@
    "deps": "(ARCH_AT91)"
   },
   {
+   "name": "SND_SPI",
+   "deps": "(SPI)"
+  },
+  {
    "name": "SND_AT73C213",
    "deps": "SND_SPI&&(ATMEL_SSC)"
   },
   {
    "name": "SND_AT73C213_TARGET_BITRATE",
    "deps": "SND_SPI&&(SND_AT73C213)"
+  },
+  {
+   "name": "SND_MIPS",
+   "deps": "(MIPS)"
   },
   {
    "name": "SND_SGI_O2",
@@ -98352,12 +99048,20 @@
    "deps": "SND_MIPS&&(MACH_NINTENDO64&&SND=y)"
   },
   {
+   "name": "SND_SUPERH",
+   "deps": "(SUPERH)"
+  },
+  {
    "name": "SND_AICA",
    "deps": "SND_SUPERH&&(SH_DREAMCAST&&SH_DMA_API)"
   },
   {
    "name": "SND_SH_DAC_AUDIO",
    "deps": "SND_SUPERH&&(SND)&&(CPU_SH3&&HIGH_RES_TIMERS)"
+  },
+  {
+   "name": "SND_USB",
+   "deps": "(USB)"
   },
   {
    "name": "SND_USB_AUDIO",
@@ -98428,6 +99132,10 @@
    "deps": ""
   },
   {
+   "name": "SND_FIREWIRE",
+   "deps": "(FIREWIRE)"
+  },
+  {
    "name": "SND_FIREWIRE_LIB",
    "deps": ""
   },
@@ -98468,12 +99176,20 @@
    "deps": ""
   },
   {
+   "name": "SND_PCMCIA",
+   "deps": "(PCMCIA)&&(HAS_IOPORT)"
+  },
+  {
    "name": "SND_VXPOCKET",
    "deps": ""
   },
   {
    "name": "SND_PDAUDIOCF",
    "deps": ""
+  },
+  {
+   "name": "SND_SPARC",
+   "deps": "(SPARC)"
   },
   {
    "name": "SND_SUN_AMD7930",
@@ -98488,8 +99204,16 @@
    "deps": "SND_SPARC&&(SBUS)"
   },
   {
+   "name": "SND_GSC",
+   "deps": "(GSC)"
+  },
+  {
    "name": "SND_HARMONY",
    "deps": "SND_GSC"
+  },
+  {
+   "name": "SND_SOC",
+   "deps": ""
   },
   {
    "name": "SND_SOC_AC97_BUS",
@@ -99172,6 +99896,10 @@
    "deps": "(I2C)&&(MFD_INTEL_LPSS||COMPILE_TEST)"
   },
   {
+   "name": "SND_SOC_INTEL_MACH",
+   "deps": "(SND_SOC_INTEL_SST_TOPLEVEL||SND_SOC_SOF_INTEL_TOPLEVEL)"
+  },
+  {
    "name": "SND_SOC_INTEL_USER_FRIENDLY_LONG_NAMES",
    "deps": "SND_SOC_INTEL_MACH"
   },
@@ -99500,6 +100228,10 @@
    "deps": ""
   },
   {
+   "name": "SND_MXS_SOC",
+   "deps": "(ARCH_MXS||COMPILE_TEST)&&(COMMON_CLK)"
+  },
+  {
    "name": "SND_SOC_MXS_SGTL5000",
    "deps": "SND_MXS_SOC&&(I2C)"
   },
@@ -99530,6 +100262,10 @@
   {
    "name": "SND_PXA910_SOC",
    "deps": "(ARCH_MMP&&SND)"
+  },
+  {
+   "name": "SND_SOC_QCOM",
+   "deps": "(ARCH_QCOM||COMPILE_TEST)"
   },
   {
    "name": "SND_SOC_LPASS_CPU",
@@ -99756,6 +100492,10 @@
    "deps": "(SND_SOC_ROCKCHIP&&I2C&&GPIOLIB&&HAVE_CLK&&SPI)"
   },
   {
+   "name": "SND_SOC_SAMSUNG",
+   "deps": "(PLAT_SAMSUNG||ARCH_S5PV210||ARCH_EXYNOS||COMPILE_TEST)&&(COMMON_CLK)"
+  },
+  {
    "name": "SND_SAMSUNG_PCM",
    "deps": "SND_SOC_SAMSUNG"
   },
@@ -99829,6 +100569,10 @@
   },
   {
    "name": "SND_SOC_SDCA_OPTIONAL",
+   "deps": ""
+  },
+  {
+   "name": "SND_SOC_SOF_TOPLEVEL",
    "deps": ""
   },
   {
@@ -100232,6 +100976,10 @@
    "deps": "(HAVE_CLK&&SND_SOC_STARFIVE)"
   },
   {
+   "name": "SND_SOC_STI",
+   "deps": "(SND_SOC)&&(ARCH_STI||COMPILE_TEST)"
+  },
+  {
    "name": "SND_SOC_STM32_SAI",
    "deps": "((ARCH_STM32&&OF)||COMPILE_TEST)&&(COMMON_CLK)&&(SND_SOC)"
   },
@@ -100530,6 +101278,10 @@
   {
    "name": "SND_SOC_UNIPHIER_EVEA_CODEC",
    "deps": "(SND_SOC_UNIPHIER)"
+  },
+  {
+   "name": "SND_SOC_UX500",
+   "deps": "(SND_SOC)&&(MFD_DB8500_PRCMU)"
   },
   {
    "name": "SND_SOC_UX500_PLAT_MSP_I2S",
@@ -102296,6 +103048,10 @@
    "deps": "(OF)"
   },
   {
+   "name": "SND_X86",
+   "deps": "(X86)"
+  },
+  {
    "name": "HDMI_LPE_AUDIO",
    "deps": "SND_X86&&(DRM_I915)"
   },
@@ -102314,6 +103070,10 @@
   {
    "name": "AC97_BUS",
    "deps": "SND"
+  },
+  {
+   "name": "HID_SUPPORT",
+   "deps": "(INPUT)"
   },
   {
    "name": "HID",
@@ -102900,6 +103660,10 @@
    "deps": "(BPF_JIT)&&(BPF_SYSCALL)&&(DYNAMIC_FTRACE_WITH_DIRECT_CALLS)"
   },
   {
+   "name": "I2C_HID",
+   "deps": "(I2C)"
+  },
+  {
    "name": "I2C_HID_ACPI",
    "deps": "I2C_HID&&(ACPI)&&(DRM||!DRM)"
   },
@@ -103002,6 +103766,10 @@
   {
    "name": "USB_UHCI_BIG_ENDIAN_DESC",
    "deps": ""
+  },
+  {
+   "name": "USB_SUPPORT",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "USB_COMMON",
@@ -103820,6 +104588,10 @@
    "deps": "USB_ISP1760&&(USB=y||USB=USB_ISP1760)&&(USB_GADGET=y||USB_GADGET=USB_ISP1760)"
   },
   {
+   "name": "USB_SERIAL",
+   "deps": "(TTY)"
+  },
+  {
    "name": "USB_SERIAL_CONSOLE",
    "deps": "USB_SERIAL&&(USB_SERIAL=y)"
   },
@@ -104168,6 +104940,10 @@
    "deps": "((USB_ONBOARD_DEV&&I2C=y)||(USB_ONBOARD_DEV=m&&I2C=m))"
   },
   {
+   "name": "USB_ATM",
+   "deps": "(ATM)"
+  },
+  {
    "name": "USB_SPEEDTOUCH",
    "deps": "USB_ATM"
   },
@@ -104249,6 +105025,10 @@
   },
   {
    "name": "USB_ULPI_VIEWPORT",
+   "deps": ""
+  },
+  {
+   "name": "USB_GADGET",
    "deps": ""
   },
   {
@@ -104716,6 +105496,10 @@
    "deps": "USB_G_DBGP"
   },
   {
+   "name": "TYPEC",
+   "deps": ""
+  },
+  {
    "name": "TYPEC_TCPM",
    "deps": "(USB)"
   },
@@ -104874,6 +105658,10 @@
   {
    "name": "USB_ROLES_INTEL_XHCI",
    "deps": "USB_ROLE_SWITCH&&(ACPI&&X86)"
+  },
+  {
+   "name": "MMC",
+   "deps": "(HAS_IOMEM)"
   },
   {
    "name": "PWRSEQ_EMMC",
@@ -105308,6 +106096,10 @@
    "deps": "(((PPC_MICROWATT||LITEX)&&OF&&HAVE_CLK)||COMPILE_TEST)"
   },
   {
+   "name": "SCSI_UFSHCD",
+   "deps": "(SCSI&&SCSI_DMA)"
+  },
+  {
    "name": "SCSI_UFS_BSG",
    "deps": ""
   },
@@ -105380,6 +106172,10 @@
    "deps": "(SCSI_UFSHCD_PLATFORM&&(ARCH_ROCKCHIP||COMPILE_TEST))"
   },
   {
+   "name": "MEMSTICK",
+   "deps": ""
+  },
+  {
    "name": "MEMSTICK_DEBUG",
    "deps": "MEMSTICK"
   },
@@ -105418,6 +106214,10 @@
   {
    "name": "LEDS_EXPRESSWIRE",
    "deps": "(GPIOLIB)"
+  },
+  {
+   "name": "NEW_LEDS",
+   "deps": ""
   },
   {
    "name": "LEDS_CLASS",
@@ -105924,6 +106724,10 @@
    "deps": "LEDS_CLASS_MULTICOLOR&&(PINCTRL_SUN50I_H616)"
   },
   {
+   "name": "LEDS_TRIGGERS",
+   "deps": "(LEDS_CLASS)"
+  },
+  {
    "name": "LEDS_TRIGGER_TIMER",
    "deps": "LEDS_TRIGGERS"
   },
@@ -106008,6 +106812,10 @@
    "deps": "(LEDS_GPIO)&&(PINCTRL_ELKHARTLAKE)&&(SIEMENS_SIMATIC_IPC)"
   },
   {
+   "name": "ACCESSIBILITY",
+   "deps": ""
+  },
+  {
    "name": "A11Y_BRAILLE_CONSOLE",
    "deps": "ACCESSIBILITY&&(VT)&&(SERIAL_CORE_CONSOLE)"
   },
@@ -106078,6 +106886,10 @@
   {
    "name": "SPEAKUP_SYNTH_DUMMY",
    "deps": "SPEAKUP"
+  },
+  {
+   "name": "INFINIBAND",
+   "deps": "(HAS_IOMEM&&HAS_DMA)&&(NET)&&(INET)&&(m||IPV6!=m)&&(!ALPHA)"
   },
   {
    "name": "INFINIBAND_USER_MAD",
@@ -106246,6 +107058,10 @@
   {
    "name": "EDAC_SUPPORT",
    "deps": ""
+  },
+  {
+   "name": "EDAC",
+   "deps": "(HAS_IOMEM&&EDAC_SUPPORT&&RAS)"
   },
   {
    "name": "EDAC_LEGACY_SYSFS",
@@ -106514,6 +107330,10 @@
   {
    "name": "RTC_MC146818_LIB",
    "deps": ""
+  },
+  {
+   "name": "RTC_CLASS",
+   "deps": "(!S390)"
   },
   {
    "name": "RTC_HCTOSYS",
@@ -107316,6 +108136,10 @@
    "deps": "SPI_MASTER&&(ARCH_S32||COMPILE_TEST)&&(COMMON_CLK)"
   },
   {
+   "name": "DMADEVICES",
+   "deps": "(HAS_DMA)"
+  },
+  {
    "name": "DMADEVICES_DEBUG",
    "deps": "(DMADEVICES!=n)"
   },
@@ -107764,6 +108588,10 @@
    "deps": ""
   },
   {
+   "name": "FSL_DPAA2_QDMA",
+   "deps": "(ARM64)&&(FSL_MC_BUS&&FSL_MC_DPIO)"
+  },
+  {
    "name": "INTEL_LDMA",
    "deps": "(X86||COMPILE_TEST)"
   },
@@ -107820,6 +108648,14 @@
    "deps": "(DMA_SHARED_BUFFER)"
   },
   {
+   "name": "DMABUF_HEAPS",
+   "deps": ""
+  },
+  {
+   "name": "DMABUF_SYSFS_STATS",
+   "deps": "(DMA_SHARED_BUFFER)"
+  },
+  {
    "name": "DMABUF_HEAPS_SYSTEM",
    "deps": "(DMABUF_HEAPS)"
   },
@@ -107830,6 +108666,10 @@
   {
    "name": "DCA",
    "deps": ""
+  },
+  {
+   "name": "UIO",
+   "deps": "(MMU)"
   },
   {
    "name": "UIO_CIF",
@@ -107878,6 +108718,10 @@
   {
    "name": "UIO_DFL",
    "deps": "UIO&&(FPGA_DFL)"
+  },
+  {
+   "name": "VFIO",
+   "deps": "(IOMMUFD||!IOMMUFD)"
   },
   {
    "name": "VFIO_DEVICE_CDEV",
@@ -108004,6 +108848,10 @@
    "deps": ""
   },
   {
+   "name": "VIRT_DRIVERS",
+   "deps": ""
+  },
+  {
    "name": "VMGENID",
    "deps": "VIRT_DRIVERS"
   },
@@ -108076,6 +108924,10 @@
    "deps": ""
   },
   {
+   "name": "VIRTIO_MENU",
+   "deps": ""
+  },
+  {
    "name": "VIRTIO_HARDEN_NOTIFICATION",
    "deps": ""
   },
@@ -108144,6 +108996,10 @@
    "deps": "VIRTIO_RTC&&(RTC_CLASS)"
   },
   {
+   "name": "VDPA",
+   "deps": "(NET)"
+  },
+  {
    "name": "VDPA_SIM",
    "deps": "VDPA&&(RUNTIME_TESTING_MENU)"
   },
@@ -108205,6 +109061,10 @@
   },
   {
    "name": "VHOST",
+   "deps": ""
+  },
+  {
+   "name": "VHOST_MENU",
    "deps": ""
   },
   {
@@ -108400,12 +109260,20 @@
    "deps": "(XEN_VIRTIO)"
   },
   {
+   "name": "GREYBUS",
+   "deps": "(SYSFS)"
+  },
+  {
    "name": "GREYBUS_BEAGLEPLAY",
    "deps": "GREYBUS&&(SERIAL_DEV_BUS)"
   },
   {
    "name": "GREYBUS_ES2",
    "deps": "GREYBUS&&(USB)"
+  },
+  {
+   "name": "COMEDI",
+   "deps": ""
   },
   {
    "name": "COMEDI_DEBUG",
@@ -108417,6 +109285,10 @@
   },
   {
    "name": "COMEDI_DEFAULT_BUF_MAXSIZE_KB",
+   "deps": "COMEDI"
+  },
+  {
+   "name": "COMEDI_MISC_DRIVERS",
    "deps": "COMEDI"
   },
   {
@@ -108434,6 +109306,10 @@
   {
    "name": "COMEDI_SSV_DNP",
    "deps": "COMEDI_MISC_DRIVERS&&(X86_32||COMPILE_TEST)&&(HAS_IOPORT)"
+  },
+  {
+   "name": "COMEDI_ISA_DRIVERS",
+   "deps": "COMEDI_MISC_DRIVERS&&(ISA||ISA_BUS||PC104)&&(HAS_IOPORT)"
   },
   {
    "name": "COMEDI_PCL711",
@@ -108614,6 +109490,10 @@
   {
    "name": "COMEDI_S526",
    "deps": "COMEDI_ISA_DRIVERS"
+  },
+  {
+   "name": "COMEDI_PCI_DRIVERS",
+   "deps": "COMEDI_ISA_DRIVERS&&(PCI)"
   },
   {
    "name": "COMEDI_8255_PCI",
@@ -108840,6 +109720,10 @@
    "deps": "COMEDI_PCI_DRIVERS&&(HAS_DMA)"
   },
   {
+   "name": "COMEDI_PCMCIA_DRIVERS",
+   "deps": "COMEDI_PCI_DRIVERS&&(PCMCIA&&HAS_IOPORT)"
+  },
+  {
    "name": "COMEDI_CB_DAS16_CS",
    "deps": "COMEDI_PCMCIA_DRIVERS"
   },
@@ -108866,6 +109750,10 @@
   {
    "name": "COMEDI_QUATECH_DAQP_CS",
    "deps": "COMEDI_PCMCIA_DRIVERS"
+  },
+  {
+   "name": "COMEDI_USB_DRIVERS",
+   "deps": "COMEDI_PCMCIA_DRIVERS&&(USB)"
   },
   {
    "name": "COMEDI_DT9812",
@@ -108952,6 +109840,10 @@
    "deps": "COMEDI_TESTS"
   },
   {
+   "name": "STAGING",
+   "deps": ""
+  },
+  {
    "name": "RTL8723BS",
    "deps": "(WLAN&&MMC&&CFG80211)&&(m)"
   },
@@ -109014,6 +109906,14 @@
   {
    "name": "NVEC_PAZ00",
    "deps": "(MFD_NVEC&&LEDS_CLASS)"
+  },
+  {
+   "name": "STAGING_MEDIA",
+   "deps": ""
+  },
+  {
+   "name": "INTEL_ATOMISP",
+   "deps": "(X86&&EFI&&PCI&&ACPI)&&(COMMON_CLK)"
   },
   {
    "name": "VIDEO_ATOMISP",
@@ -109096,6 +109996,10 @@
    "deps": "(VIDEO_TEGRA)&&(ARCH_TEGRA_210_SOC)"
   },
   {
+   "name": "STAGING_MEDIA_DEPRECATED",
+   "deps": ""
+  },
+  {
    "name": "VIDEO_ATMEL_ISC",
    "deps": "(V4L_PLATFORM_DRIVERS)&&(VIDEO_DEV&&COMMON_CLK)&&(ARCH_AT91||COMPILE_TEST)&&(!VIDEO_MICROCHIP_ISC_BASE||COMPILE_TEST)"
   },
@@ -109106,6 +110010,10 @@
   {
    "name": "VIDEO_ATMEL_ISC_BASE",
    "deps": ""
+  },
+  {
+   "name": "FB_TFT",
+   "deps": "(FB&&SPI)&&(FB_DEVICE)&&(BACKLIGHT_CLASS_DEVICE)&&(GPIOLIB||COMPILE_TEST)"
   },
   {
    "name": "FB_TFT_AGM1264K_FL",
@@ -109240,6 +110148,10 @@
    "deps": "FB_TFT"
   },
   {
+   "name": "MOST_COMPONENTS",
+   "deps": "(HAS_DMA&&CONFIGFS_FS&&MOST)"
+  },
+  {
    "name": "MOST_NET",
    "deps": "(NET)"
   },
@@ -109304,6 +110216,10 @@
    "deps": "GREYBUS"
   },
   {
+   "name": "GREYBUS_BRIDGED_PHY",
+   "deps": "GREYBUS"
+  },
+  {
    "name": "GREYBUS_GPIO",
    "deps": "GREYBUS_BRIDGED_PHY&&(GPIOLIB)"
   },
@@ -109336,6 +110252,10 @@
    "deps": "GREYBUS_BRIDGED_PHY&&(USB_HSIC_USB3613||COMPILE_TEST)"
   },
   {
+   "name": "BCM_VIDEOCORE",
+   "deps": "(OF)&&(RASPBERRYPI_FIRMWARE||(COMPILE_TEST&&!RASPBERRYPI_FIRMWARE))"
+  },
+  {
    "name": "BCM2835_VCHIQ",
    "deps": "BCM_VIDEOCORE&&(HAS_DMA)"
   },
@@ -109360,6 +110280,10 @@
    "deps": "(OF&&HAS_IOMEM)"
   },
   {
+   "name": "VME_BUS",
+   "deps": "(PCI)"
+  },
+  {
    "name": "VME_TSI148",
    "deps": "VME_BUS&&(HAS_DMA)"
   },
@@ -109370,6 +110294,10 @@
   {
    "name": "VME_USER",
    "deps": "VME_BUS"
+  },
+  {
+   "name": "GPIB",
+   "deps": ""
   },
   {
    "name": "GPIB_COMMON",
@@ -109444,6 +110372,10 @@
    "deps": ""
   },
   {
+   "name": "MIPS_PLATFORM_DEVICES",
+   "deps": "(MIPS)"
+  },
+  {
    "name": "CPU_HWMON",
    "deps": "MIPS_PLATFORM_DEVICES&&(MACH_LOONGSON64)"
   },
@@ -109456,12 +110388,24 @@
    "deps": "MIPS_PLATFORM_DEVICES&&(MACH_LOONGSON64||COMPILE_TEST)"
   },
   {
+   "name": "LOONGARCH_PLATFORM_DEVICES",
+   "deps": "(LOONGARCH)"
+  },
+  {
    "name": "LOONGSON_LAPTOP",
    "deps": "LOONGARCH_PLATFORM_DEVICES&&(ACPI_EC)&&(BACKLIGHT_CLASS_DEVICE)&&(INPUT)&&(MACH_LOONGSON64)"
   },
   {
+   "name": "GOLDFISH",
+   "deps": "(HAS_IOMEM&&HAS_DMA)"
+  },
+  {
    "name": "GOLDFISH_PIPE",
    "deps": "GOLDFISH"
+  },
+  {
+   "name": "CHROME_PLATFORMS",
+   "deps": "(X86||ARM||ARM64||COMPILE_TEST)"
   },
   {
    "name": "CHROMEOS_ACPI",
@@ -109592,6 +110536,10 @@
    "deps": "CHROME_PLATFORMS&&(KUNIT&&CROS_EC)"
   },
   {
+   "name": "CZNIC_PLATFORMS",
+   "deps": "(ARCH_MVEBU||COMPILE_TEST)"
+  },
+  {
    "name": "TURRIS_OMNIA_MCU",
    "deps": "CZNIC_PLATFORMS&&(MACH_ARMADA_38X||COMPILE_TEST)&&(I2C)"
   },
@@ -109618,6 +110566,10 @@
   {
    "name": "TURRIS_SIGNING_KEY",
    "deps": "TURRIS_OMNIA_MCU&&(KEYS)&&(ASYMMETRIC_KEY_TYPE)"
+  },
+  {
+   "name": "MELLANOX_PLATFORM",
+   "deps": "(X86||ARM||ARM64||COMPILE_TEST)"
   },
   {
    "name": "MLX_PLATFORM",
@@ -109660,8 +110612,16 @@
    "deps": ""
   },
   {
+   "name": "OLPC_XO175",
+   "deps": "(ARCH_MMP||COMPILE_TEST)"
+  },
+  {
    "name": "OLPC_XO175_EC",
    "deps": "OLPC_XO175&&(SPI_SLAVE)&&(INPUT)&&(POWER_SUPPLY)"
+  },
+  {
+   "name": "SURFACE_PLATFORMS",
+   "deps": "(ARM64||X86||COMPILE_TEST)"
   },
   {
    "name": "SURFACE3_WMI",
@@ -109712,12 +110672,20 @@
    "deps": "SURFACE_PLATFORMS&&(ACPI)&&(INPUT)"
   },
   {
+   "name": "SURFACE_AGGREGATOR",
+   "deps": "(SERIAL_DEV_BUS)&&(ACPI&&!RISCV)"
+  },
+  {
    "name": "SURFACE_AGGREGATOR_BUS",
    "deps": "(SURFACE_AGGREGATOR)"
   },
   {
    "name": "SURFACE_AGGREGATOR_ERROR_INJECTION",
    "deps": "(SURFACE_AGGREGATOR)&&(FUNCTION_ERROR_INJECTION)"
+  },
+  {
+   "name": "X86_PLATFORM_DEVICES",
+   "deps": "(X86)"
   },
   {
    "name": "ACPI_WMI",
@@ -109852,6 +110820,10 @@
    "deps": "X86_PLATFORM_DEVICES&&(ASUS_WMI)"
   },
   {
+   "name": "X86_PLATFORM_DRIVERS_DELL",
+   "deps": ""
+  },
+  {
    "name": "ALIENWARE_WMI",
    "deps": "X86_PLATFORM_DRIVERS_DELL&&(ACPI)&&(ACPI_WMI)&&(DMI)&&(LEDS_CLASS)&&(NEW_LEDS)&&(HWMON)"
   },
@@ -109946,6 +110918,10 @@
   {
    "name": "GPD_POCKET_FAN",
    "deps": "X86_PLATFORM_DEVICES&&(ACPI)&&(THERMAL)"
+  },
+  {
+   "name": "X86_PLATFORM_DRIVERS_HP",
+   "deps": "(X86_PLATFORM_DEVICES)"
   },
   {
    "name": "HP_ACCEL",
@@ -110380,6 +111356,10 @@
    "deps": "X86_PLATFORM_DEVICES&&(PCI&&X86)"
   },
   {
+   "name": "ARM64_PLATFORM_DEVICES",
+   "deps": "(ARM64||COMPILE_TEST)"
+  },
+  {
    "name": "EC_ACER_ASPIRE1",
    "deps": "ARM64_PLATFORM_DEVICES&&(ARCH_QCOM||COMPILE_TEST)&&(I2C)&&(DRM)&&(POWER_SUPPLY)&&(INPUT)"
   },
@@ -110398,6 +111378,14 @@
   {
    "name": "HAVE_CLK_PREPARE",
    "deps": ""
+  },
+  {
+   "name": "HAVE_LEGACY_CLK",
+   "deps": ""
+  },
+  {
+   "name": "COMMON_CLK",
+   "deps": "(!HAVE_LEGACY_CLK)"
   },
   {
    "name": "COMMON_CLK_WM831X",
@@ -111720,6 +112708,10 @@
    "deps": ""
   },
   {
+   "name": "COMMON_CLK_QCOM",
+   "deps": "(OF)&&(ARCH_QCOM||COMPILE_TEST)"
+  },
+  {
    "name": "CLK_X1E80100_CAMCC",
    "deps": "COMMON_CLK_QCOM&&(ARM64||COMPILE_TEST)"
   },
@@ -112688,6 +113680,10 @@
    "deps": "(COMMON_CLK_SAMSUNG)&&(EXYNOS_ARM64_COMMON_CLK)"
   },
   {
+   "name": "CLK_SIFIVE",
+   "deps": "(ARCH_SIFIVE||COMPILE_TEST)"
+  },
+  {
    "name": "CLK_SIFIVE_PRCI",
    "deps": "CLK_SIFIVE"
   },
@@ -112786,6 +113782,10 @@
   {
    "name": "CLK_STARFIVE_JH7110_VOUT",
    "deps": "(CLK_STARFIVE_JH7110_SYS&&JH71XX_PMU)"
+  },
+  {
+   "name": "CLK_SUNXI",
+   "deps": "((ARM&&ARCH_SUNXI)||COMPILE_TEST)"
   },
   {
    "name": "CLK_SUNXI_CLOCKS",
@@ -112920,6 +113920,10 @@
    "deps": "(ARCH_THEAD||COMPILE_TEST)&&(64BIT)"
   },
   {
+   "name": "COMMON_CLK_STM32MP",
+   "deps": "(ARCH_STM32||COMPILE_TEST)"
+  },
+  {
    "name": "COMMON_CLK_STM32MP135",
    "deps": "COMMON_CLK_STM32MP&&(ARM||COMPILE_TEST)"
   },
@@ -112974,6 +113978,10 @@
   {
    "name": "CLK_FD_KUNIT_TEST",
    "deps": "COMMON_CLK&&(KUNIT)"
+  },
+  {
+   "name": "HWSPINLOCK",
+   "deps": ""
   },
   {
    "name": "HWSPINLOCK_OMAP",
@@ -113420,6 +114428,10 @@
    "deps": "(ARCH_S32||COMPILE_TEST)"
   },
   {
+   "name": "MAILBOX",
+   "deps": ""
+  },
+  {
    "name": "ARM_MHU",
    "deps": "MAILBOX&&(ARM_AMBA)"
   },
@@ -113570,6 +114582,10 @@
   {
    "name": "IOMMUFD_DRIVER",
    "deps": ""
+  },
+  {
+   "name": "IOMMU_SUPPORT",
+   "deps": "(MMU)"
   },
   {
    "name": "IOMMU_IO_PGTABLE",
@@ -113984,6 +115000,10 @@
    "deps": "(HAS_DMA)"
   },
   {
+   "name": "SOUNDWIRE",
+   "deps": "(ACPI||OF)&&(SND_SOC_SDCA_OPTIONAL)"
+  },
+  {
    "name": "SOUNDWIRE_AMD",
    "deps": "SOUNDWIRE&&(ACPI&&SND_SOC)"
   },
@@ -114074,6 +115094,10 @@
   {
    "name": "EP93XX_SOC",
    "deps": "ARCH_EP93XX"
+  },
+  {
+   "name": "FSL_DPAA",
+   "deps": "(((FSL_SOC_BOOKE||ARCH_LAYERSCAPE||COMPILE_TEST)&&ARCH_DMA_ADDR_T_64BIT))"
   },
   {
    "name": "FSL_DPAA_CHECKING",
@@ -114228,6 +115252,10 @@
    "deps": "(POLARFIRE_SOC_MAILBOX)&&(MTD)"
   },
   {
+   "name": "WPCM450_SOC",
+   "deps": ""
+  },
+  {
    "name": "PLAT_PXA",
    "deps": ""
   },
@@ -114358,6 +115386,10 @@
   {
    "name": "QCOM_PBS",
    "deps": "(SPMI)"
+  },
+  {
+   "name": "SOC_RENESAS",
+   "deps": ""
   },
   {
    "name": "ARCH_RCAR_GEN1",
@@ -114604,6 +115636,10 @@
    "deps": "(DTPM&&m)"
   },
   {
+   "name": "SOC_SAMSUNG",
+   "deps": ""
+  },
+  {
    "name": "EXYNOS_ASV_ARM",
    "deps": "SOC_SAMSUNG&&(EXYNOS_CHIPID)"
   },
@@ -114714,6 +115750,10 @@
   {
    "name": "SOC_TEGRA_CBB",
    "deps": "(ARCH_TEGRA_194_SOC||ARCH_TEGRA_234_SOC)"
+  },
+  {
+   "name": "SOC_TI",
+   "deps": ""
   },
   {
    "name": "KEYSTONE_NAVIGATOR_QMSS",
@@ -115016,6 +116056,10 @@
    "deps": "(PM&&ZYNQMP_FIRMWARE)"
   },
   {
+   "name": "PM_DEVFREQ",
+   "deps": ""
+  },
+  {
    "name": "DEVFREQ_GOV_SIMPLE_ONDEMAND",
    "deps": "PM_DEVFREQ"
   },
@@ -115064,6 +116108,10 @@
    "deps": "PM_DEVFREQ&&(ARCH_SUNXI||COMPILE_TEST)&&(COMMON_CLK)"
   },
   {
+   "name": "PM_DEVFREQ_EVENT",
+   "deps": ""
+  },
+  {
    "name": "DEVFREQ_EVENT_EXYNOS_NOCP",
    "deps": "PM_DEVFREQ_EVENT&&(ARCH_EXYNOS||COMPILE_TEST)"
   },
@@ -115074,6 +116122,10 @@
   {
    "name": "DEVFREQ_EVENT_ROCKCHIP_DFI",
    "deps": "PM_DEVFREQ_EVENT&&(ARCH_ROCKCHIP||COMPILE_TEST)"
+  },
+  {
+   "name": "EXTCON",
+   "deps": ""
   },
   {
    "name": "EXTCON_ADC_JACK",
@@ -115166,6 +116218,10 @@
   {
    "name": "EXTCON_USBC_VIRTUAL_PD",
    "deps": "EXTCON&&(GPIOLIB||COMPILE_TEST)"
+  },
+  {
+   "name": "MEMORY",
+   "deps": ""
   },
   {
    "name": "DDR",
@@ -115290,6 +116346,10 @@
   {
    "name": "TEGRA210_EMC",
    "deps": "TEGRA_MC&&(ARCH_TEGRA_210_SOC||COMPILE_TEST)"
+  },
+  {
+   "name": "IIO",
+   "deps": ""
   },
   {
    "name": "IIO_BUFFER",
@@ -117684,6 +118744,10 @@
    "deps": "(I2C)"
   },
   {
+   "name": "NTB",
+   "deps": "(PCI)"
+  },
+  {
    "name": "NTB_MSI",
    "deps": "NTB&&(PCI_MSI)"
   },
@@ -117726,6 +118790,10 @@
   {
    "name": "NTB_TRANSPORT",
    "deps": "NTB"
+  },
+  {
+   "name": "PWM",
+   "deps": ""
   },
   {
    "name": "PWM_DEBUG",
@@ -118484,6 +119552,10 @@
    "deps": ""
   },
   {
+   "name": "IPACK_BUS",
+   "deps": "(HAS_IOMEM)"
+  },
+  {
    "name": "BOARD_TPCI200",
    "deps": "(IPACK_BUS)&&(PCI)"
   },
@@ -118493,6 +119565,10 @@
   },
   {
    "name": "ARCH_HAS_RESET_CONTROLLER",
+   "deps": ""
+  },
+  {
+   "name": "RESET_CONTROLLER",
    "deps": ""
   },
   {
@@ -119072,6 +120148,10 @@
    "deps": "(OF&&COMMON_CLK&&(ARCH_QCOM||COMPILE_TEST))"
   },
   {
+   "name": "PHY_QCOM_QMP",
+   "deps": "(OF&&COMMON_CLK&&(ARCH_QCOM||COMPILE_TEST))"
+  },
+  {
    "name": "PHY_QCOM_QMP_COMBO",
    "deps": "PHY_QCOM_QMP&&(TYPEC||TYPEC=n)&&(DRM||DRM=n)"
   },
@@ -119408,6 +120488,10 @@
    "deps": "(ARCH_ZYNQMP||COMPILE_TEST)"
   },
   {
+   "name": "POWERCAP",
+   "deps": ""
+  },
+  {
    "name": "INTEL_RAPL_CORE",
    "deps": "POWERCAP&&(PCI)"
   },
@@ -119438,6 +120522,10 @@
   {
    "name": "DTPM_DEVFREQ",
    "deps": "POWERCAP&&(DTPM&&ENERGY_MODEL)"
+  },
+  {
+   "name": "MCB",
+   "deps": ""
   },
   {
    "name": "MCB_PCI",
@@ -119612,6 +120700,10 @@
    "deps": "(ARCH_THUNDER||(COMPILE_TEST&&64BIT))"
   },
   {
+   "name": "RAS",
+   "deps": ""
+  },
+  {
    "name": "RAS_CEC",
    "deps": "(X86_MCE&&MEMORY_FAILURE&&DEBUG_FS)"
   },
@@ -119630,6 +120722,10 @@
   {
    "name": "RAS_FMPM",
    "deps": "RAS&&(AMD_ATL&&ACPI_APEI)"
+  },
+  {
+   "name": "USB4",
+   "deps": "(PCI)"
   },
   {
    "name": "USB4_DEBUGFS_WRITE",
@@ -119666,6 +120762,10 @@
   {
    "name": "TRACE_GPU_MEM",
    "deps": ""
+  },
+  {
+   "name": "LIBNVDIMM",
+   "deps": "(PHYS_ADDR_T_64BIT)&&(HAS_IOMEM)&&(BLK_DEV)"
   },
   {
    "name": "BLK_DEV_PMEM",
@@ -119716,6 +120816,10 @@
    "deps": "LIBNVDIMM&&(NVDIMM_KEYS)"
   },
   {
+   "name": "DAX",
+   "deps": ""
+  },
+  {
    "name": "DEV_DAX",
    "deps": "DAX&&(TRANSPARENT_HUGEPAGE)"
   },
@@ -119738,6 +120842,10 @@
   {
    "name": "DEV_DAX_KMEM",
    "deps": "DAX&&(DEV_DAX)&&(MEMORY_HOTPLUGforadd_memory()andfriends)"
+  },
+  {
+   "name": "NVMEM",
+   "deps": ""
   },
   {
    "name": "NVMEM_SYSFS",
@@ -119984,6 +121092,10 @@
    "deps": "(ARM64||(COMPILE_TEST&&64BIT))&&(PCI&&HAS_DMA&&HAS_IOMEM&&PERF_EVENTS)"
   },
   {
+   "name": "FPGA",
+   "deps": ""
+  },
+  {
    "name": "FPGA_MGR_SOCFPGA",
    "deps": "FPGA&&(ARCH_INTEL_SOCFPGA||COMPILE_TEST)"
   },
@@ -120124,6 +121236,10 @@
    "deps": "(FPGA&&FPGA_REGION&&FPGA_BRIDGE&&KUNIT=y)"
   },
   {
+   "name": "FSI",
+   "deps": "(OF)"
+  },
+  {
    "name": "FSI_NEW_DEV_NODE",
    "deps": "FSI"
   },
@@ -120162,6 +121278,10 @@
   {
    "name": "I2CR_SCOM",
    "deps": "FSI&&(FSI_MASTER_I2CR)"
+  },
+  {
+   "name": "TEE",
+   "deps": "(HAVE_ARM_SMCCC||COMPILE_TEST||CPU_SUP_AMD)"
   },
   {
    "name": "OPTEE",
@@ -120204,8 +121324,16 @@
    "deps": ""
   },
   {
+   "name": "SIOX",
+   "deps": ""
+  },
+  {
    "name": "SIOX_BUS_GPIO",
    "deps": "SIOX"
+  },
+  {
+   "name": "SLIMBUS",
+   "deps": ""
   },
   {
    "name": "SLIM_QCOM_CTRL",
@@ -120214,6 +121342,10 @@
   {
    "name": "SLIM_QCOM_NGD_CTRL",
    "deps": "SLIMBUS&&(HAS_IOMEM&&DMA_ENGINE&&NET)&&(QCOM_RPROC_COMMON||(COMPILE_TEST&&!QCOM_RPROC_COMMON))&&(ARCH_QCOM||COMPILE_TEST)"
+  },
+  {
+   "name": "INTERCONNECT",
+   "deps": ""
   },
   {
    "name": "INTERCONNECT_IMX",
@@ -120436,6 +121568,10 @@
    "deps": ""
   },
   {
+   "name": "COUNTER",
+   "deps": ""
+  },
+  {
    "name": "104_QUAD_8",
    "deps": "COUNTER&&((PC104&&X86)||COMPILE_TEST)&&(HAS_IOPORT_MAP)"
   },
@@ -120476,6 +121612,10 @@
    "deps": "COUNTER&&(SOC_AM33XX||ARCH_K3||COMPILE_TEST)"
   },
   {
+   "name": "MOST",
+   "deps": "(HAS_DMA&&CONFIGFS_FS)"
+  },
+  {
    "name": "MOST_USB_HDM",
    "deps": "MOST&&(USB)"
   },
@@ -120488,6 +121628,10 @@
    "deps": "MOST&&(SND)"
   },
   {
+   "name": "PECI",
+   "deps": ""
+  },
+  {
    "name": "PECI_CPU",
    "deps": "PECI"
   },
@@ -120498,6 +121642,10 @@
   {
    "name": "PECI_NPCM",
    "deps": "(ARCH_NPCM||COMPILE_TEST)&&(OF)"
+  },
+  {
+   "name": "HTE",
+   "deps": ""
   },
   {
    "name": "HTE_TEGRA194",
@@ -121224,6 +122372,10 @@
    "deps": "BLOCK"
   },
   {
+   "name": "HUGETLBFS",
+   "deps": "BLOCK&&(X86||SPARC64||ARCH_SUPPORTS_HUGETLBFS||BROKEN)&&((SYSFS||SYSCTL))"
+  },
+  {
    "name": "HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON",
    "deps": "HUGETLBFS&&(HUGETLB_PAGE_OPTIMIZE_VMEMMAP)"
   },
@@ -121250,6 +122402,10 @@
   {
    "name": "EFIVAR_FS",
    "deps": "(EFI)"
+  },
+  {
+   "name": "MISC_FILESYSTEMS",
+   "deps": "HUGETLBFS"
   },
   {
    "name": "ORANGEFS_FS",
@@ -121704,6 +122860,10 @@
    "deps": "((ARM64||X86)&&VBOXGUEST)"
   },
   {
+   "name": "NETWORK_FILESYSTEMS",
+   "deps": "MISC_FILESYSTEMS&&(NET)"
+  },
+  {
    "name": "NFS_FS",
    "deps": "(INET&&FILE_LOCKING&&MULTIUSER)"
   },
@@ -122052,6 +123212,10 @@
    "deps": "(9P_FS)"
   },
   {
+   "name": "NLS",
+   "deps": ""
+  },
+  {
    "name": "NLS_DEFAULT",
    "deps": "NLS"
   },
@@ -122254,6 +123418,10 @@
   {
    "name": "NLS_UCS2_UTILS",
    "deps": "NLS"
+  },
+  {
+   "name": "DLM",
+   "deps": "(INET)&&(SYSFS&&CONFIGFS_FS&&(IPV6||IPV6=n))"
   },
   {
    "name": "DLM_DEBUG",
@@ -122552,6 +123720,10 @@
    "deps": "(KUNIT=y)&&(SECURITY_LANDLOCK)"
   },
   {
+   "name": "SECURITY_IPE",
+   "deps": "(SECURITY&&SECURITYFS&&AUDIT&&AUDITSYSCALL)"
+  },
+  {
    "name": "IPE_BOOT_POLICY",
    "deps": "SECURITY_IPE"
   },
@@ -122797,6 +123969,10 @@
   },
   {
    "name": "ASYNC_TX_DISABLE_XOR_VAL_DMA",
+   "deps": ""
+  },
+  {
+   "name": "CRYPTO",
    "deps": ""
   },
   {
@@ -123252,6 +124428,10 @@
    "deps": "CRYPTO"
   },
   {
+   "name": "CRYPTO_DRBG_MENU",
+   "deps": "CRYPTO"
+  },
+  {
    "name": "CRYPTO_DRBG_HMAC",
    "deps": "CRYPTO_DRBG_MENU"
   },
@@ -123704,6 +124884,10 @@
    "deps": "(64BIT)"
   },
   {
+   "name": "CRYPTO_HW",
+   "deps": ""
+  },
+  {
    "name": "CRYPTO_DEV_ALLWINNER",
    "deps": "(ARCH_SUNXI||COMPILE_TEST)"
   },
@@ -123837,6 +125021,10 @@
   },
   {
    "name": "CRYPTO_DEV_FSL_CAAM_DEBUG",
+   "deps": "CRYPTO_DEV_FSL_CAAM"
+  },
+  {
+   "name": "CRYPTO_DEV_FSL_CAAM_JR",
    "deps": "CRYPTO_DEV_FSL_CAAM"
   },
   {
@@ -124254,6 +125442,10 @@
   {
    "name": "CRYPTO_DEV_EIP93",
    "deps": "(SOC_MT7621||ARCH_AIROHA||COMPILE_TEST)"
+  },
+  {
+   "name": "ASYMMETRIC_KEY_TYPE",
+   "deps": "(KEYS)"
   },
   {
    "name": "ASYMMETRIC_PUBLIC_KEY_SUBTYPE",
