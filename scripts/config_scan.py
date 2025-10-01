@@ -12,10 +12,11 @@ r_kc_cfg_endif = re.compile(r'^endif$')
 
 r_km_obj_mask = r'[\w\.\-/]+'
 r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
-r_km_obj_cfg = re.compile(r_km_ignores + r'^\S+-(?:y|\$\(CONFIG_(\S+)\))\s*[ :\+]=((?: *' + r_km_obj_mask + r')*)')
-r_km_obj_lst = re.compile(r'^(\s+)((?:\s*' + r_km_obj_mask + r')+)')
+r_km_obj_cfg = re.compile(r_km_ignores + r'^(\S+)-(?:objs|y|(?:(?:\$\([\s\S]+)*\$\(CONFIG_(\S+)\)(?:\))*))\s*[ :\+]=((?: *' + r_km_obj_mask + r')*)')
+r_km_obj_lst = re.compile(r'^(\s+)(\s*)((?:\s*' + r_km_obj_mask + r')+)')
+r_km_syn = re.compile(r'(\S+)-(?:objs|y)\s*:=\s*(\S+\.o)*')
 r_km_obj_not_allowed = re.compile(r'(tests\/)')
-r_km_comp = re.compile(r'(?:(?:OF_DECLARE_1|OF_DECLARE_1_RET|OF_DECLARE_2|IRQCHIP_DECLARE|OF_DECLARE)\(\S+,\s+\"(\S+)\",.+\))|' +
+r_km_comp = re.compile(r'(?:(?:OF_DECLARE\S*|IRQCHIP_DECLARE)\(\S+,\s+\"(\S+)\",.+\))|' +
     r'(?:\.compatible\s+=\s+\"(\S+)\")|' +
     r'(?:of_device_is_compatible\(\S+,\s+\"(\S+)\"\))')
 
@@ -186,19 +187,21 @@ class ConfigScan:
             return
         m_obj_cfg = m_obj_cfg[0]
         cond_loc = ""
+        syn = ["",""]
         #print(m_obj_cfg)
-        if ((not rec) and (m_obj_cfg[0] != "")):
-            cond_loc = m_obj_cfg[0]
+        if ((not rec) and (m_obj_cfg[1] != "")):
+            cond_loc = m_obj_cfg[1]
+            if (cond_loc[-1] == ")"):
+                cond_loc = cond_loc[:-1]
         else:
             cond_loc = cond
-        obj = m_obj_cfg[1]
-        if (len(obj) == 0):
+        obj = m_obj_cfg[2]
+        #print(f":{cond_loc}:{m_obj_cfg}:{line[-2]}+{rec}")
+        if (len(obj) == 0) and (line[-2] != "\\"):
             return
-        while (obj[0] == " "):
-            obj = obj[1:]
-        #print(f":{cond_loc}:{obj}:{line[-2]}+{rec}:")
         if (obj != ""):
-            #print(obj)
+            while (obj[0] == " "):
+                obj = obj[1:]
             objs = obj.split(" ")
             for o in objs:
                 self.__do_makefile_fn(path, sub_dir, cond_loc, o)
@@ -238,8 +241,9 @@ class ConfigScan:
         f.close()
     def __insert_comp(self, key, value):
         if (key in self.compatible) and (self.compatible[key] != value):
-            #print(f"Compatible already have node '{key}={self.compatible[key]}', new node '{key}={value}")
-            self.compatible[key] = self.compatible[key] + "&&" + value
+            vals = self.compatible[key].split("&&")
+            if (not (value in vals)):
+                self.compatible[key] = self.compatible[key] + "&&" + value
         else:
             self.compatible[key] = value
     def __scan_compatible(self, path):
@@ -258,10 +262,15 @@ class ConfigScan:
                     # EOF detector
                     break
                 m_o = r_km_comp.findall(line)
-                if (len(m_o) > 0):
-                    for o in m_o[0]:
-                        if (o != ""):
-                            self.__insert_comp(o, obj["cond"])
+                if (len(m_o) == 0) and ("of_device_is_compatible" in line):
+                    # multiline, concatenate
+                    line += f.readline()
+                    m_o = r_km_comp.findall(line)
+                if not ("!of_device_is_compatible" in line):
+                    for oo in m_o:
+                        for o in oo:
+                            if (o != ""):
+                                self.__insert_comp(o, obj["cond"])
             f.close()
         progress.stop()
     def __find_comp(self, val):
@@ -283,10 +292,10 @@ class ConfigScan:
             m_inc = r_dt_inc.match(line)
             if (m_inc):
                 new_fn = f"{dir}/{m_inc[1]}"
-                if (not os.path.isfile(new_fn)):
-                    print(f"Unable to find inlude file '{m_inc[1]}'")
-                else:
+                if (os.path.isfile(new_fn)):
                     self.__parse_dts(dir, new_fn)
+                #else:
+                #    print(f"Unable to find inlude file '{m_inc[1]}'")
             m_par = r_dt_parent.findall(line)
             if (m_par):
                 par = m_par[0]
@@ -298,16 +307,18 @@ class ConfigScan:
                 m_comp = r_dt_comp2.findall(line)
                 for comp in m_comp:
                     #find compatible and opt
-                    c = self.__find_comp(comp)
-                    if (c == False):
+                    cc = self.__find_comp(comp)
+                    if (cc == False):
                         continue
                     finded = True
-                    if (c != ""):
-                        self.def_opts.append(c)
+                    cc = cc.split("&&")
+                    for c in cc:
+                        if (not c in self.def_opts):
+                            self.def_opts.append(c)
                 if (not finded):
                     ll = " ".join(m_comp)
                     self.def_opts.append(f"#{ll}")
-                    print(f"Unable to find compatible '{m_comp}'!")
+                    #print(f"Unable to find compatible '{m_comp}'!")
                     #exit(1)
         f.close()
     def __find_dts(self, dir):
