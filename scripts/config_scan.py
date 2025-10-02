@@ -104,30 +104,13 @@ class ConfigOpt:
             #dep.deserialize(d)
             self.deps.append(dep)
 
-class ConfigScan:
-    def __init__(self, arch):
-        self.arch = arch
-        self.opts = []
-        self.sources = []
-        self.compatible = dict()
-        self.defconfig = dict()
-        self.vars = [
-            [ "SRCARCH", self.arch ],
-        ]
-    def __parse_variables(self, string):
-        while True:
-            for var_d in self.vars:
-                string = string.replace("$("+var_d[0]+")", str(var_d[1]))
-            if not re.compile(r'$\(\S+\)').match(string):
-                break
-        return string
-    def __find_opt(self, name):
-        for opt in self.opts:
-            if (opt.name == name):
-                return opt
-        return None
-    def __scan_kconfig(self, path, sub_dir=""):
-        full_path = f"{path}/{sub_dir}"
+class KconfigScan:
+    def __init__(self, path, cb_var, cb_on_opt):
+        self.path = path
+        self.cb_var = cb_var
+        self.cb_on_opt = cb_on_opt
+    def scan(self, sub_dir=""):
+        full_path = f"{self.path}/{sub_dir}"
         if_opt = ""
         if (sub_dir == ""):
             print(f"Start scanning for options, directory '{full_path}'...")
@@ -140,8 +123,8 @@ class ConfigScan:
             m_source = r_kc_source.match(line)
             if (m_source):
                 # current line - include another config
-                inc_parsed = self.__parse_variables(m_source[1])
-                self.__scan_kconfig(path, inc_parsed)
+                inc_parsed = self.cb_var(m_source[1])
+                self.scan(inc_parsed)
             m_cfg = r_kc_cfg_start.match(line)
             if (m_cfg):
                 # read required lines and pass to parser
@@ -155,7 +138,7 @@ class ConfigScan:
                     m_body = r_kc_cfg_body.match(ll)
                     if (m_body):
                         opt.opt_body_parse(m_body[1], if_opt)
-                self.opts.append(opt)
+                self.cb_on_opt(opt)
             # processing for "if..endif" into Kconfig
             m_if = r_kc_cfg_if.match(line)
             if (m_if):
@@ -164,16 +147,23 @@ class ConfigScan:
             if (m_endif):
                 if_opt = ""
         f.close()
-    def __do_makefile_fn(self, path, sub_dir, cond, fn):
+
+class KmakefileScan:
+    def __init__(self, path, cb_var, on_comp):
+        self.path = path
+        self.cb_var = cb_var
+        self.on_comp = on_comp
+        self.sources = []
+    def __do_fn(self,  sub_dir, cond, fn):
         if (fn.endswith("/")):
             # include subdirectory
-            self.__scan_makefiles(path, f"{sub_dir}/{fn[:-1]}", cond)
+            self.scan(f"{sub_dir}/{fn[:-1]}", cond)
         else:
             # object file name - add to list
             self.sources.append({ "path":f"{sub_dir}/{fn[:-2]}.c",
                                   "cond":cond})
-    def __do_makefile_line(self, f, path, sub_dir, cond, line, rec=False):
-        line = self.__parse_variables(line)
+    def __do_line(self, f, sub_dir, cond, line, rec=False):
+        line = self.cb_var(line)
         if (rec):
             m_obj_cfg = r_km_obj_lst.findall(line)
         else:
@@ -200,21 +190,21 @@ class ConfigScan:
                 obj = obj[1:]
             objs = obj.split(" ")
             for o in objs:
-                self.__do_makefile_fn(path, sub_dir, cond_loc, o)
+                self.__do_fn(sub_dir, cond_loc, o)
         if ((not rec) and (line[-2] == "\\")):
             # slash - need to scan next line
             while (1):
                 line = f.readline()
                 if (len(line) < 3):
                     break
-                self.__do_makefile_line(f, path, sub_dir, cond_loc, line, True)
+                self.__do_line(f, sub_dir, cond_loc, line, True)
                 if (line[-2] != "\\"):
                     break
-    def __scan_makefiles(self, path, sub_dir="", cond=""):
+    def scan(self, sub_dir="", cond=""):
         if (sub_dir == ""):
-            full_path = path
+            full_path = self.path
         else:
-            full_path = f"{path}/{sub_dir}"
+            full_path = f"{self.path}/{sub_dir}"
         #print(f"\tDir: {full_path}")
         mk_fn1 = f"{full_path}/Kbuild"
         mk_fn2 = f"{full_path}/Makefile"
@@ -233,22 +223,15 @@ class ConfigScan:
             #print(line)
             if (r_km_obj_not_allowed.match(line)):
                 continue
-            self.__do_makefile_line(f, path, sub_dir, cond, line)
+            self.__do_line(f, sub_dir, cond, line)
         f.close()
-    def __insert_comp(self, key, value):
-        if (key in self.compatible) and (self.compatible[key] != value):
-            vals = self.compatible[key].split("&&")
-            if (not (value in vals)) and (value != ""):
-                self.compatible[key] = self.compatible[key] + "&&" + value
-        else:
-            self.compatible[key] = value
-    def __scan_compatible(self, path):
+    def scan_compatible(self):
         progress = Progress()
         progress.start()
         task = progress.add_task("Scanning object files...", total=len(self.sources))
         for obj in self.sources:
             progress.update(task, advance=1)
-            fn = f"{path}/{obj["path"]}"
+            fn = f"{self.path}/{obj["path"]}"
             if (not os.path.isfile(fn)):
                 continue
             f = open(fn, "r")
@@ -266,17 +249,16 @@ class ConfigScan:
                     for oo in m_o:
                         for o in oo:
                             if (o != ""):
-                                self.__insert_comp(o, obj["cond"])
+                                self.on_comp(o, obj["cond"])
             f.close()
         progress.stop()
-    def __find_comp(self, val):
-        if (val in self.compatible):
-            return self.compatible[val]
-        # check to skip list
-        for sk in r_dt_skip:
-            if (fnmatch.fnmatch(val, sk)):
-                return ""
-        return False
+
+class DTSScan:
+    def __init__(self, path, arch, find_comp, on_defcfg):
+        self.path = path
+        self.arch = arch
+        self.find_comp = find_comp
+        self.on_defcfg = on_defcfg
     def __parse_dts(self, dir, fn):
         f = open(fn, "r", encoding='ISO-8859-1')
         par = ""
@@ -303,7 +285,7 @@ class ConfigScan:
                 m_comp = r_dt_comp2.findall(line)
                 for comp in m_comp:
                     #find compatible and opt
-                    cc = self.__find_comp(comp)
+                    cc = self.find_comp(comp)
                     if (cc == False):
                         continue
                     finded = True
@@ -317,6 +299,17 @@ class ConfigScan:
                     #print(f"Unable to find compatible '{m_comp}'!")
                     #exit(1)
         f.close()
+    def __scan_dts(self):
+        progress = Progress()
+        progress.start()
+        task = progress.add_task("DTS files", total=len(self.dts_fn))
+        for dts_el in self.dts_fn:
+            self.def_opts = []
+            dts_n = os.path.splitext(os.path.basename(dts_el[1]))[0]
+            self.__parse_dts(dts_el[0], dts_el[1])
+            self.on_defcfg(dts_n, self.def_opts)
+            progress.update(task, advance=1)
+        progress.stop()
     def __find_dts(self, dir):
         for dir_i in os.listdir(dir):
             fn = f"{dir}/{dir_i}"
@@ -327,17 +320,48 @@ class ConfigScan:
             else:
                 # recursive on directories
                 self.__find_dts(fn)
-    def __scan_dts(self):
-        progress = Progress()
-        progress.start()
-        task = progress.add_task("DTS files", total=len(self.dts_fn))
-        for dts_el in self.dts_fn:
-            self.def_opts = []
-            dts_n = os.path.splitext(os.path.basename(dts_el[1]))[0]
-            self.__parse_dts(dts_el[0], dts_el[1])
-            self.defconfig[dts_n] = self.def_opts
-            progress.update(task, advance=1)
-        progress.stop()
+    def scan(self):
+        self.dts_fn = []
+        self.__find_dts(f"{self.path}/arch/{self.arch}/boot/dts")
+        self.__scan_dts()
+
+class ConfigScan:
+    def __init__(self, arch):
+        self.arch = arch
+        self.opts = []
+        self.compatible = dict()
+        self.defconfig = dict()
+        self.vars = [
+            [ "SRCARCH", self.arch ],
+        ]
+    def __parse_variables(self, string):
+        while True:
+            for var_d in self.vars:
+                string = string.replace("$("+var_d[0]+")", str(var_d[1]))
+            if not re.compile(r'$\(\S+\)').match(string):
+                break
+        return string
+    def __find_opt(self, name):
+        for opt in self.opts:
+            if (opt.name == name):
+                return opt
+        return None
+    
+    def __insert_comp(self, key, value):
+        if (key in self.compatible) and (self.compatible[key] != value):
+            vals = self.compatible[key].split("&&")
+            if (not (value in vals)) and (value != ""):
+                self.compatible[key] = self.compatible[key] + "&&" + value
+        else:
+            self.compatible[key] = value
+    def __find_comp(self, val):
+        if (val in self.compatible):
+            return self.compatible[val]
+        # check to skip list
+        for sk in r_dt_skip:
+            if (fnmatch.fnmatch(val, sk)):
+                return ""
+        return False
     def __apply_fixes(self):
         with open("./config/kernel_fix.json") as json_data:
             js_data = json.load(json_data)
@@ -354,21 +378,23 @@ class ConfigScan:
                 else:
                     opt.opt_body_parse(f"depends on {deps[key]}", "")
             json_data.close()
-    def scan_dts(self, path):
-        self.dts_fn = []
-        self.__find_dts(f"{path}/arch/{self.arch}/boot/dts")
-        self.__scan_dts()
+    def on_config_opt(self, opt):
+        self.opts.append(opt)
+    def add_defconfig(self, name, list):
+        self.defconfig[name] = list
     def scan(self, path):
         print("Step #1 - Scan Kconfig files")
-        self.__scan_kconfig(path, "")
+        KconfigScan(path, self.__parse_variables, self.on_config_opt).scan()
         print("Step #2 - Scan Makefile for source files")
-        self.__scan_makefiles(path, "", "")
+        obj = KmakefileScan(path, self.__parse_variables, self.__insert_comp)
+        obj.scan()
         print("Step #3 - Scan 'compatible' strings")
-        self.__scan_compatible(path)
+        obj.scan_compatible()
         print("Step #4 - Apply fixes")
         self.__apply_fixes()
         print("Step #5 - Scan DTS and make defconfigs")
-        self.scan_dts(path)
+        DTSScan(path, self.arch, self.__find_comp, self.add_defconfig).scan()
+        #self.scan_dts(path)
     def serialize(self):
         opts = []
         for opt in self.opts:
