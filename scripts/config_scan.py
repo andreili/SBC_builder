@@ -108,7 +108,6 @@ class ConfigScan:
     def __init__(self, arch):
         self.arch = arch
         self.opts = []
-        self.incl_path = []
         self.sources = []
         self.compatible = dict()
         self.defconfig = dict()
@@ -142,9 +141,6 @@ class ConfigScan:
             if (m_source):
                 # current line - include another config
                 inc_parsed = self.__parse_variables(m_source[1])
-                if (sub_dir == ""):
-                    # for root Kconfig - add all include patches
-                    self.incl_path.append({ "path":inc_parsed, "cond":"" })
                 self.__scan_kconfig(path, inc_parsed)
             m_cfg = r_kc_cfg_start.match(line)
             if (m_cfg):
@@ -367,8 +363,6 @@ class ConfigScan:
         self.__scan_kconfig(path, "")
         print("Step #2 - Scan Makefile for source files")
         self.__scan_makefiles(path, "", "")
-        #for inc in self.incl_path:
-        #    self.__scan_makefiles(path, inc["path"], inc["cond"])
         print("Step #3 - Scan 'compatible' strings")
         self.__scan_compatible(path)
         print("Step #4 - Apply fixes")
