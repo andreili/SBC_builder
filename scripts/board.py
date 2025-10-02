@@ -129,7 +129,7 @@ class Board:
                 if (1):
                     cfg_scn.scan(target.sources.work_dir)
                     cfg_scn.save(f"{ROOT_DIR}/config/kernel_cfg.json")
-                cfg_scn.load(f"{ROOT_DIR}/config/kernel_cfg.json")
+                #cfg_scn.load(f"{ROOT_DIR}/config/kernel_cfg.json")
                 cfg_scn.scan_dts(target.sources.work_dir)
                 cfg_scn.save(f"{ROOT_DIR}/config/kernel_cfg.json")
         exit(0)

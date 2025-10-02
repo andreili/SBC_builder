@@ -1,0 +1,18 @@
+{
+    "compatibles":
+    {
+        "hdmi-connector": "DRM_DISPLAY_CONNECTOR",
+        "arm,gic-v3": "ARM_GIC_V3",
+        "arm,armv7m-nvic": "ARM_NVIC",
+        "simple-bus": "OF",
+        "arm,scmi-shmem": "ARM_SCMI_HAVE_SHMEM",
+        "brcm,bcm4329-fmac": "BRCMFMAC",
+        "fan53555-reg": "REGULATOR_FAN53555",
+        "simple-battery": "GENERIC_ADC_BATTERY"
+    },
+    "deps":
+    {
+        "ARM_SCMI_HAVE_SHMEM": "ARM_SCMI_PROTOCOL",
+        "ARM_SCMI_HAVE_MSG": "ARM_SCMI_PROTOCOL"
+    }
+}

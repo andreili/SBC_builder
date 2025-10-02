@@ -242,7 +242,7 @@ class ConfigScan:
     def __insert_comp(self, key, value):
         if (key in self.compatible) and (self.compatible[key] != value):
             vals = self.compatible[key].split("&&")
-            if (not (value in vals)):
+            if (not (value in vals)) and (value != ""):
                 self.compatible[key] = self.compatible[key] + "&&" + value
         else:
             self.compatible[key] = value
@@ -313,7 +313,7 @@ class ConfigScan:
                     finded = True
                     cc = cc.split("&&")
                     for c in cc:
-                        if (not c in self.def_opts):
+                        if (not c in self.def_opts) and (c != ""):
                             self.def_opts.append(c)
                 if (not finded):
                     ll = " ".join(m_comp)
@@ -342,6 +342,22 @@ class ConfigScan:
             self.defconfig[dts_n] = self.def_opts
             progress.update(task, advance=1)
         progress.stop()
+    def __apply_fixes(self):
+        with open("./config/kernel_fix.json") as json_data:
+            js_data = json.load(json_data)
+            compatibles = js_data["compatibles"]
+            for key in compatibles:
+                self.compatible[key] = compatibles[key]
+            deps = js_data["deps"]
+            for key in deps:
+                opt = self.__find_opt(key)
+                if (opt == None):
+                    opt = ConfigOpt(key)
+                    opt.opt_body_parse(deps[key], "")
+                    self.opts.append(opt)
+                else:
+                    opt.opt_body_parse(f"depends on {deps[key]}", "")
+            json_data.close()
     def scan_dts(self, path):
         self.dts_fn = []
         self.__find_dts(f"{path}/arch/{self.arch}/boot/dts")
@@ -355,8 +371,10 @@ class ConfigScan:
         #    self.__scan_makefiles(path, inc["path"], inc["cond"])
         print("Step #3 - Scan 'compatible' strings")
         self.__scan_compatible(path)
-        #print("Step #4 - Scan DTS and make defconfigs")
-        #self.scan_dts(path)
+        print("Step #4 - Apply fixes")
+        self.__apply_fixes()
+        print("Step #5 - Scan DTS and make defconfigs")
+        self.scan_dts(path)
     def serialize(self):
         opts = []
         for opt in self.opts:
