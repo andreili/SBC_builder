@@ -39,8 +39,9 @@ class ConfigCondition:
             else:
                 self.opt_str = line
     def set_val(self, val):
-        self.is_eq = True
-        self.val = val
+        if (val != ""):
+            self.is_eq = True
+            self.val = val
     def serialize(self):
         if (self.is_not):
             return "!"
@@ -336,12 +337,18 @@ class DTSScan:
 class ConfigScan:
     def __init__(self, arch):
         self.arch = arch
+        self.arch_list = []
         self.opts = []
         self.compatible = dict()
         self.defconfig = dict()
         self.vars = [
             [ "SRCARCH", self.arch ],
         ]
+    def __scan_arch_list(self, path):
+        for dir_i in os.listdir(f"{path}/arch"):
+            fn = f"{path}/arch/{dir_i}"
+            if (os.path.isdir(fn)):
+                self.arch_list.append(dir_i)
     def __parse_variables(self, string):
         while True:
             for var_d in self.vars:
@@ -392,6 +399,7 @@ class ConfigScan:
     def scan(self, path):
         print(f"Start scanning for options, directory '{path}'...")
         print("Step #1 - Scan Kconfig files")
+        self.__scan_arch_list(path)
         KconfigScan(path, self.__parse_variables, self.on_config_opt).scan()
         print("Step #2 - Scan Makefile for source files")
         obj = KmakefileScan(path, self.__parse_variables, self.__insert_comp)
@@ -407,6 +415,7 @@ class ConfigScan:
         for opt in self.opts:
             opts.append(opt.serialize())
         obj = { "arch":self.arch,
+                "arch_list":self.arch_list,
                 "compatible":self.compatible,
                 "defconfig": self.defconfig,
                 #"sources":self.sources,
@@ -414,6 +423,7 @@ class ConfigScan:
         return obj
     def deserialize(self, js):
         self.arch = js["arch"]
+        self.arch_list = js["arch_list"]
         self.compatible = js["compatible"]
         for o in js["opts"]:
             opt = ConfigOpt("")

@@ -1,5 +1,28 @@
 {
  "arch": "arm64",
+ "arch_list": [
+  "xtensa",
+  "mips",
+  "csky",
+  "m68k",
+  "parisc",
+  "um",
+  "powerpc",
+  "arc",
+  "microblaze",
+  "openrisc",
+  "sparc",
+  "hexagon",
+  "arm",
+  "riscv",
+  "alpha",
+  "nios2",
+  "arm64",
+  "loongarch",
+  "sh",
+  "x86",
+  "s390"
+ ],
  "compatible": {
   "shared-dma-pool": "DMA_CMA&&DMA_DECLARE_COHERENT",
   "restricted-dma-pool": "SWIOTLB&&OF",
