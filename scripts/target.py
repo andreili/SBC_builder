@@ -112,7 +112,7 @@ class Target:
                 opts_tmp = opts.copy()
                 opts_tmp.append(target)
                 self.sources.compile(opts_tmp, self.config_name)
-        if (sub_target != "config"):
+        if (not fnmatch.fnmatch(sub_target, "*config")):
             self.sources.copy_artifacts(self.artifacts, out_dir)
 
     def install_files(self, dir, tmp_dir, part_name, on_file, on_dd):

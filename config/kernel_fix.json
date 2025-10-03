@@ -21,6 +21,7 @@
             "name": "minimize",
             "options":
             [
+                "#minimize",
                 "SERIAL_8250_PCILIB=n",
                 "SERIAL_8250_PCI=n",
                 "SERIAL_8250_EXAR=n",
@@ -175,6 +176,7 @@
             "name": "ikconfig",
             "options":
             [
+                "#ikconfig",
                 "IKCONFIG=y",
                 "IKCONFIG_PROC=y"
             ]
@@ -183,6 +185,7 @@
             "name": "ramdisk",
             "options":
             [
+                "#ramdisk support",
                 "BLK_DEV_INITRD=y",
                 "RD_GZIP=y",
                 "RD_BZIP2=y",
@@ -195,6 +198,7 @@
             "name": "system_min",
             "options":
             [
+                "#system_min",
                 "SCHED_MC=y",
                 "TMPFS=y",
                 "TMPFS_POSIX_ACL=y",
