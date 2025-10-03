@@ -67,7 +67,8 @@
         },
         {
             "parent": "kernel",
-            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig"
+            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig",
+            "config_set": "linux_min"
         }
     ],
     "install":

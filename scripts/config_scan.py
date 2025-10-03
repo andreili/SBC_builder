@@ -442,36 +442,78 @@ class ConfigScan:
             self.deserialize(js_data)
             json_data.close()
         self.__apply_fixes()
+    def __cfg_get_default(self, cfg):
+        if (cfg.lower() in self.arch_list):
+            return None
+        return "y"
+    def __cfg_add_cfg(self, cfg, val):
+        # TODO - check a config override, conditions, value
+        def_val = self.__cfg_get_default(cfg)
+        if (def_val == None):
+            return
+        opt = ConfigCondition(cfg)
+        opt.set_val(val)
+        for o in self.def_cfg:
+            if (o.opt_str == cfg):
+                o.set_val(val)
+                return
+        self.def_cfg.append(opt)
     def __cfg_recursive(self, cfg):
         if (cfg[0] == "#"):
-            self.def_cfg[cfg] = ""
+            self.__cfg_add_cfg(cfg, "")
         else:
+            is_enabled = False
+            if ("=" in cfg):
+                oo = cfg.split("=")
+                self.__cfg_add_cfg(oo[0], oo[1])
+                if (oo[0] != "n") and (oo[1] != ""):
+                    is_enabled = True
+            else:
+                self.__cfg_add_cfg(cfg, "y")
+                is_enabled = True
             opt = self.__find_opt(cfg)
-            if (opt):
+            if (opt and is_enabled):
                 for dep in opt.deps:
                     if (dep.opt_str != ""):
                         self.__cfg_recursive(dep.opt_str)
-            # TODO - check a config override, conditions, value
-            if ("=" in cfg):
-                oo = cfg.split("=")
-                self.def_cfg[f"CONFIG_{oo[0]}"] = oo[1]
-            else:
-                self.def_cfg[f"CONFIG_{cfg}"] = "y"
-    def save_defconfig(self, path, name):
+    def __get_system(self, name):
+        for sys in self.systems:
+            if (sys["name"] == name):
+                return sys
+        return None
+    def __add_set(self, name):
+        sys_lst = self.sets[name]
+        for sys_name in sys_lst:
+            sys = self.__get_system(sys_name)
+            if (sys == None):
+                print(f"Unable to find system '{sys_name}'!")
+                exit(1)
+            for cfg in sys["options"]:
+                self.__cfg_recursive(cfg)
+    def __add_sets(self, sets):
+        lst = sets.split(",")
+        for s in lst:
+            if (not (s in self.sets)):
+                print(f"Unable to find set '{s}'!")
+                exit(1)
+            self.__add_set(s)
+    def save_defconfig(self, path, name, config_set):
         path = f"{path}/arch/{self.arch}/configs/{name}"
         cfg_name = re.findall(r'(\S+)_defconfig', name)[0]
         print(f"Save defconfig for '{cfg_name}' into '{path}'")
         cfgs = self.defconfig[cfg_name]
-        self.def_cfg = dict()
+        self.def_cfg = []
+        # activate default configurations first
+        self.__add_sets(config_set)
         for cfg in cfgs:
             self.__cfg_recursive(cfg)
         f = open(path, "w")
-        for key in self.def_cfg:
-            val = self.def_cfg[key]
-            if (val == ""):
-                f.write(f"{key}\n")
+        for opt in self.def_cfg:
+            s = opt.serialize()
+            if (s[0] == "#"):
+                f.write(f"{s}\n")
             else:
-                f.write(f"{key}={val}\n")
+                f.write(f"CONFIG_{s}\n")
         f.close()
 
 if __name__ == '__main__':

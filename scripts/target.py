@@ -51,6 +51,8 @@ class Target:
             self.makeopts = info_js["makeopts"]
         if ("config_def" in info_js):
             self.defconfig_name = info_js["config_def"]
+        if ("config_set" in info_js):
+            self.config_set = info_js["config_set"]
         if ("no_build" in info_js):
             self.no_build = True
         if ("artifacts" in info_js):
@@ -99,7 +101,7 @@ class Target:
                     # initialize without arch - required only for parsing
                     cfg_scn = ConfigScan("")
                     cfg_scn.load()
-                    cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name)
+                    cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name, self.config_set)
                     opts.append(self.defconfig_name)
                     opts.append(self.config_target)
                 elif (sub_target == "config"):
