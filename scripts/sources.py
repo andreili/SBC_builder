@@ -90,13 +90,13 @@ class Sources:
             self.board_name = ""
             self.worktree = f"{self.name}"
             self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
-            self.work_dir = f"{ROOT_DIR}/build/common/{self.worktree}"
+            self.work_dir = f"{BUILD_DIR}/common/{self.worktree}"
             self.work_done_marker = f"{self.work_dir}/.git_done_marker"
         else:
             self.board_name = board_name
             self.worktree = f"{self.name}_{board_name}"
             self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
-            self.work_dir = f"{ROOT_DIR}/build/{board_name}/{self.worktree}"
+            self.work_dir = f"{BUILD_DIR}/{board_name}/{self.worktree}"
             self.work_done_marker = f"{self.work_dir}/.git_done_marker"
 
     def set_git_params(self, version, _type):

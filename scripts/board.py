@@ -5,8 +5,8 @@ from . import *
 class Board:
     def __init__(self, name, js_fn, targets_meta):
         self.name = name
-        self.out_dir = f"{ROOT_DIR}/out/{name}"
-        self.out_sh = f"{ROOT_DIR}/out"
+        self.out_dir = f"{OUT_DIR}/{name}"
+        self.out_sh = f"{OUT_DIR}"
         with open(js_fn) as json_data:
             self.json = json.load(json_data)
             json_data.close()
@@ -55,8 +55,8 @@ class Board:
     def __load_vars(self):
         self.add_vars(self.json["variables"])
         self.variables.append(["board_name", self.name])
-        self.variables.append(["build_dir", f"{ROOT_DIR}/build/{self.name}"])
-        self.variables.append(["common_dir", f"{ROOT_DIR}/build/common"])
+        self.variables.append(["build_dir", f"{BUILD_DIR}/{self.name}"])
+        self.variables.append(["common_dir", f"{BUILD_DIR}/common"])
         self.variables.append(["out_dir", self.out_dir])
         self.variables.append(["out_sh", self.out_sh])
         self.variables.append(["ROOT_DIR", ROOT_DIR])
@@ -126,10 +126,5 @@ class Board:
             if (target.name == "kernel"):
                 target.source_sync()
                 cfg_scn = ConfigScan(self.parse_variables("%{KERNEL_ARCH}%"))
-                if (1):
-                    cfg_scn.scan(target.sources.work_dir)
-                    cfg_scn.save(f"{ROOT_DIR}/config/kernel_cfg.json")
-                #cfg_scn.load(f"{ROOT_DIR}/config/kernel_cfg.json")
-                #cfg_scn.scan_dts(target.sources.work_dir)
-                #cfg_scn.save(f"{ROOT_DIR}/config/kernel_cfg.json")
-        exit(0)
+                cfg_scn.scan(target.sources.work_dir)
+                cfg_scn.save()

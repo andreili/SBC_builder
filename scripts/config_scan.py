@@ -1,6 +1,9 @@
 #!/bin/python
 import re, json, os.path, fnmatch
 from rich.progress import Progress
+from . import *
+
+CFG_NAME=f"{CONFIG_DIR}/kernel_cfg.json"
 
 class ConfigCondition:
     def __init__(self, line):
@@ -396,17 +399,17 @@ class ConfigScan:
             opt = ConfigOpt("")
             opt.deserialize(o)
             self.opts.append(opt)
-    def save(self, path):
-        f = open(path, "w")
+    def save(self):
+        f = open(CFG_NAME, "w")
         json.dump(self.serialize(), f, indent=1)
         f.close()
-    def load(self, path):
-        with open(path) as json_data:
+    def load(self):
+        with open(CFG_NAME) as json_data:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")
-    cfg_scn.scan("/home/andreil/universal/build/common/kernel")
-    cfg_scn.save("./config/kernel_cfg.json")
+    cfg_scn.scan(f"{BUILD_DIR}/common/kernel")
+    cfg_scn.save()
