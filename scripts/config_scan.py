@@ -29,13 +29,13 @@ class ConfigCondition:
         if (self.is_not):
             return "!"
         elif (self.is_or):
-            return "||"
+            return " || "
         elif (self.is_and):
-            return "&&"
+            return " && "
         elif (self.is_br_op):
-            return "("
+            return " ( "
         elif (self.is_br_cl):
-            return ")"
+            return " ) "
         else:
             return self.opt_str
 
@@ -43,6 +43,19 @@ class ConfigOpt:
     def __init__(self, name):
         self.name = name
         self.deps = []
+    def __parse_dep(self, line):
+        #print(line)
+        m_cond = re.findall(r'(\|\|)|(&&)|(!)|(\()|(\))|(\w+)', line)
+        for cond in m_cond:
+            for cc in cond:
+                if (cc == ""):
+                    # empty match - skip
+                    continue
+                if (cc == "#"):
+                    # commentary - end of options
+                    break
+                #print(cc)
+                self.deps.append(ConfigCondition(cc))
     def opt_body_parse(self, body, if_opt):
         if ((len(self.deps) == 0) and (if_opt != "")):
             # global "if..endif" into Kconfig
@@ -56,29 +69,19 @@ class ConfigOpt:
                 # not a first dependency - use AND
                 self.deps.append(ConfigCondition("&&"))
             self.deps.append(ConfigCondition("("))
-            m_cond = re.findall(r'(\|\|)|(&&)|(!)|(\()|(\))|(\S+)', dep)
-            for cond in m_cond:
-                for cc in cond:
-                    if (cc == ""):
-                        # empty match - skip
-                        continue
-                    if (cc == "#"):
-                        # commentary - end of options
-                        break
-                    self.deps.append(ConfigCondition(cc))
+            self.__parse_dep(dep)
             self.deps.append(ConfigCondition(")"))
     def serialize(self):
         deps = ""
         for dep in self.deps:
-            deps += dep.serialize();
+            deps += dep.serialize()
         return { "name":self.name,
                  "deps":deps }
     def deserialize(self, js):
         self.name = js["name"]
-        for d in js["deps"]:
-            dep = ConfigCondition(d)
-            #dep.deserialize(d)
-            self.deps.append(dep)
+        self.__parse_dep(js["deps"])
+        #if (self.name == "DRM_ROCKCHIP"):
+        #    exit(0)
 
 class KconfigScan:
     def __init__(self, path, cb_var, cb_on_opt):
@@ -333,7 +336,6 @@ class ConfigScan:
             if (opt.name == name):
                 return opt
         return None
-    
     def __insert_comp(self, key, value):
         if (key in self.compatible) and (self.compatible[key] != value):
             vals = self.compatible[key].split("&&")
@@ -409,19 +411,38 @@ class ConfigScan:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
-    def __cfg_recursive(self, f, cfg):
+    def __cfg_recursive(self, cfg):
         if (cfg[0] == "#"):
-            f.write(f"{cfg}\n")
+            self.def_cfg[cfg] = ""
         else:
-            f.write(f"CONFIG_{cfg}=y\n")
+            opt = self.__find_opt(cfg)
+            if (opt):
+                for dep in opt.deps:
+                    if (dep.opt_str != ""):
+                        print(f"Deps: {dep.opt_str}")
+                        self.__cfg_recursive(dep.opt_str)
+            # TODO - check a config override, conditions, value
+            if ("=" in cfg):
+                oo = cfg.split("=")
+                self.def_cfg[f"CONFIG_{oo[0]}"] = oo[1]
+            else:
+                self.def_cfg[f"CONFIG_{cfg}"] = "y"
     def save_defconfig(self, path, name):
         path = f"{path}/arch/{self.arch}/configs/{name}"
         cfg_name = re.findall(r'(\S+)_defconfig', name)[0]
         print(f"Save defconfig for '{cfg_name}' into '{path}'")
         cfgs = self.defconfig[cfg_name]
-        f = open(path, "w")
+        self.def_cfg = dict()
         for cfg in cfgs:
-            self.__cfg_recursive(f, cfg)
+            self.__cfg_recursive(cfg)
+        f = open(path, "w")
+        for key in self.def_cfg:
+            val = self.def_cfg[key]
+            if (val == ""):
+                f.write(f"{key}\n")
+            else:
+                f.write(f"{key}={val}\n")
+        f.close()
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")
