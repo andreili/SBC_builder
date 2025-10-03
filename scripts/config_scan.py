@@ -377,7 +377,7 @@ class ConfigScan:
                 return ""
         return False
     def __apply_fixes(self):
-        with open("./config/kernel_fix.json") as json_data:
+        with open(f"{CONFIG_DIR}/kernel_fix.json") as json_data:
             js_data = json.load(json_data)
             compatibles = js_data["compatibles"]
             for key in compatibles:
@@ -391,6 +391,8 @@ class ConfigScan:
                     self.opts.append(opt)
                 else:
                     opt.opt_body_parse(f"depends on {deps[key]}", "")
+            self.systems = js_data["systems"]
+            self.sets = js_data["sets"]
             json_data.close()
     def on_config_opt(self, opt):
         self.opts.append(opt)
@@ -439,6 +441,7 @@ class ConfigScan:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
+        self.__apply_fixes()
     def __cfg_recursive(self, cfg):
         if (cfg[0] == "#"):
             self.def_cfg[cfg] = ""
