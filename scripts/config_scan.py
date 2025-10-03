@@ -2,33 +2,6 @@
 import re, json, os.path, fnmatch
 from rich.progress import Progress
 
-r_kc_source = re.compile(r'^source\s+\"(\S+)/Kconfig\"')
-r_kc_cfg_start = re.compile(r'^(?:config|menuconfig)\s+(\S+)')
-r_kc_cfg_body = re.compile(r'^\t(.+)$')
-r_kc_opt_dep = re.compile(r'depends on (.+)$')
-r_kc_opt_cond = re.compile(r'(\|\|)|(&&)|(!)|(\()|(\))|(\S+)')
-r_kc_cfg_if = re.compile(r'^if (\S+)$')
-r_kc_cfg_endif = re.compile(r'^endif$')
-
-r_km_obj_mask = r'[\w\.\-/]+'
-r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
-r_km_obj_cfg = re.compile(r_km_ignores + r'^(\S+)-(?:objs|y|(?:(?:\$\([\s\S]+)*\$\(CONFIG_(\S+)\)(?:\))*))\s*[ :\+]=((?: *' + r_km_obj_mask + r')*)')
-r_km_obj_lst = re.compile(r'^(\s+)(\s*)((?:\s*' + r_km_obj_mask + r')+)')
-r_km_syn = re.compile(r'(\S+)-(?:objs|y)\s*:=\s*(\S+\.o)*')
-r_km_obj_not_allowed = re.compile(r'(tests\/)')
-r_km_comp = re.compile(r'(?:(?:OF_DECLARE\S*|IRQCHIP_DECLARE)\(\S+,\s+\"(\S+)\",.+\))|' +
-    r'(?:\.compatible\s+=\s+\"(\S+)\")|' +
-    r'(?:of_device_is_compatible\(\S+,\s+\"(\S+)\"\))')
-
-r_dt_inc = re.compile(r'#include \"(\S+\.dtsi)\"')
-r_dt_parent = re.compile(r'(\S+) {$')
-r_dt_comp1 = re.compile(r'(compatible = \")')
-r_dt_comp2 = re.compile(r'(?:\"(\S+)\")+')
-r_dt_skip = [
-    "arm,cortex-*",
-    "cache",
-]
-
 class ConfigCondition:
     def __init__(self, line):
         self.opt_str = ""
@@ -71,7 +44,7 @@ class ConfigOpt:
         if ((len(self.deps) == 0) and (if_opt != "")):
             # global "if..endif" into Kconfig
             self.deps.append(ConfigCondition(if_opt))
-        m_dep = r_kc_opt_dep.match(body)
+        m_dep = re.match(r'depends on (.+)$', body)
         if (m_dep):
             dep = m_dep[1]
             if (dep[0] == '$'):
@@ -80,7 +53,7 @@ class ConfigOpt:
                 # not a first dependency - use AND
                 self.deps.append(ConfigCondition("&&"))
             self.deps.append(ConfigCondition("("))
-            m_cond = r_kc_opt_cond.findall(dep)
+            m_cond = re.findall(r'(\|\|)|(&&)|(!)|(\()|(\))|(\S+)', dep)
             for cond in m_cond:
                 for cc in cond:
                     if (cc == ""):
@@ -112,20 +85,18 @@ class KconfigScan:
     def scan(self, sub_dir=""):
         full_path = f"{self.path}/{sub_dir}"
         if_opt = ""
-        if (sub_dir == ""):
-            print(f"Start scanning for options, directory '{full_path}'...")
         f = open(f"{full_path}/Kconfig", "rt")
         while (f):
             line = f.readline()
             if (line == ""):
                 # EOF detector
                 break
-            m_source = r_kc_source.match(line)
+            m_source = re.match(r'^source\s+\"(\S+)/Kconfig\"', line)
             if (m_source):
                 # current line - include another config
                 inc_parsed = self.cb_var(m_source[1])
                 self.scan(inc_parsed)
-            m_cfg = r_kc_cfg_start.match(line)
+            m_cfg = re.match(r'^(?:config|menuconfig)\s+(\S+)', line)
             if (m_cfg):
                 # read required lines and pass to parser
                 opt_name = m_cfg[1]
@@ -135,18 +106,26 @@ class KconfigScan:
                     if ((ll == "") or (ll == "\n")):
                         # EOF detector
                         break
-                    m_body = r_kc_cfg_body.match(ll)
+                    m_body = re.match(r'^\t(.+)$', ll)
                     if (m_body):
                         opt.opt_body_parse(m_body[1], if_opt)
                 self.cb_on_opt(opt)
             # processing for "if..endif" into Kconfig
-            m_if = r_kc_cfg_if.match(line)
+            m_if = re.match(r'^if (\S+)$', line)
             if (m_if):
                 if_opt = m_if[1]
-            m_endif = r_kc_cfg_endif.match(line)
+            m_endif = re.match(r'^endif$', line)
             if (m_endif):
                 if_opt = ""
         f.close()
+
+r_km_obj_mask = r'[\w\.\-/]+'
+r_km_ignores = r'(?!.*flags)(?!.*flag)(?!^#)'
+r_rm_prefix = r'^(\S+)-(?:objs|y|(?:(?:\$\([\s\S]+)*\$\(CONFIG_(\S+)\)(?:\))*))'
+r_km_obj_cfg = re.compile(r_km_ignores + r_rm_prefix + r'\s*[ :\+]=((?: *' + r_km_obj_mask + r')*)')
+r_km_comp = re.compile(r'(?:(?:OF_DECLARE\S*|IRQCHIP_DECLARE)\(\S+,\s+\"(\S+)\",.+\))|' +
+    r'(?:\.compatible\s+=\s+\"(\S+)\")|' +
+    r'(?:of_device_is_compatible\(\S+,\s+\"(\S+)\"\))')
 
 class KmakefileScan:
     def __init__(self, path, cb_var, on_comp):
@@ -165,7 +144,7 @@ class KmakefileScan:
     def __do_line(self, f, sub_dir, cond, line, rec=False):
         line = self.cb_var(line)
         if (rec):
-            m_obj_cfg = r_km_obj_lst.findall(line)
+            m_obj_cfg = re.findall(r'^(\s+)(\s*)((?:\s*' + r_km_obj_mask + r')+)', line)
         else:
             m_obj_cfg = r_km_obj_cfg.findall(line)
         if (len(m_obj_cfg) == 0):
@@ -221,7 +200,7 @@ class KmakefileScan:
                 # EOF detector
                 break
             #print(line)
-            if (r_km_obj_not_allowed.match(line)):
+            if (re.match(r'(tests\/)', line)):
                 continue
             self.__do_line(f, sub_dir, cond, line)
         f.close()
@@ -253,6 +232,11 @@ class KmakefileScan:
             f.close()
         progress.stop()
 
+r_dt_skip = [
+    "arm,cortex-*",
+    "cache",
+]
+
 class DTSScan:
     def __init__(self, path, arch, find_comp, on_defcfg):
         self.path = path
@@ -267,22 +251,22 @@ class DTSScan:
             if (line == ""):
                 # EOF detector
                 break
-            m_inc = r_dt_inc.match(line)
+            m_inc = re.match(r'#include \"(\S+\.dtsi)\"', line)
             if (m_inc):
                 new_fn = f"{dir}/{m_inc[1]}"
                 if (os.path.isfile(new_fn)):
                     self.__parse_dts(dir, new_fn)
                 #else:
                 #    print(f"Unable to find inlude file '{m_inc[1]}'")
-            m_par = r_dt_parent.findall(line)
+            m_par = re.findall(r'(\S+) {$', line)
             if (m_par):
                 par = m_par[0]
             if (par == '/'):
                 # skip root node properties
                 continue
-            if (r_dt_comp1.findall(line)):
+            if (re.findall(r'(compatible = \")', line)):
                 finded = False
-                m_comp = r_dt_comp2.findall(line)
+                m_comp = re.findall(r'(?:\"(\S+)\")+', line)
                 for comp in m_comp:
                     #find compatible and opt
                     cc = self.find_comp(comp)
@@ -383,6 +367,7 @@ class ConfigScan:
     def add_defconfig(self, name, list):
         self.defconfig[name] = list
     def scan(self, path):
+        print(f"Start scanning for options, directory '{path}'...")
         print("Step #1 - Scan Kconfig files")
         KconfigScan(path, self.__parse_variables, self.on_config_opt).scan()
         print("Step #2 - Scan Makefile for source files")
@@ -394,7 +379,6 @@ class ConfigScan:
         self.__apply_fixes()
         print("Step #5 - Scan DTS and make defconfigs")
         DTSScan(path, self.arch, self.__find_comp, self.add_defconfig).scan()
-        #self.scan_dts(path)
     def serialize(self):
         opts = []
         for opt in self.opts:
