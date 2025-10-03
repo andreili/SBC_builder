@@ -399,6 +399,7 @@ class ConfigScan:
             opt = ConfigOpt("")
             opt.deserialize(o)
             self.opts.append(opt)
+        self.defconfig = js["defconfig"]
     def save(self):
         f = open(CFG_NAME, "w")
         json.dump(self.serialize(), f, indent=1)
@@ -408,6 +409,19 @@ class ConfigScan:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
+    def __cfg_recursive(self, f, cfg):
+        if (cfg[0] == "#"):
+            f.write(f"{cfg}\n")
+        else:
+            f.write(f"CONFIG_{cfg}=y\n")
+    def save_defconfig(self, path, name):
+        path = f"{path}/arch/{self.arch}/configs/{name}"
+        cfg_name = re.findall(r'(\S+)_defconfig', name)[0]
+        print(f"Save defconfig for '{cfg_name}' into '{path}'")
+        cfgs = self.defconfig[cfg_name]
+        f = open(path, "w")
+        for cfg in cfgs:
+            self.__cfg_recursive(f, cfg)
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")

@@ -83,8 +83,6 @@ class Target:
         Logger.build(f"'{self.name}': Source prepare")
         #self.sources.sync()
         #self.sources.do_patch(self.board_name, self.patch_dir)
-        if (self.have_defconfig):
-            self.defconfig.save(self.sources.work_dir)
 
     def build(self, sub_target, out_dir):
         self.source_sync()
@@ -98,6 +96,10 @@ class Target:
                 targets = self.target
             else:
                 if (sub_target == "defconfig"):
+                    # initialize without arch - required only for parsing
+                    cfg_scn = ConfigScan("")
+                    cfg_scn.load()
+                    cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name)
                     opts.append(self.defconfig_name)
                     opts.append(self.config_target)
                 elif (sub_target == "config"):

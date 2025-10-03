@@ -67,7 +67,7 @@
         },
         {
             "parent": "kernel",
-            "config_def": "btt_pi2_printer_defconfig"
+            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig"
         }
     ],
     "install":
