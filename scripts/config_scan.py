@@ -13,6 +13,9 @@ class ConfigCondition:
         self.is_and = False
         self.is_br_op = False
         self.is_br_cl = False
+        self.is_eq = False
+        self.is_neq = False
+        self.val = None
         if (line == "||"):
             self.is_or = True
         elif (line == "&&"):
@@ -24,7 +27,20 @@ class ConfigCondition:
         elif (line == ")"):
             self.is_br_cl = True
         else:
-            self.opt_str = line
+            m_eq = re.findall(r'(\w+)(\!=|=)"*(\w*)"*', line)
+            if (m_eq):
+                self.opt_str = m_eq[0][0]
+                eq_op        = m_eq[0][1]
+                self.val     = m_eq[0][2]
+                if (eq_op == "="):
+                    self.is_eq = True
+                elif (eq_op == "!="):
+                    self.is_neq = True
+            else:
+                self.opt_str = line
+    def set_val(self, val):
+        self.is_eq = True
+        self.val = val
     def serialize(self):
         if (self.is_not):
             return "!"
@@ -36,6 +52,10 @@ class ConfigCondition:
             return "("
         elif (self.is_br_cl):
             return ")"
+        elif (self.is_eq):
+            return f"{self.opt_str}={self.val}"
+        elif (self.is_neq):
+            return f"{self.opt_str}!={self.val}"
         else:
             return self.opt_str
 

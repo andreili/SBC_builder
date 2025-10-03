@@ -102242,11 +102242,11 @@
   },
   {
    "name": "INITRAMFS_ROOT_UID",
-   "deps": "(INITRAMFS_SOURCE!=\"\")"
+   "deps": "(INITRAMFS_SOURCE!=)"
   },
   {
    "name": "INITRAMFS_ROOT_GID",
-   "deps": "(INITRAMFS_SOURCE!=\"\")"
+   "deps": "(INITRAMFS_SOURCE!=)"
   },
   {
    "name": "RD_GZIP",
@@ -103838,7 +103838,7 @@
   },
   {
    "name": "ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD",
-   "deps": "(ACPI_TABLE_UPGRADE)&&(INITRAMFS_SOURCE!=\"\"&&INITRAMFS_COMPRESSION_NONE)"
+   "deps": "(ACPI_TABLE_UPGRADE)&&(INITRAMFS_SOURCE!=&&INITRAMFS_COMPRESSION_NONE)"
   },
   {
    "name": "ACPI_DEBUG",
@@ -137010,59 +137010,59 @@
   },
   {
    "name": "PANEL_KEYPAD",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0)"
   },
   {
    "name": "PANEL_LCD",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0)"
   },
   {
    "name": "PANEL_LCD_HEIGHT",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_WIDTH",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_BWIDTH",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_HWIDTH",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_CHARSET",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_PROTO",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_LCD_PIN_E",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\"&&PANEL_LCD_PROTO=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1&&PANEL_LCD_PROTO=0)"
   },
   {
    "name": "PANEL_LCD_PIN_RS",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\"&&PANEL_LCD_PROTO=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1&&PANEL_LCD_PROTO=0)"
   },
   {
    "name": "PANEL_LCD_PIN_RW",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\"&&PANEL_LCD_PROTO=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1&&PANEL_LCD_PROTO=0)"
   },
   {
    "name": "PANEL_LCD_PIN_SCL",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\"&&PANEL_LCD_PROTO!=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1&&PANEL_LCD_PROTO!=0)"
   },
   {
    "name": "PANEL_LCD_PIN_SDA",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\"&&PANEL_LCD_PROTO!=\"0\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1&&PANEL_LCD_PROTO!=0)"
   },
   {
    "name": "PANEL_LCD_PIN_BL",
-   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=\"0\"&&PANEL_LCD=\"1\")"
+   "deps": "PARPORT_PANEL&&(PANEL_PROFILE=0&&PANEL_LCD=1)"
   },
   {
    "name": "PANEL_CHANGE_MESSAGE",
@@ -137070,7 +137070,7 @@
   },
   {
    "name": "PANEL_BOOT_MESSAGE",
-   "deps": "PARPORT_PANEL&&(PANEL_CHANGE_MESSAGE=\"y\")"
+   "deps": "PARPORT_PANEL&&(PANEL_CHANGE_MESSAGE=y)"
   },
   {
    "name": "KS0108",
