@@ -29,13 +29,13 @@ class ConfigCondition:
         if (self.is_not):
             return "!"
         elif (self.is_or):
-            return " || "
+            return "||"
         elif (self.is_and):
-            return " && "
+            return "&&"
         elif (self.is_br_op):
-            return " ( "
+            return "("
         elif (self.is_br_cl):
-            return " ) "
+            return ")"
         else:
             return self.opt_str
 
@@ -45,7 +45,7 @@ class ConfigOpt:
         self.deps = []
     def __parse_dep(self, line):
         #print(line)
-        m_cond = re.findall(r'(\|\|)|(&&)|(!)|(\()|(\))|(\w+)', line)
+        m_cond = re.findall(r'(\|\|)|(&&)|(!)|(\()|(\))|([\w=!\"]+)', line)
         for cond in m_cond:
             for cc in cond:
                 if (cc == ""):
@@ -80,8 +80,6 @@ class ConfigOpt:
     def deserialize(self, js):
         self.name = js["name"]
         self.__parse_dep(js["deps"])
-        #if (self.name == "DRM_ROCKCHIP"):
-        #    exit(0)
 
 class KconfigScan:
     def __init__(self, path, cb_var, cb_on_opt):
@@ -419,7 +417,6 @@ class ConfigScan:
             if (opt):
                 for dep in opt.deps:
                     if (dep.opt_str != ""):
-                        print(f"Deps: {dep.opt_str}")
                         self.__cfg_recursive(dep.opt_str)
             # TODO - check a config override, conditions, value
             if ("=" in cfg):
