@@ -340,7 +340,9 @@ class ConfigSolver:
         self.on_cfg_set = on_cfg_set
         self.stack = []
         self.pos = pos
-    def solve(self):
+        self.is_or = False
+        self.is_and = False
+    def __prepare(self):
         processed = 0
         while (self.pos < len(self.opt.deps)):
             cur_dep = self.opt.deps[self.pos]
@@ -349,14 +351,42 @@ class ConfigSolver:
                 processed += 1
                 new_solv = ConfigSolver(self.opt, self.on_cfg_set, self.pos)
                 self.stack.append(new_solv)
-                self.pos += new_solv.solve()
+                self.pos += new_solv.__prepare()
             elif (cur_dep.is_br_cl):
                 return (processed + 1)
             else:#if (cur_dep.is_and or cur_dep.is_and or cur_dep.is_not):
                 self.stack.append(cur_dep)
                 self.pos += 1
                 processed += 1
+            if (cur_dep.is_or):
+                if (self.is_and):
+                    print("Error: mixing AND/OR operators!")
+                    exit(1)
+                self.is_or = True
+            if (cur_dep.is_and):
+                if (self.is_or):
+                    print("Error: mixing AND/OR operators!")
+                    exit(1)
+                self.is_and = True
         return processed
+    def solve(self):
+        self.__prepare()
+        not_op = False
+        if (self.is_and or (len(self.stack) < 3)):
+            # both conditions must be true
+            for s in self.stack:
+                if (isinstance(s, ConfigSolver)):
+                    # recursive solver
+                    s.solve()
+                elif (s.is_not):
+                    not_op = True
+                elif (s.opt_str != ""):
+                    #option
+                    if (not_op):
+                        self.on_cfg_set(f"{s.opt_str}=n")
+                        not_op = False
+                    else:
+                        self.on_cfg_set(f"{s.opt_str}=y")
 
 class ConfigScan:
     def __init__(self, arch):
@@ -486,21 +516,33 @@ class ConfigScan:
                 o.set_val(val)
                 return
         self.def_cfg.append(opt)
+    def __check_cfg_exists(self, cfg):
+        for o in self.def_cfg:
+            if (o.opt_str == cfg):
+                return True
+        return False
     def __cfg_recursive(self, cfg):
         if (cfg[0] == "#"):
             self.__cfg_add_cfg(cfg, "")
         else:
             is_enabled = False
+            is_new = False
             if ("=" in cfg):
+                # config have a predefined value
                 oo = cfg.split("=")
+                is_new = not (self.__check_cfg_exists(oo[0]))
+                print(f"Process config '{cfg}', is_new={is_new}")
                 self.__cfg_add_cfg(oo[0], oo[1])
-                if (oo[0] != "n") and (oo[1] != ""):
+                if (oo[1] != "n") and (oo[1] != ""):
                     is_enabled = True
+                cfg = oo[0]
             else:
+                # config have a default "yes" value
+                is_new = not (self.__check_cfg_exists(cfg))
                 self.__cfg_add_cfg(cfg, "y")
                 is_enabled = True
             opt = self.__find_opt(cfg)
-            if (opt and is_enabled):
+            if (opt and is_enabled and is_new):
                 ss = opt.serialize()["deps"]
                 print(f"Process dependency '{ss}' for '{cfg}'")
                 solver = ConfigSolver(opt, self.__cfg_recursive)
@@ -510,7 +552,7 @@ class ConfigScan:
                 #    # dependencies resolution
                 #    if (dep.opt_str != ""):
                 #        self.__cfg_recursive(dep.opt_str)
-                if (len(opt.deps) > 0):
+                if (len(opt.deps) > 10):
                     exit(0)
     def __get_system(self, name):
         for sys in self.systems:
