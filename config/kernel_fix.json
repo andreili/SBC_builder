@@ -88,7 +88,7 @@
                 "NET_VENDOR_AMD=n",
                 "NET_VENDOR_AQUANTIA=n",
                 "NET_VENDOR_ASIX=n",
-                "NET_VENDOR_BROADCOM=nn",
+                "NET_VENDOR_BROADCOM=n",
                 "NET_VENDOR_CADENCE=n",
                 "NET_VENDOR_CAVIUM=n",
                 "NET_VENDOR_CORTINA=n",

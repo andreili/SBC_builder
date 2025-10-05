@@ -139,7 +139,7 @@ class KconfigScan:
             m_if = re.match(r'^if (\S+)$', line)
             if (m_if):
                 if_opt = m_if[1]
-            m_endif = re.match(r'^endif$', line)
+            m_endif = re.match(r'^endif', line)
             if (m_endif):
                 if_opt = ""
         f.close()
@@ -334,6 +334,30 @@ class DTSScan:
         self.__find_dts(f"{self.path}/arch/{self.arch}/boot/dts")
         self.__scan_dts()
 
+class ConfigSolver:
+    def __init__(self, opt, on_cfg_set, pos=0):
+        self.opt = opt
+        self.on_cfg_set = on_cfg_set
+        self.stack = []
+        self.pos = pos
+    def solve(self):
+        processed = 0
+        while (self.pos < len(self.opt.deps)):
+            cur_dep = self.opt.deps[self.pos]
+            if (cur_dep.is_br_op):
+                self.pos += 1
+                processed += 1
+                new_solv = ConfigSolver(self.opt, self.on_cfg_set, self.pos)
+                self.stack.append(new_solv)
+                self.pos += new_solv.solve()
+            elif (cur_dep.is_br_cl):
+                return (processed + 1)
+            else:#if (cur_dep.is_and or cur_dep.is_and or cur_dep.is_not):
+                self.stack.append(cur_dep)
+                self.pos += 1
+                processed += 1
+        return processed
+
 class ConfigScan:
     def __init__(self, arch):
         self.arch = arch
@@ -477,10 +501,17 @@ class ConfigScan:
                 is_enabled = True
             opt = self.__find_opt(cfg)
             if (opt and is_enabled):
-                for dep in opt.deps:
-                    # dependencies resolution
-                    if (dep.opt_str != ""):
-                        self.__cfg_recursive(dep.opt_str)
+                ss = opt.serialize()["deps"]
+                print(f"Process dependency '{ss}' for '{cfg}'")
+                solver = ConfigSolver(opt, self.__cfg_recursive)
+                solver.solve()
+                print(solver.stack)
+                #for dep in opt.deps:
+                #    # dependencies resolution
+                #    if (dep.opt_str != ""):
+                #        self.__cfg_recursive(dep.opt_str)
+                if (len(opt.deps) > 0):
+                    exit(0)
     def __get_system(self, name):
         for sys in self.systems:
             if (sys["name"] == name):
