@@ -80,7 +80,13 @@ class ConfigOpt:
     def opt_body_parse(self, body, if_opt):
         if ((len(self.deps) == 0) and (if_opt != "")):
             # global "if..endif" into Kconfig
-            self.deps.append(ConfigCondition(if_opt))
+            ifs = if_opt.split(",")
+            for if_o in ifs:
+                self.deps.append(ConfigCondition(if_o))
+                self.deps.append(ConfigCondition("&&"))
+        if (len(self.deps) > 0) and (self.deps[-1].is_and):
+            # remove last AND operator
+            self.deps = self.deps[:-1]
         m_dep = re.match(r'depends on (.+)$', body)
         if (m_dep):
             dep = m_dep[1]
@@ -107,9 +113,8 @@ class KconfigScan:
         self.path = path
         self.cb_var = cb_var
         self.cb_on_opt = cb_on_opt
-    def scan(self, sub_dir=""):
+    def scan(self, sub_dir="", if_opt=""):
         full_path = f"{self.path}/{sub_dir}"
-        if_opt = ""
         f = open(f"{full_path}/Kconfig", "rt")
         while (f):
             line = f.readline()
@@ -120,7 +125,7 @@ class KconfigScan:
             if (m_source):
                 # current line - include another config
                 inc_parsed = self.cb_var(m_source[1])
-                self.scan(inc_parsed)
+                self.scan(inc_parsed, if_opt)
             m_cfg = re.match(r'^(?:config|menuconfig)\s+(\S+)', line)
             if (m_cfg):
                 # read required lines and pass to parser
@@ -138,10 +143,17 @@ class KconfigScan:
             # processing for "if..endif" into Kconfig
             m_if = re.match(r'^if (\S+)$', line)
             if (m_if):
-                if_opt = m_if[1]
+                if (if_opt != ""):
+                    if_opt += "," + m_if[1]
+                else:
+                    if_opt = m_if[1]
             m_endif = re.match(r'^endif', line)
             if (m_endif):
-                if_opt = ""
+                ifs = if_opt.split(",")
+                if (len(ifs) > 1):
+                    if_opt = ",".join(ifs[:-1])
+                else:
+                    if_opt = ""
         f.close()
 
 r_km_obj_mask = r'[\w\.\-/]+'

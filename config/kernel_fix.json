@@ -8,7 +8,8 @@
         "arm,scmi-shmem": "ARM_SCMI_HAVE_SHMEM",
         "brcm,bcm4329-fmac": "BRCMFMAC",
         "fan53555-reg": "REGULATOR_FAN53555",
-        "simple-battery": "GENERIC_ADC_BATTERY"
+        "simple-battery": "GENERIC_ADC_BATTERY",
+        "arm,gic-v3-its": "ARM_GIC_V3_ITS"
     },
     "deps":
     {
