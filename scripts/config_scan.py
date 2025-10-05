@@ -397,7 +397,23 @@ class ConfigSolver:
                         already_set = True
                         break
             if (not already_set):
-                print("\tCondition not met")
+                if (len(self.stack) == 4):
+                    # check for "X||!X" conditions
+                    if ((isinstance(self.stack[0], ConfigCondition)) and
+                        (isinstance(self.stack[1], ConfigCondition)) and (self.stack[1].is_or) and
+                        (isinstance(self.stack[2], ConfigCondition)) and (self.stack[2].is_not) and
+                        (isinstance(self.stack[3], ConfigCondition)) and
+                        (self.stack[0].opt_str == self.stack[3].opt_str)):
+                        return
+                if (len(self.stack) == 3):
+                    # check for "X||X=n" conditions
+                    if ((isinstance(self.stack[0], ConfigCondition)) and
+                        (isinstance(self.stack[1], ConfigCondition)) and (self.stack[1].is_or) and
+                        (isinstance(self.stack[2], ConfigCondition)) and
+                        (self.stack[0].opt_str == self.stack[2].opt_str) and
+                        (self.stack[2].is_eq and (self.stack[0].val == None) and (self.stack[2].val == "n"))):
+                        return
+                print(f"\tCondition not met: '{self.opt.serialize()['deps']}'")
                 return
         elif (self.is_and or (len(self.stack) < 3)):
             # both conditions must be true
@@ -579,9 +595,6 @@ class ConfigScan:
             opt = self.__find_opt(cfg)
             if (opt and is_enabled and is_new):
                 # solve dependencies only for enabled and new options
-                ss = opt.serialize()["deps"]
-                if (ss != ""):
-                    print(f"Process dependency '{ss}' for '{cfg}'")
                 solver = ConfigSolver(opt, self.__cfg_recursive, self.__cfg_get)
                 solver.solve()
     def __get_system(self, name):
