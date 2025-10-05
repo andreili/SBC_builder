@@ -19,6 +19,13 @@
     "systems":
     [
         {
+            "name": "minimize_arm64",
+            "options":
+            [
+                "ARM64_VA_BITS_48=y"
+            ]
+        },
+        {
             "name": "minimize",
             "options":
             [
@@ -38,7 +45,6 @@
                 "ELF_CORE=n",
                 "COREDUMP=n",
                 "KALLSYMS=n",
-                "ARM64_VA_BITS_48=y",
                 "NR_CPUS=8",
                 "EFI=n",
                 "SWAP=n",
@@ -221,6 +227,55 @@
             ]
         },
         {
+            "name": "arm64_errata",
+            "options":
+            [
+                "ARM64_WORKAROUND_CLEAN_CACHE=y",
+                "#Cortex-A53 errata fixes",
+                "ARM64_ERRATUM_826319=y",
+                "ARM64_ERRATUM_827319=y",
+                "ARM64_ERRATUM_824069=y",
+                "ARM64_ERRATUM_819472=y",
+                "ARM64_ERRATUM_843419=y",
+                "#Cortex-A57 errata fixes",
+                "ARM64_ERRATUM_832075=y",
+                "#Cortex-A55 errata fixes",
+                "ARM64_ERRATUM_1024718=y",
+                "ARM64_ERRATUM_1530923=y",
+
+                "ARM64_WORKAROUND_SPECULATIVE_AT=y",
+                "ARM64_WORKAROUND_REPEAT_TLBI=y",
+                "ARM64_WORKAROUND_TSB_FLUSH_FAILURE=y",
+                "ARM64_WORKAROUND_SPECULATIVE_UNPRIV_LOAD=y",
+
+                "#disable ERRATA for another CPUs",
+                "ARM64_ERRATUM_2966298=n",
+                "ARM64_ERRATUM_3117295=n",
+                "ARM64_ERRATUM_3194386=n",
+                "CAVIUM_ERRATUM_22375=n",
+                "CAVIUM_ERRATUM_23154=n",
+                "CAVIUM_ERRATUM_27456=n",
+                "CAVIUM_ERRATUM_30115=n",
+                "CAVIUM_TX2_ERRATUM_219=n",
+                "FUJITSU_ERRATUM_010001=n",
+                "HISILICON_ERRATUM_161600802=n",
+                "HISILICON_ERRATUM_162100801=n",
+                "QCOM_FALKOR_ERRATUM_1003=n",
+                "QCOM_FALKOR_ERRATUM_1009=n",
+                "QCOM_QDF2400_ERRATUM_0065=n",
+                "QCOM_FALKOR_ERRATUM_E1041=n",
+                "NVIDIA_CARMEL_CNP_ERRATUM=n",
+                "SOCIONEXT_SYNQUACER_PREITS=n",
+                "ARM64_ERRATUM_2457168=n",
+                "ARM64_ERRATUM_2645198=n",
+                "ARM64_ERRATUM_2054223=n",
+                "ARM64_ERRATUM_2067961=n",
+                "ARM64_ERRATUM_2051678=n",
+                "ARM64_ERRATUM_2077057=n",
+                "ARM64_ERRATUM_2658417=n"
+            ]
+        },
+        {
             "name": "linux_base",
             "options":
             [
@@ -253,6 +308,11 @@
             "system_min",
             "overlays",
             "linux_base"
+        ],
+        "arm64_min":
+        [
+            "arm64_errata",
+            "minimize_arm64"
         ]
     }
 }
