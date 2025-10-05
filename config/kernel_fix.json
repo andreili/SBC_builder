@@ -239,7 +239,6 @@
                 "KEXEC_FILE=y",
                 "HAS_IOMEM=y",
                 "SYSVIPC=y",
-                "SYSVIPC_COMPAT=y",
                 "POSIX_MQUEUE=y"
             ]
         }
