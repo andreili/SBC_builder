@@ -199,6 +199,7 @@
             "options":
             [
                 "#system_min",
+                "LOCALVERSION=\"-$(SRCARCH)\"",
                 "SCHED_MC=y",
                 "TMPFS=y",
                 "TMPFS_POSIX_ACL=y",

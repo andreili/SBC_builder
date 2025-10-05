@@ -425,6 +425,9 @@ class ConfigScan:
         return obj
     def deserialize(self, js):
         self.arch = js["arch"]
+        self.vars = [
+            [ "SRCARCH", self.arch ],
+        ]
         self.arch_list = js["arch_list"]
         self.compatible = js["compatible"]
         for o in js["opts"]:
@@ -449,6 +452,7 @@ class ConfigScan:
     def __cfg_add_cfg(self, cfg, val):
         # TODO - check a config override, conditions, value
         def_val = self.__cfg_get_default(cfg)
+        val = self.__parse_variables(val)
         if (def_val == None):
             return
         opt = ConfigCondition(cfg)
@@ -474,6 +478,7 @@ class ConfigScan:
             opt = self.__find_opt(cfg)
             if (opt and is_enabled):
                 for dep in opt.deps:
+                    # dependencies resolution
                     if (dep.opt_str != ""):
                         self.__cfg_recursive(dep.opt_str)
     def __get_system(self, name):
@@ -484,6 +489,7 @@ class ConfigScan:
     def __add_set(self, name):
         sys_lst = self.sets[name]
         for sys_name in sys_lst:
+            # add all systems for selected set
             sys = self.__get_system(sys_name)
             if (sys == None):
                 print(f"Unable to find system '{sys_name}'!")
@@ -506,6 +512,7 @@ class ConfigScan:
         # activate default configurations first
         self.__add_sets(config_set)
         for cfg in cfgs:
+            # walk through all platform configs
             self.__cfg_recursive(cfg)
         f = open(path, "w")
         for opt in self.def_cfg:
