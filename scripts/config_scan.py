@@ -216,12 +216,29 @@ class KmakefileScan:
                 self.__do_line(f, sub_dir, cond_loc, line, True)
                 if (line[-2] != "\\"):
                     break
+        if (m_obj_cfg[0] == "obj"):
+            # next line is a synonym?
+            line = f.readline()
+            m_obj_next = r_km_obj_cfg.findall(line)
+            if (m_obj_next):
+                target_name = m_obj_next[0][0] + ".o"
+                obj_new = m_obj_next[0][2]
+                if (target_name == obj) and (obj_new != ""):
+                    while (obj_new[0] == " "):
+                        obj_new = obj_new[1:]
+                    self.__do_fn(sub_dir, cond_loc, obj_new)
+                else:
+                    # not a synonym - process line again
+                    self.__do_line(f, sub_dir, cond_loc, line)
+            else:
+                # not a synonym - process line again
+                self.__do_line(f, sub_dir, cond_loc, line)
     def scan(self, sub_dir="", cond=""):
         if (sub_dir == ""):
             full_path = self.path
         else:
             full_path = f"{self.path}/{sub_dir}"
-        #print(f"\tDir: {full_path}")
+        #print(f"\tDir: {sub_dir}")
         mk_fn1 = f"{full_path}/Kbuild"
         mk_fn2 = f"{full_path}/Makefile"
         if (os.path.isfile(mk_fn1)):
