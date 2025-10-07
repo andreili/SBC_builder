@@ -294,7 +294,142 @@
                 "KEXEC_FILE=y",
                 "HAS_IOMEM=y",
                 "SYSVIPC=y",
-                "POSIX_MQUEUE=y"
+                "POSIX_MQUEUE=y",
+                "DEVTMPFS=y",
+                "DEVTMPFS_MOUNT=y",
+                "NLS_DEFAULT=\"utf8\"",
+                "NLS_CODEPAGE_437=y"
+            ]
+        },
+        {
+            "name": "stat_opts",
+            "options":
+            [
+                "TASKSTATS=y",
+                "TASK_XACCT=y",
+                "TASK_IO_ACCOUNTING=y",
+                "PERF_EVENTS=y",
+                "PERCPU_STATS=y"
+            ]
+        },
+        {
+            "name": "power_control",
+            "options":
+            [
+                "CPU_IDLE_MULTIPLE_DRIVERS=y",
+                "CPU_IDLE_GOV_LADDER=y",
+                "CPU_IDLE_GOV_MENU=y",
+                "DT_IDLE_STATES=y",
+                "DT_IDLE_GENPD=y",
+                "ARM_PSCI_CPUIDLE=y",
+                "ARM_PSCI_CPUIDLE_DOMAIN=y",
+                "CPU_FREQ=y",
+                "CPU_FREQ_GOV_ATTR_SET=y",
+                "CPU_FREQ_GOV_COMMON=y",
+                "CPU_FREQ_DEFAULT_GOV_ONDEMAND=y",
+                "CPU_FREQ_GOV_PERFORMANCE=y",
+                "CPU_FREQ_GOV_POWERSAVE=y",
+                "CPU_FREQ_GOV_USERSPACE=y",
+                "CPU_FREQ_GOV_ONDEMAND=y",
+                "CPU_FREQ_GOV_SCHEDUTIL=y",
+                "CPUFREQ_DT=y",
+                "CPUFREQ_DT_PLATDEV=y",
+                "ARM_SCMI_CPUFREQ=y",
+                "DEVFREQ_GOV_PERFORMANCE=y",
+                "DEVFREQ_GOV_POWERSAVE=y",
+                "DEVFREQ_GOV_USERSPACE=y",
+                "DEVFREQ_GOV_PASSIVE=y"
+            ]
+        },
+        {
+            "name": "net_base",
+            "options":
+            [
+                "CFG80211=m",
+                "MAC80211=m",
+                "CFG80211_WEXT=y",
+                "WEXT_CORE=y",
+                "WEXT_PROC=y",
+                "CFG80211_CERTIFICATION_ONUS=y",
+                "MAC80211_LEDS=y",
+                "RFKILL=y",
+                "RFKILL_GPIO=y"
+            ]
+        },
+        {
+            "name": "to_review",
+            "options":
+            [
+                "MEMCG=y",
+                "CGROUP_PIDS=y",
+                "CGROUP_FREEZER=y",
+                "CGROUP_DEVICE=y",
+                "CGROUP_CPUACCT=y",
+                "CGROUP_PERF=y",
+                "UTS_NS=y",
+                "TIME_NS=y",
+                "IPC_NS=y",
+                "USER_NS=y",
+                "PID_NS=y",
+                "NET_NS=y",
+                "DEBUG_FS=y",
+                "DEBUG_FS_ALLOW_ALL=y"
+            ]
+        },
+        {
+            "name": "rk_base",
+            "options":
+            [
+                "PCIE_ROCKCHIP_DW_HOST=y",
+                "ARM_SCPI_PROTOCOL=y"
+            ]
+        },
+        {
+            "name": "system_live",
+            "options":
+            [
+                "SQUASHFS=y",
+                "SQUASHFS_FILE_DIRECT=y",
+                "SQUASHFS_DECOMP_MULTI_PERCPU=y",
+                "SQUASHFS_COMPILE_DECOMP_MULTI_PERCPU=y",
+                "SQUASHFS_XATTR=y",
+                "SQUASHFS_ZLIB=y",
+                "SQUASHFS_LZ4=y",
+                "SQUASHFS_LZO=y",
+                "SQUASHFS_XZ=y",
+                "OVERLAY_FS=y",
+                "OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y"
+            ]
+        },
+        {
+            "name": "printer_base",
+            "options":
+            [
+                "DEFAULT_HOSTNAME=\"Printer\"",
+                "MTD=y",
+                "MTD_OF_PARTS=y",
+                "MTD_BLKDEVS=y",
+                "MTD_BLOCK=y",
+                "FAT_FS=y",
+                "VFAT_FS=y",
+                "FAT_DEFAULT_IOCHARSET=\"utf8\"",
+                "EXFAT_FS=y",
+                "EXFAT_DEFAULT_IOCHARSET=\"utf8\"",
+                "F2FS_FS=y",
+                "F2FS_STAT_FS=y",
+                "F2FS_FS_XATTR=y",
+                "F2FS_FS_POSIX_ACL=y",
+                "F2FS_CHECK_FS=y",
+                "F2FS_FS_COMPRESSION=y",
+                "F2FS_FS_LZO=y",
+                "F2FS_FS_LZORLE=y",
+                "F2FS_FS_LZ4=y",
+                "F2FS_FS_LZ4HC=y",
+                "F2FS_IOSTAT=y",
+                "F2FS_FS_ZSTD=n",
+                "EXT4_FS=y",
+                "EXT4_FS_POSIX_ACL=y",
+                "DHT11=m"
             ]
         }
     ],
@@ -307,12 +442,30 @@
             "ramdisk",
             "system_min",
             "overlays",
-            "linux_base"
+            "linux_base",
+            "stat_opts",
+            "power_control",
+            "net_base",
+            "to_review"
         ],
         "arm64_min":
         [
             "arm64_errata",
             "minimize_arm64"
+        ],
+        "arm64_linux_min":
+        [
+            "linux_min",
+            "arm64_min"
+        ],
+        "rk_all":
+        [
+            "rk_base"
+        ],
+        "printer_all":
+        [
+            "system_live",
+            "printer_base"
         ]
     }
 }
