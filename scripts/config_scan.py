@@ -413,7 +413,7 @@ class ConfigSolver:
                         (self.stack[0].opt_str == self.stack[2].opt_str) and
                         (self.stack[2].is_eq and (self.stack[0].val == None) and (self.stack[2].val == "n"))):
                         return
-                print(f"\tCondition not met: '{self.opt.serialize()['deps']}'")
+                print(f"\tCondition not met: '{self.opt.serialize()['deps']}' for '{self.opt.name}'")
                 return
         elif (self.is_and or (len(self.stack) < 3)):
             # both conditions must be true
@@ -559,7 +559,12 @@ class ConfigScan:
         opt.set_val(val)
         for o in self.def_cfg:
             if (o.opt_str == cfg):
-                o.set_val(val)
+                if (val == "n") and (o.val != "n"):
+                    # override "no" value only
+                    print("Override 'NO' value for config '{cfg}'!!!")
+                    exit(1)
+                if (o.val != "y") and (o.val != "m"):
+                    o.set_val(val)
                 return
         self.def_cfg.append(opt)
     def __cfg_get(self, cfg):
@@ -578,25 +583,27 @@ class ConfigScan:
         else:
             is_enabled = False
             is_new = False
+            cfg_val = "y"
             if ("=" in cfg):
                 # config have a predefined value
                 oo = cfg.split("=")
                 is_new = not (self.__check_cfg_exists(oo[0]))
                 #print(f"Process config '{cfg}', is_new={is_new}")
-                self.__cfg_add_cfg(oo[0], oo[1])
+                cfg = oo[0]
+                cfg_val = oo[1]
                 if (oo[1] != "n") and (oo[1] != ""):
                     is_enabled = True
                 cfg = oo[0]
             else:
                 # config have a default "yes" value
                 is_new = not (self.__check_cfg_exists(cfg))
-                self.__cfg_add_cfg(cfg, "y")
                 is_enabled = True
             opt = self.__find_opt(cfg)
             if (opt and is_enabled and is_new):
                 # solve dependencies only for enabled and new options
                 solver = ConfigSolver(opt, self.__cfg_recursive, self.__cfg_get)
                 solver.solve()
+            self.__cfg_add_cfg(cfg, cfg_val)
     def __get_system(self, name):
         for sys in self.systems:
             if (sys["name"] == name):
@@ -605,13 +612,17 @@ class ConfigScan:
     def __add_set(self, name):
         sys_lst = self.sets[name]
         for sys_name in sys_lst:
-            # add all systems for selected set
-            sys = self.__get_system(sys_name)
-            if (sys == None):
-                print(f"Unable to find system '{sys_name}'!")
-                exit(1)
-            for cfg in sys["options"]:
-                self.__cfg_recursive(cfg)
+            if (sys_name in self.sets):
+                # recursive set
+                self.__add_set(sys_name)
+            else:
+                # add all systems for selected set
+                sys = self.__get_system(sys_name)
+                if (sys == None):
+                    print(f"Unable to find system '{sys_name}'!")
+                    exit(1)
+                for cfg in sys["options"]:
+                    self.__cfg_recursive(cfg)
     def __add_sets(self, sets):
         lst = sets.split(",")
         for s in lst:
