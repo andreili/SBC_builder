@@ -103,7 +103,6 @@ class Target:
                     cfg_scn.load()
                     cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name, self.config_set)
                     opts.append(self.defconfig_name)
-                    opts.append(self.config_target)
                 elif (sub_target == "config"):
                     opts.append(self.config_target)
                 else:
