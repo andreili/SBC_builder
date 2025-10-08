@@ -31,14 +31,18 @@ os.check_rootfs()
 
 if (args.sync):
     target_board.sync()
-elif (args.target != ""):
-    if (args.target == "initramfs"):
-        init = Initramfs()
-        init.build(os)
-    else:
-        if (args.kernel_scan):
-            target_board.scan_kernel()
-        target_board.build(args.target)
+
+if (args.kernel_scan):
+    target_board.scan_kernel()
+
+if (args.target != ""):
+    targets = args.target.split(",")
+    for target in targets:
+        if (target == "initramfs"):
+            init = Initramfs()
+            init.build(os)
+        else:
+            target_board.build(target)
 
 if (args.os_act != ""):
     acts = args.os_act.split(",")
