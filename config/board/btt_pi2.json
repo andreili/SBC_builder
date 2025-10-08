@@ -68,7 +68,7 @@
         {
             "parent": "kernel",
             "config_def": "rk3566-bigtreetech-cb2-manta_defconfig",
-            "config_set": "arm64_linux_min,rk_all,printer_all"
+            "config_set": "arm64_linux_min,rk_all,printer_all,sys_rk809"
         }
     ],
     "install":

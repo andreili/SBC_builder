@@ -89,10 +89,14 @@
                 "EEPROM_AT25=n",
                 "EEPROM_93CX6=n",
                 "VM_EVENT_COUNTERS=n",
+                "ATA=n",
+                "AHCI_DWC=y",
+                "ATA_SFF=y",
                 "NET_VENDOR_MYRI=n",
                 "NET_VENDOR_ALACRITECH=n",
                 "NET_VENDOR_AMAZON=n",
                 "NET_VENDOR_AMD=n",
+                "NET_VENDOR_ARC=n",
                 "NET_VENDOR_AQUANTIA=n",
                 "NET_VENDOR_ASIX=n",
                 "NET_VENDOR_BROADCOM=n",
@@ -176,7 +180,11 @@
                 "WLAN_VENDOR_ST=n",
                 "WLAN_VENDOR_TI=n",
                 "WLAN_VENDOR_ZYDAS=n",
-                "WLAN_VENDOR_QUANTENNA=n"
+                "WLAN_VENDOR_QUANTENNA=n",
+                "MEDIA_TUNER=n",
+                "MEDIA_USB_SUPPORT=n",
+                "MEDIA_SUPPORT_FILTER=y",
+                "MEDIA_SUBDRV_AUTOSELECT=y"
             ]
         },
         {
@@ -351,9 +359,14 @@
                 "WEXT_CORE=y",
                 "WEXT_PROC=y",
                 "CFG80211_CERTIFICATION_ONUS=y",
+                "CFG80211_REQUIRE_SIGNED_REGDB=n",
                 "MAC80211_LEDS=y",
                 "RFKILL=y",
-                "RFKILL_GPIO=y"
+                "RFKILL_GPIO=y",
+                "PACKET=y",
+                "NET_IP_TUNNEL=y",
+                "INET_TUNNEL=y",
+                "IPV6=y"
             ]
         },
         {
@@ -373,7 +386,15 @@
                 "PID_NS=y",
                 "NET_NS=y",
                 "DEBUG_FS=y",
-                "DEBUG_FS_ALLOW_ALL=y"
+                "DEBUG_FS_ALLOW_ALL=y",
+                "LEDS_TRIGGER_MTD=y",
+                "LEDS_TRIGGER_HEARTBEAT=y",
+                "LEDS_TRIGGER_BACKLIGHT=y",
+                "LEDS_TRIGGER_CPU=y",
+                "LEDS_TRIGGER_ACTIVITY=y",
+                "LEDS_TRIGGER_PANIC=y",
+                "LEDS_USER=y",
+                "LEDS_PWM=y"
             ]
         },
         {
@@ -398,7 +419,9 @@
                 "SQUASHFS_LZO=y",
                 "SQUASHFS_XZ=y",
                 "OVERLAY_FS=y",
-                "OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y"
+                "OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y",
+                "BLK_DEV_LOOP=y",
+                "BLK_DEV_LOOP_MIN_COUNT=8"
             ]
         },
         {
@@ -410,6 +433,9 @@
                 "MTD_OF_PARTS=y",
                 "MTD_BLKDEVS=y",
                 "MTD_BLOCK=y",
+                "MTD_SPI_NOR=y",
+                "MTD_SPI_NOR_USE_4K_SECTORS=y",
+                "I2C_CHARDEV=y",
                 "FAT_FS=y",
                 "VFAT_FS=y",
                 "FAT_DEFAULT_IOCHARSET=\"utf8\"",
@@ -429,7 +455,52 @@
                 "F2FS_FS_ZSTD=n",
                 "EXT4_FS=y",
                 "EXT4_FS_POSIX_ACL=y",
-                "DHT11=m"
+                "DHT11=m",
+                "W1_MASTER_DS2482=m",
+                "W1_SLAVE_THERM=y",
+                "USB_SERIAL_CH341=y",
+                "USB_SERIAL_CP210X=y",
+                "USB_SERIAL_FTDI_SIO=y",
+                "USB_STORAGE=y",
+                "USB_UAS=y",
+                "USB_ACM=m",
+                "USB_XHCI_PLATFORM=y",
+                "USB_XHCI_PCI=n",
+                "FB=y",
+                "FB_CORE=y",
+                "FB_MODE_HELPERS=y",
+                "FRAMEBUFFER_CONSOLE=y",
+                "FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y",
+                "BACKLIGHT_PWM=y",
+                "DRM_PANEL_SIMPLE=m",
+                "DRM_PANEL_RASPBERRYPI_TOUCHSCREEN=m",
+                "DRM_PANEL_DSI_CM=m",
+                "DRM_SIMPLEDRM=y",
+                "SERIAL_8250_CONSOLE=y",
+                "SERIAL_8250_DMA=y",
+                "SERIAL_8250_EXTENDED=y",
+                "SERIAL_OF_PLATFORM=y",
+                "CAN_GS_USB=y",
+                "CAN_ROCKCHIP_CANFD=m",
+                "MOTORCOMM_PHY=y",
+                "BLK_DEV_SD=y"
+            ]
+        },
+        {
+            "name": "sys_rk809",
+            "options":
+            [
+                "INPUT_RK805_PWRKEY=y",
+                "REGULATOR_RK808=y",
+                "RTC_DRV_RK808=y",
+                "COMMON_CLK_RK808=y"
+            ]
+        },
+        {
+            "name": "no_snd",
+            "options":
+            [
+                "SOUND=n"
             ]
         }
     ],
