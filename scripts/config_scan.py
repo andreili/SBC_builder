@@ -626,6 +626,13 @@ class ConfigScan:
             if (sys["name"] == name):
                 return sys
         return None
+    def _add_system(self, name):
+        sys = self.__get_system(name)
+        if (sys == None):
+            print(f"Unable to find system '{name}'!")
+            exit(1)
+        for cfg in sys["options"]:
+            self.__cfg_recursive(cfg)
     def __add_set(self, name):
         sys_lst = self.sets[name]
         for sys_name in sys_lst:
@@ -643,10 +650,13 @@ class ConfigScan:
     def __add_sets(self, sets):
         lst = sets.split(",")
         for s in lst:
-            if (not (s in self.sets)):
+            if (self.__get_system(s)):
+                self._add_system(s)
+            elif (not (s in self.sets)):
                 print(f"Unable to find set '{s}'!")
                 exit(1)
-            self.__add_set(s)
+            else:
+                self.__add_set(s)
     def save_defconfig(self, path, name, config_set):
         path = f"{path}/arch/{self.arch}/configs/{name}"
         cfg_name = re.findall(r'(\S+)_defconfig', name)[0]
