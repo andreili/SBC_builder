@@ -15,6 +15,8 @@ class ConfigCondition:
         self.is_br_cl = False
         self.is_eq = False
         self.is_neq = False
+        self.is_force = False
+        self.is_flex = False
         self.val = None
         if (line == "||"):
             self.is_or = True
@@ -41,7 +43,15 @@ class ConfigCondition:
     def set_val(self, val):
         if (val != ""):
             self.is_eq = True
-            self.val = val
+            if (val[0] == "!"):
+                self.is_force = True
+                self.val = val[1:]
+            elif (val[0] == "?"):
+                self.is_flex = True
+                self.val = val[1:]
+            elif (not self.is_force):
+                self.val = val
+                self.is_flex = False
     def serialize(self):
         if (self.is_not):
             return "!"
@@ -576,12 +586,11 @@ class ConfigScan:
         opt.set_val(val)
         for o in self.def_cfg:
             if (o.opt_str == cfg):
-                if (val == "n") and (o.val != "n"):
+                if (val != "n") and (o.val == "n") and (not o.is_force) and (not o.is_flex):
                     # override "no" value only
-                    print("Override 'NO' value for config '{cfg}'!!!")
+                    print(f"Override 'NO' value for config '{cfg}'!!!")
                     exit(1)
-                if (o.val != "y") and (o.val != "m"):
-                    o.set_val(val)
+                o.set_val(val)
                 return
         self.def_cfg.append(opt)
     def __cfg_get(self, cfg):
@@ -608,7 +617,7 @@ class ConfigScan:
                 #print(f"Process config '{cfg}', is_new={is_new}")
                 cfg = oo[0]
                 cfg_val = oo[1]
-                if (oo[1] != "n") and (oo[1] != ""):
+                if (not ("n" in oo[1])) and (oo[1] != ""):
                     is_enabled = True
                 cfg = oo[0]
             else:
