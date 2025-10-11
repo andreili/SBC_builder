@@ -5,6 +5,7 @@
     ],
     "variables":
     [
+        "KERNEL_ARCH:arm64",
         "CROSS_C:aarch64-linux-gnu-",
         "ATF_PLATFORM:sun50i_h616",
         "ARCH:aarch64",

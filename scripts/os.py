@@ -12,7 +12,7 @@ class Partition(object):
 class OS:
     def __init__(self):
         self.root_dir = f"{ROOT_DIR}/root"
-        self.mount_dir = f"{ROOT_DIR}/build/mnt_tmp"
+        self.mount_dir = f"{BUILD_DIR}/mnt_tmp"
         self.actions = [
             [ "chroot",    self.chroot        ],
             [ "sync",      self.sync_repo     ],
@@ -32,7 +32,7 @@ class OS:
         Logger.ok_exit("Finished running from 'sudo'")
 
     def load_info(self):
-        with open(f"{ROOT_DIR}/config/os_{self.arch}.json") as json_data:
+        with open(f"{CONFIG_DIR}/os_{self.arch}.json") as json_data:
             js_data = json.load(json_data)
             json_data.close()
             self.st3_info = js_data["stage3_info"]
@@ -64,7 +64,7 @@ class OS:
         self.__tmp_clean(self.root_dir)
         [url,fn] = self.__get_stage3_url()
         Logger.os(f"Download Stage3 archive '{fn}'...")
-        temp_dir = f"{ROOT_DIR}/build/tmp"
+        temp_dir = f"{BUILD_DIR}/tmp"
         self.__tmp_clean(temp_dir)
         os.makedirs(temp_dir, exist_ok=True)
         r = requests.get(url, stream=True)
@@ -250,7 +250,7 @@ class OS:
 
     def make_sqh_kmod(self):
         self.__relaunch_as_sudo()
-        mod_path = f"{ROOT_DIR}/out/modules"
+        mod_path = f"{OUT_DIR}/modules"
         os.makedirs(mod_path, exist_ok=True)
         kmod_fn = self.board.parse_variables("%{out_sh}%/kmods/usr/lib/modules")
         kmod = Path(kmod_fn)
@@ -263,7 +263,7 @@ class OS:
         #self.__relaunch_as_sudo()
         self.make_sqh_kmod()
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        temp_dir = f"{ROOT_DIR}/build/tmp"
+        temp_dir = f"{BUILD_DIR}/tmp"
         # pack full system via tar
         arch_full_path = self.pack()
         self.__tmp_clean(temp_dir)
@@ -277,10 +277,10 @@ class OS:
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
         self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
-        sqh_fn = f"{ROOT_DIR}/out/root_{date}.sqh"
+        sqh_fn = f"{OUT_DIR}/root_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
-        os.symlink(f"root_{date}.sqh", f"{ROOT_DIR}/out/root.sqh.tmp")
-        os.rename(f"{ROOT_DIR}/out/root.sqh.tmp", f"{ROOT_DIR}/out/root.sqh")
+        os.symlink(f"root_{date}.sqh", f"{OUT_DIR}/root.sqh.tmp")
+        os.rename(f"{OUT_DIR}/root.sqh.tmp", f"{OUT_DIR}/root.sqh")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):

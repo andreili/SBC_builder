@@ -27,7 +27,7 @@ class CfgSet:
             for opt in opts:
                 opt_o = CfgOpt(opt)
                 self.options.append(opt_o)
-        Logger.build(f"Loaded config {self.name} with {len(self.options)} options")
+        #Logger.build(f"Loaded config {self.name} with {len(self.options)} options")
 
 class Defconfig:
     def __init__(self, name=""):

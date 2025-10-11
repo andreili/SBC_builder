@@ -14,9 +14,9 @@ class Initramfs:
         self.e2fsp = Sources("e2fsp", "git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git")
         self.e2fsp.init_source_path("common", True)
         self.e2fsp.set_git_params("@", "head")
-        self.build_dir = f"{ROOT_DIR}/build/common"
+        self.build_dir = f"{BUILD_DIR}/common"
         self.files_dir = f"{self.build_dir}/initrd"
-        self.out_dir = f"{ROOT_DIR}/out"
+        self.out_dir = f"{OUT_DIR}"
         self.root_dir = f"{ROOT_DIR}/root/media/initramfs_tmp"
         os.makedirs(self.files_dir, exist_ok=True)
 
@@ -134,7 +134,7 @@ class Initramfs:
         self.__mkshutdown()
 
     def build(self, os):
-        #self.__prepare()
+        self.__prepare()
         self.__busybox(os)
         self.__eudev(os)
         self.__e2fsp(os)

@@ -5,6 +5,7 @@
     ],
     "variables":
     [
+        "KERNEL_ARCH:arm64",
         "CROSS_C:aarch64-linux-gnu-",
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
         "BL31_BIN:rk3568_bl31_v1.45.elf",
@@ -66,7 +67,8 @@
         },
         {
             "parent": "kernel",
-            "config_def": "btt_pi2_printer_defconfig"
+            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig",
+            "config_set": "arm64_linux_min,rk_all,printer_all,sys_rk809,nvme_blk"
         }
     ],
     "install":

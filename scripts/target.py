@@ -51,6 +51,8 @@ class Target:
             self.makeopts = info_js["makeopts"]
         if ("config_def" in info_js):
             self.defconfig_name = info_js["config_def"]
+        if ("config_set" in info_js):
+            self.config_set = info_js["config_set"]
         if ("no_build" in info_js):
             self.no_build = True
         if ("artifacts" in info_js):
@@ -78,13 +80,11 @@ class Target:
             art["file"] = parse_variables(art["file"])
         if (self.have_defconfig):
             self.defconfig = Defconfig(self.name)
-    
+
     def source_sync(self):
         Logger.build(f"'{self.name}': Source prepare")
-        self.sources.sync()
-        self.sources.do_patch(self.board_name, self.patch_dir)
-        if (self.have_defconfig):
-            self.defconfig.save(self.sources.work_dir)
+        #self.sources.sync()
+        #self.sources.do_patch(self.board_name, self.patch_dir)
 
     def build(self, sub_target, out_dir):
         self.source_sync()
@@ -98,8 +98,11 @@ class Target:
                 targets = self.target
             else:
                 if (sub_target == "defconfig"):
+                    # initialize without arch - required only for parsing
+                    cfg_scn = ConfigScan("")
+                    cfg_scn.load()
+                    cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name, self.config_set)
                     opts.append(self.defconfig_name)
-                    opts.append(self.config_target)
                 elif (sub_target == "config"):
                     opts.append(self.config_target)
                 else:
@@ -108,7 +111,7 @@ class Target:
                 opts_tmp = opts.copy()
                 opts_tmp.append(target)
                 self.sources.compile(opts_tmp, self.config_name)
-        if (sub_target != "config"):
+        if (not fnmatch.fnmatch(sub_target, "*config")):
             self.sources.copy_artifacts(self.artifacts, out_dir)
 
     def install_files(self, dir, tmp_dir, part_name, on_file, on_dd):

@@ -143,7 +143,8 @@
                     "virtual/libcrypt static-libs",
                     "sys-libs/libxcrypt static-libs",
                     "sys-fs/e2fsprogs static-libs",
-                    "media-video/mpv xv"
+                    "media-video/mpv xv",
+                    "media-libs/freetype harfbuzz"
                 ]
             },
             { "chroot": "emerge-webrsync" }

@@ -5,7 +5,7 @@ from . import *
 class Software:
     def __init__(self, os):
         self.os = os
-        js_fn = f"{ROOT_DIR}/config/software.json"
+        js_fn = f"{CONFIG_DIR}/software.json"
         with open(js_fn) as json_data:
             js = json.load(json_data)
             json_data.close()
