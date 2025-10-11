@@ -30,48 +30,48 @@
             "options":
             [
                 "#minimize",
-                "SERIAL_8250_PCILIB=n",
-                "SERIAL_8250_PCI=n",
-                "SERIAL_8250_EXAR=n",
-                "SERIAL_8250_PERICOM=n",
+                "SERIAL_8250_PCILIB=!n",
+                "SERIAL_8250_PCI=!n",
+                "SERIAL_8250_EXAR=!n",
+                "SERIAL_8250_PERICOM=!n",
                 "CXD2880_SPI_DRV=n",
-                "LEGACY_PTYS=n",
+                "LEGACY_PTYS=!n",
                 "LEGACY_TIOCSTI=n",
-                "SOUND=n",
-                "COMPAT=n",
+                "COMPAT=!n",
                 "EXPERT=y",
-                "UID16=n",
-                "BUG=n",
-                "ELF_CORE=n",
-                "COREDUMP=n",
-                "KALLSYMS=n",
+                "UID16=!n",
+                "BUG=!n",
+                "ELF_CORE=!n",
+                "COREDUMP=!n",
+                "KALLSYMS=!n",
                 "NR_CPUS=8",
-                "EFI=n",
-                "SWAP=n",
-                "SURFACE_PLATFORMS=n",
+                "EFI=!n",
+                "SWAP=!n",
+                "SURFACE_PLATFORMS=!n",
                 "LOG_BUF_SHIFT=13",
                 "LOG_CPU_MAX_BUF_SHIFT=12",
-                "FTRACE=n",
-                "MOUSE_PS2=n",
+                "FTRACE=!n",
+                "MOUSE_PS2=!n",
                 "SUNXI_SYS_INFO=n",
                 "DUMP_REG=n",
-                "ETHERNET=n",
-                "WLAN_VENDOR_ADMTEK=n",
-                "WLAN_VENDOR_ATH=n",
-                "WLAN_VENDOR_ATMEL=n",
-                "WLAN_VENDOR_BROADCOM=n",
-                "WLAN_VENDOR_INTEL=n",
-                "WLAN_VENDOR_INTERSIL=n",
-                "WLAN_VENDOR_MARVELL=n",
-                "WLAN_VENDOR_MEDIATEK=n",
-                "WLAN_VENDOR_MICROCHIP=n",
-                "WLAN_VENDOR_PURELIFI=n",
-                "WLAN_VENDOR_RALINK=n",
-                "WLAN_VENDOR_REALTEK=n",
+                "ETHERNET=?n",
+                "HUGETLBFS=!n",
+                "WLAN_VENDOR_ADMTEK=?n",
+                "WLAN_VENDOR_ATH=?n",
+                "WLAN_VENDOR_ATMEL=?n",
+                "WLAN_VENDOR_BROADCOM=?n",
+                "WLAN_VENDOR_INTEL=?n",
+                "WLAN_VENDOR_INTERSIL=?n",
+                "WLAN_VENDOR_MARVELL=?n",
+                "WLAN_VENDOR_MEDIATEK=?n",
+                "WLAN_VENDOR_MICROCHIP=?n",
+                "WLAN_VENDOR_PURELIFI=?n",
+                "WLAN_VENDOR_RALINK=?n",
+                "WLAN_VENDOR_REALTEK=?n",
                 "WLAN_VENDOR_RSI=n",
                 "WLAN_VENDOR_SILABS=n",
-                "WLAN_VENDOR_ST=n",
-                "WLAN_VENDOR_TI=n",
+                "WLAN_VENDOR_ST=?n",
+                "WLAN_VENDOR_TI=?n",
                 "WLAN_VENDOR_ZYDAS=n",
                 "WLAN_VENDOR_QUANTENNA=n",
                 "VIRTIO_MENU=n",
@@ -89,9 +89,9 @@
                 "EEPROM_AT25=n",
                 "EEPROM_93CX6=n",
                 "VM_EVENT_COUNTERS=n",
-                "ATA=n",
+                "ATA=!n",
                 "AHCI_DWC=y",
-                "ATA_SFF=y",
+                "ATA_SFF=!n",
                 "NET_VENDOR_MYRI=n",
                 "NET_VENDOR_ALACRITECH=n",
                 "NET_VENDOR_AMAZON=n",
@@ -163,7 +163,7 @@
                 "NET_VENDOR_SUN=n",
                 "NET_VENDOR_TEHUTI=n",
                 "NET_VENDOR_TI=n",
-                "WLAN=n",
+                "WLAN=?n",
                 "WLAN_VENDOR_ADMTEK=n",
                 "WLAN_VENDOR_ATH=n",
                 "WLAN_VENDOR_ATMEL=n",
@@ -182,9 +182,10 @@
                 "WLAN_VENDOR_ZYDAS=n",
                 "WLAN_VENDOR_QUANTENNA=n",
                 "MEDIA_TUNER=n",
-                "MEDIA_USB_SUPPORT=n",
+                "MEDIA_USB_SUPPORT=?n",
                 "MEDIA_SUPPORT_FILTER=y",
-                "MEDIA_SUBDRV_AUTOSELECT=y"
+                "MEDIA_SUBDRV_AUTOSELECT=y",
+                "INPUT_TOUCHSCREEN=?n"
             ]
         },
         {
@@ -215,6 +216,7 @@
             [
                 "#system_min",
                 "LOCALVERSION=\"-$(SRCARCH)\"",
+                "LOCALVERSION_AUTO=n",
                 "SCHED_MC=y",
                 "TMPFS=y",
                 "TMPFS_POSIX_ACL=y",
@@ -353,8 +355,8 @@
             "name": "net_base",
             "options":
             [
-                "CFG80211=m",
-                "MAC80211=m",
+                "CFG80211=!m",
+                "MAC80211=!m",
                 "CFG80211_WEXT=y",
                 "WEXT_CORE=y",
                 "WEXT_PROC=y",
@@ -366,7 +368,8 @@
                 "PACKET=y",
                 "NET_IP_TUNNEL=y",
                 "INET_TUNNEL=y",
-                "IPV6=y"
+                "IPV6=y",
+                "USB_NET_DRIVERS=?n"
             ]
         },
         {
@@ -455,15 +458,16 @@
                 "F2FS_FS_ZSTD=n",
                 "EXT4_FS=y",
                 "EXT4_FS_POSIX_ACL=y",
-                "DHT11=m",
-                "W1_MASTER_DS2482=m",
+                "NTFS3_FS=y",
+                "DHT11=!m",
+                "W1_MASTER_DS2482=!m",
                 "W1_SLAVE_THERM=y",
                 "USB_SERIAL_CH341=y",
                 "USB_SERIAL_CP210X=y",
                 "USB_SERIAL_FTDI_SIO=y",
                 "USB_STORAGE=y",
                 "USB_UAS=y",
-                "USB_ACM=m",
+                "USB_ACM=!m",
                 "USB_XHCI_PLATFORM=y",
                 "USB_XHCI_PCI=n",
                 "FB=y",
@@ -472,18 +476,24 @@
                 "FRAMEBUFFER_CONSOLE=y",
                 "FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y",
                 "BACKLIGHT_PWM=y",
-                "DRM_PANEL_SIMPLE=m",
-                "DRM_PANEL_RASPBERRYPI_TOUCHSCREEN=m",
-                "DRM_PANEL_DSI_CM=m",
+                "DRM_PANEL_SIMPLE=!m",
+                "DRM_PANEL_RASPBERRYPI_TOUCHSCREEN=!m",
+                "DRM_PANEL_DSI_CM=!m",
                 "DRM_SIMPLEDRM=y",
                 "SERIAL_8250_CONSOLE=y",
                 "SERIAL_8250_DMA=y",
                 "SERIAL_8250_EXTENDED=y",
                 "SERIAL_OF_PLATFORM=y",
                 "CAN_GS_USB=y",
-                "CAN_ROCKCHIP_CANFD=m",
+                "CAN_ROCKCHIP_CANFD=!m",
                 "MOTORCOMM_PHY=y",
-                "BLK_DEV_SD=y"
+                "BLK_DEV_SD=y",
+                "GPIO_SYSFS=y",
+                "MEDIA_CAMERA_SUPPORT=y",
+                "MEDIA_USB_SUPPORT=y",
+                "USB_VIDEO_CLASS=y",
+                "V4L_PLATFORM_DRIVERS=y",
+                "V4L_MEM2MEM_DRIVERS=y"
             ]
         },
         {
@@ -497,10 +507,28 @@
             ]
         },
         {
+            "name": "nvme_blk",
+            "options":
+            [
+                "NVME_CORE=y",
+                "BLK_DEV_NVME=y"
+            ]
+        },
+        {
+            "name": "input_touch",
+            "options":
+            [
+                "INPUT_EVDEV=y",
+                "INPUT_TOUCHSCREEN=y",
+                "INPUT_MOUSEDEV=y"
+            ]
+        },
+        {
             "name": "no_snd",
             "options":
             [
-                "SOUND=n"
+                "SOUND=!n",
+                "SND=!n"
             ]
         }
     ],
@@ -536,7 +564,9 @@
         "printer_all":
         [
             "system_live",
-            "printer_base"
+            "printer_base",
+            "input_touch",
+            "no_snd"
         ]
     }
 }
