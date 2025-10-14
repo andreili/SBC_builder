@@ -12,7 +12,7 @@ index 9b2f128fd309..ae3b28cbe31f 100644
 +	.hsync_start = 800 + 59,
 +	.hsync_end = 800 + 59 + 2,
 +	.htotal = 800 + 59 + 2 + 52,
-+	.vdisplay = 1200,
++	.vdisplay = 480,
 +	.vsync_start = 480 + 7,
 +	.vsync_end = 480 + 7 + 2,
 +	.vtotal = 480 + 7 + 2 + 21,
