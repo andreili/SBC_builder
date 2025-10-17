@@ -11,7 +11,6 @@ class Partition(object):
 
 class OS:
     def __init__(self):
-        self.root_dir = f"{ROOT_DIR}/root"
         self.mount_dir = f"{BUILD_DIR}/mnt_tmp"
         self.actions = [
             [ "chroot",    self.chroot        ],
@@ -145,8 +144,9 @@ class OS:
 
     def set_board(self, board):
         self.board = board
-        self.board.add_var("ROOTFS", self.root_dir)
         self.arch = board.parse_variables("%{ARCH}%")
+        self.root_dir = f"{ROOT_DIR}/root_{self.arch}"
+        self.board.add_var("ROOTFS", self.root_dir)
 
     def sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         self.__sudo(args, cwd, env, stdout, shell)
