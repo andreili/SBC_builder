@@ -16,10 +16,6 @@
             "version": "v2024.01",
             "version_type": "tag",
             "patch_dir": "uboot/sunxi",
-            "deps":
-            [
-                "atf"
-            ],
             "artifacts":
             [
                 {
