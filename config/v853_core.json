@@ -1,0 +1,59 @@
+{
+    "build":
+    [
+        "initramfs", "uboot", "kernel"
+    ],
+    "variables":
+    [
+        "KERNEL_ARCH:arm",
+        "CROSS_C:arm-unknown-linux-gnu-",
+        "ARCH:armv7a_hf"
+    ],
+    "targets":
+    [
+        {
+            "parent": "uboot",
+            "version": "v2024.01",
+            "version_type": "tag",
+            "patch_dir": "uboot/sunxi",
+            "deps":
+            [
+                "atf"
+            ],
+            "artifacts":
+            [
+                {
+                    "file": "u-boot-sunxi-with-spl.bin",
+                    "store_type": "dd",
+                    "block_size": "1k",
+                    "img_offset": 8
+                }
+            ],
+            "target": [ "" ],
+            "config_def": "orangepi_zero2_defconfig",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
+        },
+        {
+            "parent": "kernel",
+            "config_def": "opi_zero2_printer_defconfig"
+        }
+    ],
+    "install":
+    {
+        "target": "image",
+        "block_size": "512b",
+        "type": "mbr",
+        "partitions":
+        [
+            {
+                "name": "boot",
+                "size": "1g",
+                "first_sector": "2048"
+            },
+            {
+                "name": "rw",
+                "size": "2g"
+            }
+        ]
+    }
+}

@@ -4,7 +4,7 @@ if __name__ != '__main__':
     from . import *
 
 units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
-MARKER_ROOTFS_READY = "rootfs_ready"
+MARKER_ROOTFS_READY = "rootfs_%{ARCH}%_ready"
 
 class Partition(object):
     pass
@@ -35,12 +35,15 @@ class OS:
             js_data = json.load(json_data)
             json_data.close()
             self.st3_info = js_data["stage3_info"]
+        with open(f"{CONFIG_DIR}/os.json") as json_data:
+            js_data = json.load(json_data)
+            json_data.close()
             self.st3_prepare = js_data["prepare"]
             self.st3_update = js_data["update"]
             self.st3_install = js_data["install"]
             self.finalize = js_data["finalize"]
             self.board.add_vars(js_data["variables"])
-            self.board.add_var("ROOT_FS", self.root_dir)
+        self.board.add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
         lst = []
@@ -127,7 +130,7 @@ class OS:
                     self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
 
     def check_rootfs(self):
-        if marker_check(MARKER_ROOTFS_READY):
+        if marker_check(MARKER_ROOTFS_READY, self.board):
             return
         self.__relaunch_as_sudo()
         stages = [
@@ -137,10 +140,10 @@ class OS:
             [self.st3_install,  self.__stage3_steps, "Software installation..."],
         ]
         for st in stages:
-            if (not marker_check(st[0]["marker"])):
+            if (not marker_check(st[0]["marker"], self.board)):
                 st[1](st[0], st[2])
-                marker_set(st[0]["marker"])
-        marker_set(MARKER_ROOTFS_READY)
+                marker_set(st[0]["marker"], self.board)
+        marker_set(MARKER_ROOTFS_READY, self.board)
 
     def set_board(self, board):
         self.board = board
