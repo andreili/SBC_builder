@@ -164,6 +164,8 @@ class OS:
                 err_n = args[1]
         else:
             err_n = args
+        if (isinstance(args, str)):
+            shell=True
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
@@ -173,7 +175,11 @@ class OS:
         qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{self.arch}")
         if (not qemu_f.is_file()):
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
-        self.__sudo(["cp", f"{ROOT_DIR}/files/qemu/qemu-{self.arch}", f"{self.root_dir}/bin/"])
+        if (self.arch == "armv7a_hf"):
+            arch = "arm"
+        else:
+            arch = self.arch
+        self.__sudo(f"cp -L /usr/bin/qemu-{arch} {self.root_dir}/bin/")
 
     def __chroot(self, command, dir="", stdout=None):
         self.__prepare()
@@ -280,10 +286,10 @@ class OS:
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
         self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
-        sqh_fn = f"{OUT_DIR}/root_{date}.sqh"
+        sqh_fn = f"{OUT_DIR}/root_{self.arch}_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
-        os.symlink(f"root_{date}.sqh", f"{OUT_DIR}/root.sqh.tmp")
-        os.rename(f"{OUT_DIR}/root.sqh.tmp", f"{OUT_DIR}/root.sqh")
+        os.symlink(f"root_{self.arch}_{date}.sqh", f"{OUT_DIR}/root_{self.arch}.sqh.tmp")
+        os.rename(f"{OUT_DIR}/root_{self.arch}.sqh.tmp", f"{OUT_DIR}/root_{self.arch}.sqh")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):
@@ -451,8 +457,8 @@ class OS:
             else:
                 target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
-        Logger.install(f"\tCopy root.sqh")
-        self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
+        Logger.install(f"\tCopy root_{self.arch}.sqh")
+        self.__sudo(["cp", "-H", f"{self.board.out_sh}/root_{self.arch}.sqh", f"{out_dir}/"])
         self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
@@ -506,6 +512,11 @@ if __name__ == '__main__':
         name = "aarch64"
         interp = f"/usr/bin/qemu-{name}"
         magic  = b"\\x7fELF\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\xb7\\x00"
+        mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
+    if (len(sys.argv) < 2) or (sys.argv[1] == "armv7a_hf"):
+        name = "arm"
+        interp = f"/usr/bin/qemu-{name}"
+        magic  = b"\\x7fELF\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x28\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     else:
         print("Invalid arguments!")

@@ -8,3 +8,4 @@
 * dev-python/requests
 * dev-python/pyelftools
 * sys-fs/squashfs-tools
+* app-emulation/qemu
