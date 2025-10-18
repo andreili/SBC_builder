@@ -74,11 +74,14 @@ class Board:
             self.variables.append(var_def.split(":"))
 
     def parse_variables(self, string):
-        while True:
+        finded = True
+        while finded:
+            finded = False
             for var_d in self.variables:
-                string = string.replace("%{"+var_d[0]+"}%", str(var_d[1]))
-            if not re.compile('%{\\S+}%').match(string):
-                break
+                s_var = "%{"+var_d[0]+"}%"
+                if (s_var in string):
+                    finded = True
+                    string = string.replace(s_var, str(var_d[1]))
         return string
 
     def targets_list(self):
