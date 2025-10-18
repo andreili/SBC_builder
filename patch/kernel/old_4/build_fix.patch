@@ -1,0 +1,176 @@
+diff --git a/arch/arm/boot/bootp/init.S b/arch/arm/boot/bootp/init.S
+index 78b508075..e62cecf2f 100644
+--- a/arch/arm/boot/bootp/init.S
++++ b/arch/arm/boot/bootp/init.S
+@@ -16,7 +16,7 @@
+  *  size immediately following the kernel, we could build this into
+  *  a binary blob, and concatenate the zImage using the cat command.
+  */
+-		.section .start,#alloc,#execinstr
++		.section .start,"ax"
+ 		.type	_start, #function
+ 		.globl	_start
+ 
+diff --git a/arch/arm/boot/compressed/big-endian.S b/arch/arm/boot/compressed/big-endian.S
+index 25ab26f1c..f22428e27 100644
+--- a/arch/arm/boot/compressed/big-endian.S
++++ b/arch/arm/boot/compressed/big-endian.S
+@@ -5,7 +5,7 @@
+  *  Author: Nicolas Pitre
+  */
+ 
+-	.section ".start", #alloc, #execinstr
++	.section ".start", "ax"
+ 
+ 	mrc	p15, 0, r0, c1, c0, 0	@ read control reg
+ 	orr	r0, r0, #(1 << 7)	@ enable big endian mode
+diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
+index 98a87e9ec..037b50a9c 100644
+--- a/arch/arm/boot/compressed/head.S
++++ b/arch/arm/boot/compressed/head.S
+@@ -114,7 +114,7 @@
+ #endif
+ 		.endm
+ 
+-		.section ".start", #alloc, #execinstr
++		.section ".start", "ax"
+ /*
+  * sort out different calling conventions
+  */
+diff --git a/arch/arm/boot/compressed/piggy.S b/arch/arm/boot/compressed/piggy.S
+index f72088495..4851df706 100644
+--- a/arch/arm/boot/compressed/piggy.S
++++ b/arch/arm/boot/compressed/piggy.S
+@@ -1,4 +1,4 @@
+-	.section .piggydata,#alloc
++	.section .piggydata,"ax"
+ 	.globl	input_data
+ input_data:
+ 	.incbin	"arch/arm/boot/compressed/piggy_data"
+diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+index 618dd11b8..53a038194 100644
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -638,7 +638,7 @@ __v7_setup_stack:
+ 	string	cpu_elf_name, "v7"
+ 	.align
+ 
+-	.section ".proc.info.init", #alloc
++	.section ".proc.info.init", "ax"
+ 
+ 	/*
+ 	 * Standard v7 proc info content
+diff --git a/drivers/mfd/axp2101.c b/drivers/mfd/axp2101.c
+index 7bd7e0226..8a4a88287 100644
+--- a/drivers/mfd/axp2101.c
++++ b/drivers/mfd/axp2101.c
+@@ -3136,7 +3136,7 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
+ EXPORT_SYMBOL(axp20x_match_device);
+ 
+ 
+-int axp_debug_mask;
++int _axp_debug_mask;
+ 
+ static ssize_t debugmask_store(struct class *class,
+ 				struct class_attribute *attr,
+@@ -3148,7 +3148,7 @@ static ssize_t debugmask_store(struct class *class,
+ 	if (err)
+ 		return err;
+ 
+-	axp_debug_mask = val;
++	_axp_debug_mask = val;
+ 
+ 	return count;
+ }
+@@ -3160,7 +3160,7 @@ static ssize_t debugmask_show(struct class *class,
+ 	char *end = (char *)((ptrdiff_t)buf + (ptrdiff_t)PAGE_SIZE);
+ 
+ 	s += scnprintf(s, end - s, "%s\n", "1: SPLY 2: REGU 4: INT 8: CHG");
+-	s += scnprintf(s, end - s, "debug_mask=%d\n", axp_debug_mask);
++	s += scnprintf(s, end - s, "debug_mask=%d\n", _axp_debug_mask);
+ 
+ 	return s - buf;
+ }
+@@ -3206,7 +3206,7 @@ static struct class_attribute axp_class_attrs[] = {
+ 	__ATTR_NULL
+ };
+ 
+-struct class axp_class = {
++struct class _axp_class = {
+ 	.name = "axp",
+ 	.class_attrs = axp_class_attrs,
+ };
+@@ -3215,7 +3215,7 @@ static int axp_sysfs_init(void)
+ {
+ 	int status;
+ 
+-	status = class_register(&axp_class);
++	status = class_register(&_axp_class);
+ 	if (status < 0)
+ 		pr_err("%s,%d err, status:%d\n", __func__, __LINE__, status);
+ 
+diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+index 196f01fc1..fc5c66d5a 100644
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@ -10,7 +10,7 @@ obj-$(CONFIG_GENERIC_ADC_BATTERY)	+= generic-adc-battery.o
+ obj-$(CONFIG_PDA_POWER)		+= pda_power.o
+ obj-$(CONFIG_APM_POWER)		+= apm_power.o
+ obj-$(CONFIG_AXP20X_POWER)	+= axp20x_usb_power.o
+-obj-$(CONFIG_AXP2101_POWER)	+= axp2101_charger.o
++#obj-$(CONFIG_AXP2101_POWER)	+= axp2101_charger.o
+ obj-$(CONFIG_AXP2101_POWER_EXT)	+= axp2101_battery.o
+ obj-$(CONFIG_AXP2101_POWER_EXT)	+= axp2101_usb_power.o
+ obj-$(CONFIG_AXP152_VBUS_POWER)	+= axp152_vbus_power.o
+diff --git a/drivers/power/supply/axp/axp2101/axp2101.c b/drivers/power/supply/axp/axp2101/axp2101.c
+index 3f415c288..8658f38ae 100644
+--- a/drivers/power/supply/axp/axp2101/axp2101.c
++++ b/drivers/power/supply/axp/axp2101/axp2101.c
+@@ -559,8 +559,8 @@ static int axp2101_probe(struct platform_device *pdev)
+ 	if (!pm_power_off)
+ 		pm_power_off = axp2101_power_off;
+ 
+-	device_create_file(&pdev->dev, &dev_attr_pmu_ws);
+-	device_create_file(&pdev->dev, &dev_attr_axp_wakeup_event);
++	device_create_file(device, &dev_attr_pmu_ws);
++	device_create_file(device, &dev_attr_axp_wakeup_event);
+ 
+ 	/* wakeup-source process */
+ #ifndef CONFIG_AXP_TWI_USED
+diff --git a/scripts/dtc/dtc-lexer.l b/scripts/dtc/dtc-lexer.l
+index c60060304..cf7707be4 100644
+--- a/scripts/dtc/dtc-lexer.l
++++ b/scripts/dtc/dtc-lexer.l
+@@ -38,7 +38,6 @@ LINECOMMENT	"//".*\n
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
+ extern bool treesource_error;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+diff --git a/scripts/dtc/dtc-lexer.lex.c_shipped b/scripts/dtc/dtc-lexer.lex.c_shipped
+index cc7fa8248..e1072d9e4 100644
+--- a/scripts/dtc/dtc-lexer.lex.c_shipped
++++ b/scripts/dtc/dtc-lexer.lex.c_shipped
+@@ -631,7 +631,6 @@ char *yytext;
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
+ extern bool treesource_error;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
+index 5075ebf2d..0f81ae6ce 100755
+--- a/scripts/kconfig/lxdialog/check-lxdialog.sh
++++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
+@@ -47,7 +47,7 @@ trap "rm -f $tmp" 0 1 2 3 15
+ check() {
+         $cc -x c - -o $tmp 2>/dev/null <<'EOF'
+ #include CURSES_LOC
+-main() {}
++int main() {return 0;}
+ EOF
+ 	if [ $? != 0 ]; then
+ 	    echo " *** Unable to find the ncurses libraries or the"       1>&2
