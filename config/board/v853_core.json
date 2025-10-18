@@ -50,7 +50,7 @@
                     "kmods": true
                 },
                 {
-                    "file": "arch/arm/boot/zImage",
+                    "file": "arch/arm/boot/uImage",
                     "store_type": "boot"
                 }
             ],
