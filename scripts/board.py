@@ -16,17 +16,22 @@ class Board:
         self.variables = []
         self.__load_vars()
         for target in self.json["targets"]:
-            t = self.__find_meta(targets_meta, target["parent"])
-            if (t == 0):
-                Logger.error("Unable to find parent for package!")
-            t.load_detail(self.name, target, self.parse_variables)
-            self.targets.append(t)
-            for module in t.modules:
-                m = self.__find_meta(targets_meta, module)
-                if (m == 0):
-                    Logger.error("Unable to find parent for module!")
-                m.load_detail(self.name, None, self.parse_variables)
-                self.targets.append(m)
+            if ("parent" in target):
+                t = self.__find_meta(targets_meta, target["parent"])
+                if (t == 0):
+                    Logger.error("Unable to find parent for package!")
+                t.load_detail(self.name, target, self.parse_variables)
+                self.targets.append(t)
+                for module in t.modules:
+                    m = self.__find_meta(targets_meta, module)
+                    if (m == 0):
+                        Logger.error("Unable to find parent for module!")
+                    m.load_detail(self.name, None, self.parse_variables)
+                    self.targets.append(m)
+            else:
+                t = targets_meta[0].wo_parent(target)
+                t.load_detail(self.name, target, self.parse_variables)
+                self.targets.append(t)
         self.__scan_deps()
 
     def __scan_deps(self):

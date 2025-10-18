@@ -507,7 +507,6 @@ class OS:
         Logger.install(f"Finished!")
 
 if __name__ == '__main__':
-    f = open("/proc/sys/fs/binfmt_misc/register","wb")
     if (len(sys.argv) < 2) or (sys.argv[1] == "aarch64"):
         name = "aarch64"
         interp = f"/usr/bin/qemu-{name}"
@@ -521,6 +520,9 @@ if __name__ == '__main__':
     else:
         print("Invalid arguments!")
         exit(1)
+    if (os.path.exists(f"/proc/sys/fs/binfmt_misc/qemu-{name}")):
+        exit(0)
+    f = open("/proc/sys/fs/binfmt_misc/register","wb")
     _REGISTER_FORMAT = b":qemu-%(name)s:M::%(magic)s:%(mask)s:%(interp)s:%(flags)s"
     s = _REGISTER_FORMAT % {
         b"name": name.encode("utf-8"),

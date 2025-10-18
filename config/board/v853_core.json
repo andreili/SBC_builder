@@ -6,7 +6,7 @@
     "variables":
     [
         "KERNEL_ARCH:arm",
-        "CROSS_C:arm-unknown-linux-gnu-",
+        "CROSS_C:armv7a-unknown-linux-musleabih-",
         "ARCH:armv7a_hf"
     ],
     "targets":
@@ -30,7 +30,29 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
         },
         {
-            "parent": "kernel",
+            "name": "kernel_v853",
+            "url": "https://github.com/lindenis-org/lindenis-v853-lichee-linux-4.9.git",
+            "config": true,
+            "config_target": "menuconfig",
+            "is_shared": false,
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": [ "kernel/old_4" ],
+            "target": [ "modules_prepare", "uImage", "modules", "dtbs", "modules_install" ],
+            "have_defconfig": false,
+            "artifacts":
+            [
+                {
+                    "file": "",
+                    "store_type": "none",
+                    "kmods": true
+                },
+                {
+                    "file": "arch/arm/boot/zImage",
+                    "store_type": "boot"
+                }
+            ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
             "config_def": "opi_zero2_printer_defconfig"
         }
     ],

@@ -28,6 +28,14 @@ class Target:
             self.is_shared = meta_info["is_shared"]
             self.__load_info(meta_info)
 
+    def wo_parent(self, meta_js):
+        js = dict()
+        t_name = meta_js["name"]
+        js[t_name] = meta_js
+        t = Target(js)
+        t.depends = []
+        return t
+
     def load_meta(meta_fn):
         with open(meta_fn) as json_data:
             js_data = json.load(json_data)

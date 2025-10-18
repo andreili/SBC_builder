@@ -242,7 +242,7 @@ class Sources:
 
     def compile(self, opts, cfg_name):
         #print(f"opts:{opts} target:{target}")
-        Logger.build(f"Compile (opts='{opts}')...")
+        Logger.build(f"Compile (opts='{opts}' cfg_name='{cfg_name}')...")
         if (cfg_name != ""):
             work_cfg_name = f"{self.work_dir}/.config"
             cfg_or = Path(cfg_name)
