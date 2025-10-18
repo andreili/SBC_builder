@@ -5,38 +5,18 @@
     ],
     "variables":
     [
-        "CHOST:aarch64-unknown-linux-gnu",
-        "KERNEL_ARCH:arm64",
+        "CHOST:armv7a-unknown-linux-gnueabihf",
+        "KERNEL_ARCH:arm",
         "CROSS_C:%{CHOST}%-",
-        "ATF_PLATFORM:sun50i_h616",
-        "ARCH:aarch64"
+        "ARCH:armv7a_hf"
     ],
     "targets":
     [
-        {
-            "parent": "atf",
-            "version": "lts-v2.12.1",
-            "version_type": "tag",
-            "patch_dir": "atf/sunxi64",
-            "target": [ "bl31" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0",
-            "artifacts":
-            [
-                {
-                    "file": "build/%{ATF_PLATFORM}%/release/bl31.bin",
-                    "store_type": "temp"
-                }
-            ]
-        },
         {
             "parent": "uboot",
             "version": "v2024.01",
             "version_type": "tag",
             "patch_dir": "uboot/sunxi",
-            "deps":
-            [
-                "atf"
-            ],
             "artifacts":
             [
                 {
@@ -51,7 +31,30 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
         },
         {
-            "parent": "kernel",
+            "name": "kernel_v853",
+            "type": "kernel",
+            "url": "https://github.com/lindenis-org/lindenis-v853-lichee-linux-4.9.git",
+            "config": true,
+            "config_target": "menuconfig",
+            "is_shared": false,
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": [ "kernel/old_4" ],
+            "target": [ "modules_prepare", "uImage", "modules", "dtbs", "modules_install" ],
+            "have_defconfig": false,
+            "artifacts":
+            [
+                {
+                    "file": "",
+                    "store_type": "none",
+                    "kmods": true
+                },
+                {
+                    "file": "arch/arm/boot/zImage",
+                    "store_type": "boot"
+                }
+            ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
             "config_def": "opi_zero2_printer_defconfig"
         }
     ],

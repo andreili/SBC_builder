@@ -3,6 +3,7 @@
 OS_DIR_DEF="./root/"
 DDIR=$(realpath "$1")
 ROOT_DIR="$2"
+KPATH="$3"
 
 if [ -z "${DDIR}" ]
 then
@@ -14,12 +15,12 @@ then
     echo "No main directory specified!"
     exit 1
 fi
-KV=$(make -C "${ROOT_DIR}/build/common/kernel/" --silent kernelversion)
+KV=$(make -C "${KPATH}/" --silent kernelversion)
 
 mkdir -p ${DDIR}/usr/portage
 mount --bind ${ROOT_DIR}/files/portage ${DDIR}/usr/portage
 mkdir -p ${DDIR}/usr/src/linux-${KV}
-mount --bind ${ROOT_DIR}/build/common/kernel ${DDIR}/usr/src/linux-${KV}
+mount --bind ${KPATH} ${DDIR}/usr/src/linux-${KV}
 
 mount --bind /dev ${DDIR}/dev
 mount --bind /dev/shm ${DDIR}/dev/shm
@@ -27,12 +28,12 @@ mount --bind /dev/pts ${DDIR}/dev/pts
 mount --bind /sys ${DDIR}/sys
 mount --bind /proc ${DDIR}/proc
 mount -t tmpfs tmpfs ${DDIR}/var/tmp/
-if [ -z "$3" ]
+if [ -z "$4" ]
 then
     chroot ${DDIR}/ /bin/bash
     ret=$?
 else
-    chroot ${DDIR}/ /bin/bash -c "${@:3}"
+    chroot ${DDIR}/ /bin/bash -c "${@:4}"
     ret=$?
 fi
 umount ${DDIR}/var/tmp

@@ -16,6 +16,7 @@ class Target:
         self.modules = []
         self.have_config = False
         self.have_defconfig = False
+        self.type = ""
         for key in meta_js.keys():
             if (self.name != ''):
                 raise "Invalid target definition!"
@@ -28,6 +29,14 @@ class Target:
             self.is_shared = meta_info["is_shared"]
             self.__load_info(meta_info)
 
+    def wo_parent(self, meta_js):
+        js = dict()
+        t_name = meta_js["name"]
+        js[t_name] = meta_js
+        t = Target(js)
+        t.depends = []
+        return t
+
     def load_meta(meta_fn):
         with open(meta_fn) as json_data:
             js_data = json.load(json_data)
@@ -39,6 +48,8 @@ class Target:
         return res
 
     def __load_info(self, info_js, parse_variables=None):
+        if ("type" in info_js):
+            self.type = info_js["type"]
         if ("version" in info_js):
             self.sources.set_git_params(info_js["version"], info_js["version_type"])
             self.target = info_js["target"]

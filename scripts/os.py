@@ -4,14 +4,13 @@ if __name__ != '__main__':
     from . import *
 
 units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
-MARKER_ROOTFS_READY = "rootfs_ready"
+MARKER_ROOTFS_READY = "rootfs_%{ARCH}%_ready"
 
 class Partition(object):
     pass
 
 class OS:
     def __init__(self):
-        self.root_dir = f"{ROOT_DIR}/root"
         self.mount_dir = f"{BUILD_DIR}/mnt_tmp"
         self.actions = [
             [ "chroot",    self.chroot        ],
@@ -36,12 +35,15 @@ class OS:
             js_data = json.load(json_data)
             json_data.close()
             self.st3_info = js_data["stage3_info"]
+        with open(f"{CONFIG_DIR}/os.json") as json_data:
+            js_data = json.load(json_data)
+            json_data.close()
             self.st3_prepare = js_data["prepare"]
             self.st3_update = js_data["update"]
             self.st3_install = js_data["install"]
             self.finalize = js_data["finalize"]
             self.board.add_vars(js_data["variables"])
-            self.board.add_var("ROOT_FS", self.root_dir)
+        self.board.add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
         lst = []
@@ -87,6 +89,7 @@ class OS:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
                 lines = "\n".join(step["lines"])
+                lines = self.board.parse_variables(lines)
                 path = step["file"]
                 directory = Path(path).parent
                 cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
@@ -128,7 +131,7 @@ class OS:
                     self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
 
     def check_rootfs(self):
-        if marker_check(MARKER_ROOTFS_READY):
+        if marker_check(MARKER_ROOTFS_READY, self.board):
             return
         self.__relaunch_as_sudo()
         stages = [
@@ -138,15 +141,16 @@ class OS:
             [self.st3_install,  self.__stage3_steps, "Software installation..."],
         ]
         for st in stages:
-            if (not marker_check(st[0]["marker"])):
+            if (not marker_check(st[0]["marker"], self.board)):
                 st[1](st[0], st[2])
-                marker_set(st[0]["marker"])
-        marker_set(MARKER_ROOTFS_READY)
+                marker_set(st[0]["marker"], self.board)
+        marker_set(MARKER_ROOTFS_READY, self.board)
 
     def set_board(self, board):
         self.board = board
-        self.board.add_var("ROOTFS", self.root_dir)
         self.arch = board.parse_variables("%{ARCH}%")
+        self.root_dir = f"{ROOT_DIR}/root_{self.arch}"
+        self.board.add_var("ROOTFS", self.root_dir)
 
     def sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         self.__sudo(args, cwd, env, stdout, shell)
@@ -161,6 +165,8 @@ class OS:
                 err_n = args[1]
         else:
             err_n = args
+        if (isinstance(args, str)):
+            shell=True
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
@@ -170,14 +176,22 @@ class OS:
         qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{self.arch}")
         if (not qemu_f.is_file()):
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
-        self.__sudo(["cp", f"{ROOT_DIR}/files/qemu/qemu-{self.arch}", f"{self.root_dir}/bin/"])
+        if (self.arch == "armv7a_hf"):
+            arch = "arm"
+        else:
+            arch = self.arch
+        self.__sudo(f"cp -L /usr/bin/qemu-{arch} {self.root_dir}/bin/")
 
     def __chroot(self, command, dir="", stdout=None):
         self.__prepare()
         if (dir == ""):
             dir = self.root_dir
         Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
-        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR, command], stdout=stdout)
+        k_target = self.board.get_kernel()
+        if (k_target == None):
+            Logger.error("Can't find kernel target for chroot!")
+        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR,
+            k_target.sources.work_dir, command], stdout=stdout)
 
     def umount_safe(self):
         self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])
@@ -277,10 +291,10 @@ class OS:
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
         self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
-        sqh_fn = f"{OUT_DIR}/root_{date}.sqh"
+        sqh_fn = f"{OUT_DIR}/root_{self.arch}_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
-        os.symlink(f"root_{date}.sqh", f"{OUT_DIR}/root.sqh.tmp")
-        os.rename(f"{OUT_DIR}/root.sqh.tmp", f"{OUT_DIR}/root.sqh")
+        os.symlink(f"root_{self.arch}_{date}.sqh", f"{OUT_DIR}/root_{self.arch}.sqh.tmp")
+        os.rename(f"{OUT_DIR}/root_{self.arch}.sqh.tmp", f"{OUT_DIR}/root_{self.arch}.sqh")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):
@@ -448,8 +462,8 @@ class OS:
             else:
                 target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
         self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
-        Logger.install(f"\tCopy root.sqh")
-        self.__sudo(["cp", "-H", f"{self.board.out_sh}/root.sqh", f"{out_dir}/"])
+        Logger.install(f"\tCopy root_{self.arch}.sqh")
+        self.__sudo(["cp", "-H", f"{self.board.out_sh}/root_{self.arch}.sqh", f"{out_dir}/"])
         self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
@@ -498,15 +512,22 @@ class OS:
         Logger.install(f"Finished!")
 
 if __name__ == '__main__':
-    f = open("/proc/sys/fs/binfmt_misc/register","wb")
     if (len(sys.argv) < 2) or (sys.argv[1] == "aarch64"):
         name = "aarch64"
         interp = f"/usr/bin/qemu-{name}"
         magic  = b"\\x7fELF\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\xb7\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
+    if (len(sys.argv) < 2) or (sys.argv[1] == "armv7a_hf"):
+        name = "arm"
+        interp = f"/usr/bin/qemu-{name}"
+        magic  = b"\\x7fELF\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x28\\x00"
+        mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     else:
         print("Invalid arguments!")
         exit(1)
+    if (os.path.exists(f"/proc/sys/fs/binfmt_misc/qemu-{name}")):
+        exit(0)
+    f = open("/proc/sys/fs/binfmt_misc/register","wb")
     _REGISTER_FORMAT = b":qemu-%(name)s:M::%(magic)s:%(mask)s:%(interp)s:%(flags)s"
     s = _REGISTER_FORMAT % {
         b"name": name.encode("utf-8"),

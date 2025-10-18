@@ -2,23 +2,21 @@ diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchi
 index 4bf84622db47..b1a8b52d33c9 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -122,10 +122,15 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
+@@ -122,10 +122,13 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lckfb-tspi.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lubancat-1.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-nanopi-r3s.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-cb2-manta.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pcie.dtso
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-dsi1.dtso
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-hdmi.dtso
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-sfc-nor.dtso
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-w1-gpio4-pb2.dtso
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-pcie.dtbo
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-sfc-nor.dtbo
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer.dtbo
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r68s.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-lubancat-2.dtb
-@@ -246,5 +251,29 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
+@@ -246,5 +249,17 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
  	rk3588-rock-5b-pcie-srns.dtbo
  
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-haikou-video-demo.dtb
@@ -29,95 +27,13 @@ index 4bf84622db47..b1a8b52d33c9 100644
 +rk3566-bigtreetech-pi2-pcie-dtbs := rk3566-bigtreetech-pi2.dtb \
 +	rk3566-pcie.dtbo
 +
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-dsi1.dtb
-+rk3566-bigtreetech-pi2-dsi1-dtbs := rk3566-bigtreetech-pi2.dtb \
-+	rk3566-dsi1.dtbo
-+
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-hdmi.dtb
-+rk3566-bigtreetech-pi2-hdmi-dtbs := rk3566-bigtreetech-pi2.dtb \
-+	rk3566-hdmi.dtbo
-+
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-sfc-nor.dtb
 +rk3566-bigtreetech-pi2-sfc-nor-dtbs := rk3566-bigtreetech-pi2.dtb \
 +	rk3566-sfc-nor.dtbo
 +
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-w1-gpio4-pb2.dtb
-+rk3566-bigtreetech-pi2-w1-gpio4-pb2-dtbs := rk3566-bigtreetech-pi2.dtb \
-+	rk3566-w1-gpio4-pb2.dtbo
-+
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer.dtb
-+rk3566-bigtreetech-pi2-printer-dtbs := rk3566-bigtreetech-pi2.dtb \
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer_tst.dtb
++rk3566-bigtreetech-pi2-printer_tst-dtbs := rk3566-bigtreetech-pi2.dtb \
 +	rk3566-bigtreetech-pi2-printer.dtbo
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso b/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso
-new file mode 100644
-index 000000000000..7c4790908638
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-dsi1.dtso
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&vop {
-+	status = "okay";
-+};
-+&vop_mmu {
-+	status = "okay";
-+};
-+&display_subsystem {
-+	status = "okay";
-+};
-+&dsi1 {
-+	status = "okay";
-+};
-+&dsi1_panel {
-+	status = "okay";
-+};
-+&dsi1_in_vp1 {
-+	status = "okay";
-+};
-+&dsi_dphy1 {
-+	status = "okay";
-+};
-+&tp_dsi {
-+	status = "okay";
-+};
-+&bl_dsi {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso b/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso
-new file mode 100644
-index 000000000000..08fb4f254955
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-hdmi.dtso
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&vop {
-+	status = "okay";
-+};
-+&vop_mmu {
-+	status = "okay";
-+};
-+&display_subsystem {
-+	status = "okay";
-+};
-+&hdmi_sound {
-+	status = "okay";
-+};
-+&i2s0_8ch {
-+	status = "okay";
-+};
-+&hdmi {
-+	status = "okay";
-+};
-+&hdmi_in_vp0 {
-+	status = "okay";
-+};
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso b/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso
 new file mode 100644
 index 000000000000..9cb6e8f03685
@@ -158,48 +74,152 @@ index 000000000000..011850ba18db
 +		spi-tx-bus-width = <1>;
 +	};
 +};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso b/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
 new file mode 100644
 index 000000000000..410763276a6b
 --- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-w1-gpio4-pb2.dtso
-@@ -0,0 +1,25 @@
++++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
+@@ -0,0 +1,198 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
 +/plugin/;
 +
 +#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
 +#include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
++#include <dt-bindings/power/rk3568-power.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/rk3568-cru.h>
 +
-+&{/} {
-+    onewire: onewire {
-+        compatible = "w1-gpio";
-+        gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&gpio_w1>;
-+        status = "disabled";
-+    };
++&hdmi {
++	status = "disabled";
++};
++&hdmi_sound {
++	status = "disabled";
++};
++&i2s0_8ch {
++	status = "disabled";
++};
++&i2s1_8ch {
++	status = "disabled";
++};
++&i2c3 {
++	status = "disabled";
 +};
 +
-+&pinctrl {
-+    gpio-w1 {
-+        gpio_w1:gpio-w1 {
-+            rockchip,pins = <4 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
-+        };
-+    };
++&vp1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	vp1_out_dsi1: endpoint@ROCKCHIP_VOP2_EP_MIPI1 {
++		reg = <ROCKCHIP_VOP2_EP_MIPI1>;
++		remote-endpoint = <&dsi1_in_vp1>;
++	};
 +};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
-new file mode 100644
-index 000000000000..410763276a6b
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
-+/dts-v1/;
-+/plugin/;
++&vp0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
 +
++	vp0_out_dsi1: endpoint@ROCKCHIP_VOP2_EP_MIPI1 {
++		reg = <ROCKCHIP_VOP2_EP_MIPI1>;
++		remote-endpoint = <&dsi1_in_vp0>;
++	};
++};
++
++&dsi1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++	phy-supply = <&vdd_logic>;
++
++	dsi1_panel: panel@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "btt-pitft";
++		reg = <0x0>;
++		status = "okay";
++		power-supply = <&vcc3v3_sys>;
++		vddc-supply = <&bl_dsi>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				panel_in_dsi1: endpoint {
++					remote-endpoint = <&dsi1_out_panel>;
++				};
++			};
++		};
++	};
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		dsi1_in: port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			dsi1_in_vp0: endpoint@0 {
++				remote-endpoint = <&vp0_out_dsi1>;
++			};
++
++			dsi1_in_vp1: endpoint@1 {
++				remote-endpoint = <&vp1_out_dsi1>;
++			};
++		};
++
++		dsi1_out: port@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			dsi1_out_panel: endpoint {
++				remote-endpoint = <&panel_in_dsi1>;
++			};
++		};
++	};
++};
++
++&i2c2 {
++	status = "okay";
++	clock-frequency = <100000>;
++	avdd-1v8-supply = <&vcca1v8_image>;
++	avdd-0v9-supply = <&vdda0v9_image>;
++	power-domains = <&power RK3568_PD_VI>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	bl_dsi: regulator@45 {
++		compatible = "raspberrypi,7inch-touchscreen-panel-regulator";
++		reg = <0x45>;
++		status = "okay";
++	};
++
++	tp_dsi: touchscreen@38 {
++		compatible = "edt,edt-ft5306";
++		reg = <0x38>;
++		status = "okay";
++
++		vcc-supply = <&vcc3v3_sys>;
++		iovcc-supply = <&vcc_3v3>;
++
++		touchscreen-size-x = <800>;
++		touchscreen-size-y = <480>;
++		touchscreen-inverted-x;
++		touchscreen-inverted-y;
++	};
++};
++
++&gpu {
++	status = "okay";
++};
 +&vop {
 +	status = "okay";
 +};
@@ -209,22 +229,7 @@ index 000000000000..410763276a6b
 +&display_subsystem {
 +	status = "okay";
 +};
-+&dsi1 {
-+	status = "okay";
-+};
-+&dsi1_panel {
-+	status = "okay";
-+};
-+&dsi1_in_vp1 {
-+	status = "okay";
-+};
 +&dsi_dphy1 {
-+	status = "okay";
-+};
-+&tp_dsi {
-+	status = "okay";
-+};
-+&bl_dsi {
 +	status = "okay";
 +};
 +
@@ -260,7 +265,7 @@ index 000000000000..410763276a6b
 +	status = "disabled";
 +};
 +
-+&pwm7 {
++&pwm5 {
 +    status = "okay";
 +};
 +
@@ -269,7 +274,7 @@ index 000000000000..410763276a6b
 +		compatible = "pwm-fan";
 +		#cooling-cells = <2>;
 +		cooling-levels = <0 50 100 150 200 255>;
-+		pwms = <&pwm7 0 50000 0>;
++		pwms = <&pwm5 0 10000000>;
 +		status = "okay";
 +	};
 +};

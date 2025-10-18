@@ -1,0 +1,273 @@
+{
+    "variables":
+    [
+        "USER_LOGIN:klipper",
+        "USER_ID:1010",
+        "TIME_ZONE:Europe/Warsaw"
+    ],
+    "prepare":
+    {
+        "marker": "stage3_%{ARCH}%_prepared",
+        "steps":
+        [
+            {
+                "file": "/etc/portage/modules",
+                "append": false,
+                "lines": [ "portdbapi.auxdbmodule = portage.cache.sqlite.database" ]
+            },
+            {
+                "file": "/etc/portage/make.conf",
+                "append": false,
+                "lines":
+                [
+                    "COMMON_FLAGS=\"-O3 -pipe\"",
+                    "CFLAGS=\"${COMMON_FLAGS}\"",
+                    "CXXFLAGS=\"${COMMON_FLAGS}\"",
+                    "FCFLAGS=\"${COMMON_FLAGS}\"",
+                    "FFLAGS=\"${COMMON_FLAGS}\"",
+                    "CHOST=\"%{CHOST}%\"",
+                    "",
+                    "EMERGE_DEFAULT_OPTS=\"--load-average 8.0\"",
+                    "USE=\"${USE} ${ARCH}",
+                    "    -handbook -compiler-rt -sanitize -gtk-doc -gtk -jit",
+                    "    -vulkan -cups -wayland -opengl -egl -eglfs -gles2 -kms",
+                    "    -vala -spell -tk -tcl -fortran",
+                    "    -slang -gpg -doc -test lto -nls",
+                    "    sqlite\"",
+                    "FEATURES=\"${FEATURES} metadata-transfer nodoc noinfo noman -pid-sandbox\"",
+                    "",
+                    "VIDEO_CARDS=\"panfrost fbdev\"",
+                    "INPUT_DEVICES=\"libinput evdev\"",
+                    "LLVM_TARGETS=\"\"",
+                    "PYTHON_TARGETS=\"python3_13\"",
+                    "PYTHON_SINGLE_TARGET=\"${PYTHON_TARGETS}\"",
+                    "",
+                    "LC_MESSAGES=C.utf8"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.accept_keywords/all",
+                "append": false,
+                "lines": [ "*/* ~arm64" ]
+            },
+            {
+                "file": "/etc/portage/package.mask/python",
+                "append": false,
+                "lines": [ ">dev-lang/python-3.13.999" ]
+            },
+            {
+                "file": "/etc/portage/repos.conf/andreil.conf",
+                "append": false,
+                "lines":
+                [
+                    "[andreil]",
+                    "location = /usr/portage/andreil"
+                ]
+            },
+            {
+                "file": "/etc/portage/repos.conf/crossdev.conf",
+                "append": false,
+                "lines":
+                [
+                    "[crossdev]",
+                    "location = /usr/portage/crossdev"
+                ]
+            },
+            {
+                "file": "/etc/portage/savedconfig/sys-kernel/linux-firmware",
+                "append": false,
+                "lines": [ "regulatory.db" ]
+            },
+            {
+                "file": "/etc/portage/package.use/system",
+                "append": false,
+                "lines":
+                [
+                    "sys-kernel/linux-firmware savedconfig",
+                    "sys-kernel/genkernel -firmware",
+                    "net-misc/networkmanager tools",
+                    "sys-apps/util-linux static-libs"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/minimal",
+                "append": false,
+                "lines":
+                [
+                    "sys-apps/portage -rsync-verify",
+                    "app-admin/sudo -sendmail",
+                    "sys-apps/systemd -dns-over-tls -gcrypt -kernel-install",
+                    "media-libs/mesa -llvm",
+                    "sys-process/htop lm-sensors",
+                    "net-misc/networkmanager -bluetooth -modemmanager -ppp"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/klipper",
+                "append": false,
+                "lines":
+                [
+                    "virtual/klipper mainsail",
+                    "app-misc/mime-types nginx",
+                    "media-libs/mesa -proprietary-codecs",
+                    "x11-base/xorg-server minimal",
+                    "sys-apps/iproute2 minimal",
+                    "dev-perl/* minimal",
+                    "dev-lang/perl dev-perl",
+                    "sys-apps/systemd policykit",
+                    "x11-libs/cairo X",
+                    "dev-python/pycairo X",
+                    "media-libs/libepoxy -egl",
+                    "net-wireless/wpa_supplicant dbus",
+                    "#x11-base/xorg-server suid",
+                    "cross-arm-none-eabi/newlib nano",
+                    "media-libs/libepoxy egl",
+                    "#net-misc/networkmanager -tools",
+                    "media-libs/libglvnd X",
+                    "media-libs/libv4l bpf",
+                    "media-video/ffmpeg x264 x265 v4l",
+                    "#media-libs/libv4l -bpf",
+                    "sys-devel/gcc fortran",
+                    "dev-python/pillow webp",
+                    "virtual/imagemagick-tools jpeg tiff",
+                    "media-gfx/imagemagick jpeg tiff",
+                    "sci-libs/atlas lapack threads",
+                    "dev-lang/rust system-llvm",
+                    "sys-apps/busybox static -pam savedconfig",
+                    "virtual/libcrypt static-libs",
+                    "sys-libs/libxcrypt static-libs",
+                    "sys-fs/e2fsprogs static-libs",
+                    "media-video/mpv xv",
+                    "media-libs/freetype harfbuzz"
+                ]
+            },
+            { "chroot": "emerge-webrsync" }
+        ]
+    },
+    "update":
+    {
+        "marker": "stage3_%{ARCH}%_updated",
+        "steps":
+        [
+            {
+                "file": "/etc/locale.gen",
+                "append": false,
+                "lines": [ "en_US.UTF-8 UTF-8" ]
+            },
+            { "chroot": "locale-gen" },
+            { "chroot": "eselect kernel set 1" },
+            { "chroot": "eselect news read" },
+            { "chroot": "eselect editor set nano" },
+            { "chroot": "" },
+            { "action": "reinstall" },
+            { "action": "update" }
+        ]
+    },
+    "install":
+    {
+        "marker": "stage3_%{ARCH}%_installed",
+        "steps":
+        [
+            {
+                "soft_inst":
+                [
+                    "app-editors/nano",
+                    "app-misc/mc",
+                    "app-portage/eix",
+                    "app-portage/gentoolkit",
+                    "sys-devel/crossdev",
+                    "sys-process/htop",
+                    "virtual/klipper"
+                ],
+                "oneshot": false
+            },
+            {
+                "file": "/etc/eixrc/00-eixrc",
+                "append": false,
+                "lines": [
+                    "PORTDIR_CACHE_METHOD='sqlite'",
+                    "OVERLAY_CACHE_METHOD='sqlite'"
+                ]
+            },
+            { "chroot": "crossdev -s4 arm-none-eabi" },
+            { "chroot": "eselect news read" },
+            { "chroot": "eix-update" },
+            { "soft_clean": "default" }
+        ]
+    },
+    "finalize":
+    {
+        "steps":
+        [
+            {
+                "file": "/etc/systemd/system/prepare_shutdown.service",
+                "append": false,
+                "lines": [
+                    "[Unit]",
+                    "Description=Prepare a shutdown script to correctly unmount all filesystems",
+                    "[Install]",
+                    "WantedBy=multi-user.target",
+                    "[Service]",
+                    "Type=oneshot",
+                    "ExecStart=sh -c \"mkdir -p /run/initramfs && cd /run/initramfs && tar xf /usr/shutdown.tar.xz\""
+                ]
+            },
+            {
+                "file": "/etc/systemd/system/sync.service",
+                "append": false,
+                "lines": [
+                    "[Unit]",
+                    "Description=Sync all data",
+                    "StartLimitIntervalSec=0",
+                    "[Service]",
+                    "Type=simple",
+                    "Restart=always",
+                    "RestartSec=10",
+                    "User=root",
+                    "ExecStart=/usr/local/bin/sync.sh",
+                    "[Install]",
+                    "WantedBy=multi-user.target"
+                ]
+            },
+            {
+                "file": "/usr/local/bin/sync.sh",
+                "append": false,
+                "lines": [
+                    "#!/bin/bash",
+                    "# regular sync to prevent data loss when direct power outage",
+                    "while [ 1 ]; do",
+                    "    sync",
+                    "    sleep 60",
+                    "done"
+                ],
+                "chmod": "+x"
+            },
+            {
+                "file": "/etc/NetworkManager/conf.d/00-leave-original-mac.conf",
+                "append": false,
+                "lines": [
+                    "[device-mac-randomization]",
+                    "wifi.scan-rand-mac-address=no",
+                    "",
+                    "[connection-mac-randomization]",
+                    "ethernet.cloned-mac-address=permanent",
+                    "wifi.cloned-mac-address=permanent"
+                ],
+                "chmod": "+x"
+            },
+            { "chroot": "systemctl enable NetworkManager ntpdate sshd prepare_shutdown sync" },
+            { "sudo": "sed -i -E 's/^# (%wheel ALL)/\\1/' ./etc/sudoers" },
+            { "sudo": "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' ./etc/systemd/journald.conf" },
+            { "sudo": "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' ./etc/systemd/journald.conf" },
+            { "copy": [ "%{ROOT_DIR}%/files/firmware/usr", "."] },
+            { "sudo": "chmod u+s ./usr/bin/Xorg" },
+            { "sudo": "ln -sf /usr/share/zoneinfo/%{TIME_ZONE}% ./etc/localtime" },
+            { "chroot": "groupadd -g %{USER_ID}% %{USER_LOGIN}%" },
+            { "chroot": "useradd -m -G wheel,video,audio,disk,usb -g %{USER_ID}% -u %{USER_ID}% %{USER_LOGIN}% --password %{USER_LOGIN}%" },
+            { "chroot": "echo '%{USER_LOGIN}%:%{USER_LOGIN}%' | chpasswd" },
+            { "chroot": "echo 'root:root' | chpasswd" },
+            { "chroot": "sudo -i -u %{USER_LOGIN}% python -m venv /home/%{USER_LOGIN}%/venv" },
+            { "soft_clean": "bdeps" }
+        ]
+    }
+}
