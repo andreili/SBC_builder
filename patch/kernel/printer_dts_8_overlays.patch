@@ -79,7 +79,7 @@ new file mode 100644
 index 000000000000..410763276a6b
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
-@@ -0,0 +1,205 @@
+@@ -0,0 +1,198 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -114,8 +114,8 @@ index 000000000000..410763276a6b
 +	#address-cells = <1>;
 +	#size-cells = <0>;
 +
-+	vp1_out_dsi1: endpoint@1 {
-+		reg = <1>;
++	vp1_out_dsi1: endpoint@ROCKCHIP_VOP2_EP_MIPI1 {
++		reg = <ROCKCHIP_VOP2_EP_MIPI1>;
 +		remote-endpoint = <&dsi1_in_vp1>;
 +	};
 +};
@@ -168,15 +168,11 @@ index 000000000000..410763276a6b
 +			reg = <0>;
 +
 +			dsi1_in_vp0: endpoint@0 {
-+				reg = <0>;
 +				remote-endpoint = <&vp0_out_dsi1>;
-+				status = "okay";
 +			};
 +
 +			dsi1_in_vp1: endpoint@1 {
-+				reg = <1>;
 +				remote-endpoint = <&vp1_out_dsi1>;
-+				status = "disabled";
 +			};
 +		};
 +
@@ -231,9 +227,6 @@ index 000000000000..410763276a6b
 +	status = "okay";
 +};
 +&display_subsystem {
-+	status = "okay";
-+};
-+&dsi1_in_vp0 {
 +	status = "okay";
 +};
 +&dsi_dphy1 {
