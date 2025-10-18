@@ -127,9 +127,15 @@ class Board:
             Logger.error("Don't find target!")
 
     def scan_kernel(self):
+        target = self.get_kernel()
+        if (target != None):
+            target.source_sync()
+            cfg_scn = ConfigScan(self.parse_variables("%{KERNEL_ARCH}%"))
+            cfg_scn.scan(target.sources.work_dir)
+            cfg_scn.save()
+
+    def get_kernel(self):
         for target in self.targets:
-            if (target.name == "kernel"):
-                target.source_sync()
-                cfg_scn = ConfigScan(self.parse_variables("%{KERNEL_ARCH}%"))
-                cfg_scn.scan(target.sources.work_dir)
-                cfg_scn.save()
+            if (target.type == "kernel"):
+                return target
+        return None

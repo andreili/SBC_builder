@@ -89,6 +89,7 @@ class OS:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
                 lines = "\n".join(step["lines"])
+                lines = self.board.parse_variables(lines)
                 path = step["file"]
                 directory = Path(path).parent
                 cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
@@ -186,7 +187,11 @@ class OS:
         if (dir == ""):
             dir = self.root_dir
         Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
-        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR, command], stdout=stdout)
+        k_target = self.board.get_kernel()
+        if (k_target == None):
+            Logger.error("Can't find kernel target for chroot!")
+        self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR,
+            k_target.sources.work_dir, command], stdout=stdout)
 
     def umount_safe(self):
         self.__sudo(["umount", "--all-targets", "--recursive", self.root_dir])

@@ -5,8 +5,9 @@
     ],
     "variables":
     [
+        "CHOST:armv7a-unknown-linux-gnueabihf",
         "KERNEL_ARCH:arm",
-        "CROSS_C:armv7a-unknown-linux-musleabih-",
+        "CROSS_C:%{CHOST}%-",
         "ARCH:armv7a_hf"
     ],
     "targets":
@@ -31,6 +32,7 @@
         },
         {
             "name": "kernel_v853",
+            "type": "kernel",
             "url": "https://github.com/lindenis-org/lindenis-v853-lichee-linux-4.9.git",
             "config": true,
             "config_target": "menuconfig",

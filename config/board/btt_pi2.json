@@ -5,8 +5,9 @@
     ],
     "variables":
     [
+        "CHOST:aarch64-unknown-linux-gnu",
         "KERNEL_ARCH:arm64",
-        "CROSS_C:aarch64-linux-gnu-",
+        "CROSS_C:%{CHOST}%-",
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
         "BL31_BIN:rk3568_bl31_v1.45.elf",
         "ARCH:aarch64",
