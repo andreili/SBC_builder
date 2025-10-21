@@ -148,7 +148,7 @@ index 1f7313475..acc3fff65 100644
  #include "util.h"
  #include "strv.h"
  
-+#if 0
++#if !defined(__aarch64__)
  void strv_clear(char **l) {
          char **k;
  

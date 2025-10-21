@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Busybox version: 1.38.0.git
-# Sat Sep 20 11:25:47 2025
+# Tue Oct 21 18:07:04 2025
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -27,6 +27,7 @@ CONFIG_PID_FILE_PATH=""
 CONFIG_BUSYBOX=y
 CONFIG_FEATURE_SHOW_SCRIPT=y
 CONFIG_FEATURE_INSTALLER=y
+# CONFIG_FEATURE_VERSION is not set
 CONFIG_INSTALL_NO_USR=y
 CONFIG_FEATURE_SUID=y
 # CONFIG_FEATURE_SUID_CONFIG is not set

@@ -88,9 +88,10 @@ class Sources:
     def init_source_path(self, board_name, is_shared):
         if (is_shared):
             self.board_name = ""
-            self.worktree = f"{self.name}"
+            arch = parse_variables("%{ARCH}%")
+            self.worktree = f"{self.name}_{arch}"
             self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
-            self.work_dir = f"{BUILD_DIR}/common/{self.worktree}"
+            self.work_dir = f"{BUILD_DIR}/common_{arch}/{self.name}"
             self.work_done_marker = f"{self.work_dir}/.git_done_marker"
         else:
             self.board_name = board_name

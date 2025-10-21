@@ -4,29 +4,30 @@ from . import *
 
 class Initramfs:
     def __init__(self):
+        self.arch = parse_variables("%{ARCH}%")
         self.busybox = Sources("busybox", "https://git.busybox.net/busybox")
-        self.busybox.init_source_path("common", True)
+        self.busybox.init_source_path("", True)
         self.busybox.set_git_params("@", "head")
         self.busybox_cfg = f"{ROOT_DIR}/cfg/busybox_config"
         self.eudev = Sources("eudev", "https://github.com/eudev-project/eudev.git")
-        self.eudev.init_source_path("common", True)
+        self.eudev.init_source_path("", True)
         self.eudev.set_git_params("@", "head")
         self.e2fsp = Sources("e2fsp", "git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git")
-        self.e2fsp.init_source_path("common", True)
+        self.e2fsp.init_source_path("", True)
         self.e2fsp.set_git_params("@", "head")
-        self.build_dir = f"{BUILD_DIR}/common"
+        self.build_dir = f"{BUILD_DIR}/common_{self.arch}"
         self.files_dir = f"{self.build_dir}/initrd"
         self.out_dir = f"{OUT_DIR}"
-        self.root_dir = f"{ROOT_DIR}/root/media/initramfs_tmp"
+        self.root_dir = f"{ROOT_DIR}/root_{self.arch}/media/initramfs_tmp"
         os.makedirs(self.files_dir, exist_ok=True)
 
     def __prepare(self):
         self.busybox.sync()
         self.eudev.sync()
         self.e2fsp.sync()
-        self.busybox.do_patch("common", "busybox")
-        self.eudev.do_patch("common", "eudev")
-        self.e2fsp.do_patch("common", "e2fsp")
+        self.busybox.do_patch("", "busybox")
+        self.eudev.do_patch("", "eudev")
+        self.e2fsp.do_patch("", "e2fsp")
 
     def __chrooted(self, obj, os, dir, cmd):
         os.bind(obj.work_dir, dir)
@@ -84,6 +85,57 @@ class Initramfs:
 
     def __cpio(self):
         Logger.build(f"\tCreate init.cpio")
+        f = open(f"{ROOT_DIR}/files/initramfs/initramfs.list", "w")
+        f.write("# directory structure\n")
+        f.write("dir /sys           755 0 0\n")
+        f.write("dir /dev           755 0 0\n")
+        f.write("dir /proc          755 0 0\n")
+        f.write("dir /run           755 0 0\n")
+        f.write("dir /bin           755 0 0\n")
+        f.write("dir /var           755 0 0\n")
+        f.write("dir /lib           755 0 0\n")
+        f.write("dir /mnt           755 0 0\n")
+        f.write("dir /etc           755 0 0\n")
+        f.write("dir /root          700 0 0\n")
+        f.write("dir /tmp           755 0 0\n")
+        f.write("dir /mnt/cdrom              755 0 0\n")
+        f.write("dir /mnt/rw_part            755 0 0\n")
+        f.write("dir /mnt/livecd             755 0 0\n")
+        f.write("dir /mnt/overlay            755 0 0\n")
+        f.write("dir /newroot                755 0 0\n")
+        f.write("dir /newroot/mnt            755 0 0\n")
+        f.write("dir /newroot/mnt/cdrom      755 0 0\n")
+        f.write("dir /newroot/mnt/rw_part    755 0 0\n")
+        f.write("dir /newroot/mnt/livecd     755 0 0\n")
+        f.write("dir /newroot/mnt/overlay    755 0 0\n")
+        f.write("#symlinks to easy script starts\n")
+        f.write("slink /bin/[                            busybox                         755 0 0\n")
+        f.write("slink /bin/ash                          busybox                         755 0 0\n")
+        f.write("slink /bin/cat                          busybox                         755 0 0\n")
+        f.write("slink /bin/chmod                        busybox                         755 0 0\n")
+        f.write("slink /bin/cut                          busybox                         755 0 0\n")
+        f.write("slink /bin/echo                         busybox                         755 0 0\n")
+        f.write("slink /bin/mkdir                        busybox                         755 0 0\n")
+        f.write("slink /bin/mknod                        busybox                         755 0 0\n")
+        f.write("slink /bin/mount                        busybox                         755 0 0\n")
+        f.write("slink /bin/sh                           busybox                         755 0 0\n")
+        f.write("slink /bin/touch                        busybox                         755 0 0\n")
+        f.write("slink /bin/uname                        busybox                         755 0 0\n")
+        f.write("slink /bin/sed                          busybox                         755 0 0\n")
+        f.write("slink /bin/ts                           busybox                         755 0 0\n")
+        f.write("slink /lib64                            /lib                            755 0 0\n")
+        f.write("slink /dev/stderr                       /proc/self/fd/2                 777 0 0\n")
+        f.write("slink /dev/stdin                        /proc/self/fd/0                 777 0 0\n")
+        f.write("slink /dev/std/out                      /proc/self/fd/1                 777 0 0\n")
+        f.write(f"file /bin/busybox            build/common_{self.arch}/initrd/busybox            755 0 0\n")
+        f.write(f"file /bin/udevadm            build/common_{self.arch}/initrd/udevadm            755 0 0\n")
+        f.write(f"file /bin/e2fsck             build/common_{self.arch}/initrd/e2fsck             755 0 0\n")
+        f.write(f"file /bin/resize2fs          build/common_{self.arch}/initrd/resize2fs          755 0 0\n")
+        f.write("file /etc/init.def           files/initramfs/init.def        755 0 0\n")
+        f.write("file /etc/init.script        files/initramfs/init.script     755 0 0\n")
+        f.write("file /init                   files/initramfs/init            755 0 0\n")
+        f.write("file /shutdown               files/initramfs/shutdown        755 0 0\n")
+        f.close()
         f = open(f"{self.files_dir}/init.cpio", "wb")
         p = subprocess.Popen(["/usr/src/linux/usr/gen_init_cpio",
             f"{ROOT_DIR}/files/initramfs/initramfs.list"], stdout=f, cwd=ROOT_DIR)
@@ -104,23 +156,23 @@ class Initramfs:
         Logger.build(f"\tImage")
         p = subprocess.Popen(["mkimage", "-A", "arm", "-T", "ramdisk", "-C",
             "none", "-n", "uInitrd", "-d", f"{self.files_dir}/init.cpio.lzma",
-            f"{self.out_dir}/uInitrd"])
+            f"{self.out_dir}/uInitrd_{self.arch}"])
         p.wait()
 
     def __mkshutdown(self):
         Logger.build(f"\tShutdown image")
-        dir_tmp = f"{self.build_dir}/shutdown_img"
+        dir_tmp = f"{self.build_dir}/shutdown_img_{self.arch}"
         dir_ch = Path(dir_tmp)
         if (dir_ch.is_dir()):
             p = subprocess.Popen(["sudo", "rm", "-rf", dir_tmp])
             p.wait()
-        fn = "shutdown.tar.xz"
+        fn = f"shutdown_{self.arch}.tar.xz"
         p = subprocess.Popen(["mkdir", "-p", dir_tmp])
         p.wait()
         p = subprocess.Popen(f"sudo cat {self.files_dir}/init.cpio | sudo cpio -idm && sudo tar cJpf ../{fn} . && cp ../{fn} {self.out_dir}/{fn}",
             shell=True, cwd=dir_tmp)
         p.wait()
-        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/{fn}", f"{ROOT_DIR}/root/usr/"])
+        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/{fn}", f"{ROOT_DIR}/root_{self.arch}/usr/"])
         p.wait()
         p = subprocess.Popen(["sudo", "rm", "-rf", dir_tmp])
         p.wait()

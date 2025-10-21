@@ -466,7 +466,7 @@ class OS:
                 target.install_files(out_dir, self.board.out_sh, "boot", self.__copy_file, self.__dd_bin)
             else:
                 target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
-        self.__copy_file(f"{self.board.out_sh}/uInitrd", f"{out_dir}/")
+        self.__copy_file(f"{self.board.out_sh}/uInitrd_{self.arch}", f"{out_dir}/")
         Logger.install(f"\tCopy root_{self.arch}.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root_{self.arch}.sqh", f"{out_dir}/"])
         self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
