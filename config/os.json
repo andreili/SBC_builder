@@ -48,7 +48,11 @@
             {
                 "file": "/etc/portage/package.accept_keywords/all",
                 "append": false,
-                "lines": [ "*/* ~arm64" ]
+                "lines": [
+                    "*/* ~arm64",
+                    "*/* ~arm",
+                    "<=app-mobilephone/dfu-util-9999 **"
+                ]
             },
             {
                 "file": "/etc/portage/package.mask/python",
@@ -158,8 +162,6 @@
             { "chroot": "eselect kernel set 1" },
             { "chroot": "eselect news read" },
             { "chroot": "eselect editor set nano" },
-            { "chroot": "" },
-            { "action": "reinstall" },
             { "action": "update" }
         ]
     },
