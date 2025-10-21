@@ -144,19 +144,10 @@ diff --git a/src/shared/strv.c b/src/shared/strv.c
 index 1f7313475..acc3fff65 100644
 --- a/src/shared/strv.c
 +++ b/src/shared/strv.c
-@@ -26,6 +26,7 @@
- #include "util.h"
- #include "strv.h"
- 
-+#if !defined(__aarch64__)
- void strv_clear(char **l) {
-         char **k;
- 
-@@ -193,20 +194,9 @@ int strv_extend(char ***l, const char *value) {
+@@ -193,20 +194,8 @@ int strv_extend(char ***l, const char *value) {
  
          return strv_consume(l, v);
  }
-+#endif
  
 -char **strv_uniq(char **l) {
 -        char **i;
