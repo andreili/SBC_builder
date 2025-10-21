@@ -228,7 +228,7 @@ class OS:
         my_env = os.environ.copy()
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        arch_path = self.board.parse_variables("%{out_sh}%/back_" + name + "_" + date + ".tar.xz")
+        arch_path = self.board.parse_variables("%{out_sh}%/back_" + self.arch + "_" + name + "_" + date + ".tar.xz")
         self.__sudo(["tar", "-cJpf", arch_path,
             f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
             cwd=dir, env=my_env)
