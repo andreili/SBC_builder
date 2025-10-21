@@ -1,0 +1,13 @@
+diff '--color=auto' -Naur OpenBLAS-0.3.30_or/cpuid.S OpenBLAS-0.3.30/cpuid.S
+--- OpenBLAS-0.3.30_or/cpuid.S  2025-10-20 20:48:58.432979293 +0200
++++ OpenBLAS-0.3.30/cpuid.S     2025-10-20 20:52:54.529612123 +0200
+@@ -66,5 +66,9 @@
+ 
+ #endif
+ #if defined(__ELF__) && defined(__linux__)
++    #if defined(__aarch64__)
+         .section        .note.GNU-stack,"",@progbits
++    #else
++        .section        .note.GNU-stack,""
++    #endif
+ #endif
