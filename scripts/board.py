@@ -20,17 +20,17 @@ class Board:
                 t = self.__find_meta(targets_meta, target["parent"])
                 if (t == 0):
                     Logger.error("Unable to find parent for package!")
-                t.load_detail(self.name, target, self.parse_variables)
+                t.load_detail(self.name, target)
                 self.targets.append(t)
                 for module in t.modules:
                     m = self.__find_meta(targets_meta, module)
                     if (m == 0):
                         Logger.error("Unable to find parent for module!")
-                    m.load_detail(self.name, None, self.parse_variables)
+                    m.load_detail(self.name, None)
                     self.targets.append(m)
             else:
                 t = targets_meta[0].wo_parent(target)
-                t.load_detail(self.name, target, self.parse_variables)
+                t.load_detail(self.name, target)
                 self.targets.append(t)
         self.__scan_deps()
 
@@ -58,31 +58,13 @@ class Board:
         return 0
 
     def __load_vars(self):
-        self.add_vars(self.json["variables"])
-        self.variables.append(["board_name", self.name])
-        self.variables.append(["build_dir", f"{BUILD_DIR}/{self.name}"])
-        self.variables.append(["common_dir", f"{BUILD_DIR}/common"])
-        self.variables.append(["out_dir", self.out_dir])
-        self.variables.append(["out_sh", self.out_sh])
-        self.variables.append(["ROOT_DIR", ROOT_DIR])
-
-    def add_var(self, name, val):
-        self.variables.append([name, val])
-
-    def add_vars(self, lst):
-        for var_def in lst:
-            self.variables.append(var_def.split(":"))
-
-    def parse_variables(self, string):
-        finded = True
-        while finded:
-            finded = False
-            for var_d in self.variables:
-                s_var = "%{"+var_d[0]+"}%"
-                if (s_var in string):
-                    finded = True
-                    string = string.replace(s_var, str(var_d[1]))
-        return string
+        add_vars(self.json["variables"])
+        add_var("board_name", self.name)
+        add_var("build_dir", f"{BUILD_DIR}/{self.name}")
+        add_var("common_dir", f"{BUILD_DIR}/common")
+        add_var("out_dir", self.out_dir)
+        add_var("out_sh", self.out_sh)
+        add_var("ROOT_DIR", ROOT_DIR)
 
     def targets_list(self):
         lst = []
@@ -133,7 +115,7 @@ class Board:
         target = self.get_kernel()
         if (target != None):
             target.source_sync()
-            cfg_scn = ConfigScan(self.parse_variables("%{KERNEL_ARCH}%"))
+            cfg_scn = ConfigScan(parse_variables("%{KERNEL_ARCH}%"))
             cfg_scn.scan(target.sources.work_dir)
             cfg_scn.save()
 

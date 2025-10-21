@@ -47,7 +47,7 @@ class Target:
             res.append(t)
         return res
 
-    def __load_info(self, info_js, parse_variables=None):
+    def __load_info(self, info_js):
         if ("type" in info_js):
             self.type = info_js["type"]
         if ("version" in info_js):
@@ -75,11 +75,11 @@ class Target:
         if ("have_defconfig" in info_js):
             self.have_defconfig = info_js["have_defconfig"]
 
-    def load_detail(self, board_name, detail_js, parse_variables):
+    def load_detail(self, board_name, detail_js):
         self.board_name = board_name
         self.sources.init_source_path(board_name, self.is_shared)
         if (detail_js != None):
-            self.__load_info(detail_js, parse_variables)
+            self.__load_info(detail_js)
         if (self.is_shared):
             self.config_name = f"{ROOT_DIR}/cfg/{self.name}"
         else:

@@ -6,6 +6,13 @@ if __name__ != '__main__':
 units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
 MARKER_ROOTFS_READY = "rootfs_%{ARCH}%_ready"
 
+def qemu_arch_name(arch):
+    if (arch == "aarch64"):
+        return "aarch64"
+    if (arch == "armv7a_hf"):
+        return "arm"
+    return ""
+
 class Partition(object):
     pass
 
@@ -42,8 +49,8 @@ class OS:
             self.st3_update = js_data["update"]
             self.st3_install = js_data["install"]
             self.finalize = js_data["finalize"]
-            self.board.add_vars(js_data["variables"])
-        self.board.add_var("ROOT_FS", self.root_dir)
+            add_vars(js_data["variables"])
+        add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
         lst = []
@@ -89,7 +96,7 @@ class OS:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
                 lines = "\n".join(step["lines"])
-                lines = self.board.parse_variables(lines)
+                lines = parse_variables(lines)
                 path = step["file"]
                 directory = Path(path).parent
                 cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
@@ -100,7 +107,7 @@ class OS:
                     mode = step["chmod"]
                     self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
             if ("chroot" in step):
-                cmd = self.board.parse_variables(step["chroot"])
+                cmd = parse_variables(step["chroot"])
                 self.__chroot(cmd, dir=dir)
             if ("action" in step):
                 action = step["action"]
@@ -119,12 +126,12 @@ class OS:
                 if (clean_type == "bdeps"):
                     self.__chroot(f"emerge --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", dir=dir)
             if ("sudo" in step):
-                cmd = self.board.parse_variables(step["sudo"])
+                cmd = parse_variables(step["sudo"])
                 Logger.os(f"\tSudo command {cmd}...")
                 self.__sudo(cmd, cwd=dir, shell=True)
             if ("copy" in step):
-                path_from = self.board.parse_variables(step["copy"][0])
-                path_to = self.board.parse_variables(step["copy"][1])
+                path_from = parse_variables(step["copy"][0])
+                path_to = parse_variables(step["copy"][1])
                 if (Path(path_from).is_dir()):
                     self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
                 else:
@@ -148,9 +155,9 @@ class OS:
 
     def set_board(self, board):
         self.board = board
-        self.arch = board.parse_variables("%{ARCH}%")
+        self.arch = parse_variables("%{ARCH}%")
         self.root_dir = f"{ROOT_DIR}/root_{self.arch}"
-        self.board.add_var("ROOTFS", self.root_dir)
+        add_var("ROOTFS", self.root_dir)
 
     def sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         self.__sudo(args, cwd, env, stdout, shell)
@@ -158,7 +165,7 @@ class OS:
     def __sudo(self, args, cwd=None, env=None, stdout=None, shell=None):
         if (os.geteuid() != 0):
             if isinstance(args, str):
-                args = self.board.parse_variables("sudo " + args)
+                args = parse_variables("sudo " + args)
                 err_n = args
             else:
                 args.insert(0, "sudo")
@@ -173,14 +180,11 @@ class OS:
             Logger.error(f"Command '{err_n}' finished with error code {p.returncode}!")
 
     def __prepare(self):
-        qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{self.arch}")
+        qemu_fn = qemu_arch_name(self.arch)
+        qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{qemu_fn}")
         if (not qemu_f.is_file()):
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
-        if (self.arch == "armv7a_hf"):
-            arch = "arm"
-        else:
-            arch = self.arch
-        self.__sudo(f"cp -L /usr/bin/qemu-{arch} {self.root_dir}/bin/")
+        self.__sudo(f"cp -L /usr/bin/qemu-{qemu_fn} {self.root_dir}/bin/")
 
     def __chroot(self, command, dir="", stdout=None):
         self.__prepare()
@@ -228,7 +232,7 @@ class OS:
         my_env = os.environ.copy()
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        arch_path = self.board.parse_variables("%{out_sh}%/back_" + self.arch + "_" + name + "_" + date + ".tar.xz")
+        arch_path = parse_variables("%{out_sh}%/back_" + self.arch + "_" + name + "_" + date + ".tar.xz")
         self.__sudo(["tar", "-cJpf", arch_path,
             f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
             cwd=dir, env=my_env)
@@ -266,7 +270,7 @@ class OS:
         self.__relaunch_as_sudo()
         mod_path = f"{OUT_DIR}/modules"
         os.makedirs(mod_path, exist_ok=True)
-        kmod_fn = self.board.parse_variables("%{out_sh}%/kmods/usr/lib/modules")
+        kmod_fn = parse_variables("%{out_sh}%/kmods/usr/lib/modules")
         kmod = Path(kmod_fn)
         for f in kmod.iterdir():
             sqh_name = f.name
@@ -290,7 +294,8 @@ class OS:
         # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
-        self.__sudo(f"rm {temp_dir}/usr/bin/qemu-{self.arch}", shell=True)
+        qemu_fn = qemu_name(self.arch)
+        self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
         sqh_fn = f"{OUT_DIR}/root_{self.arch}_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
         os.symlink(f"root_{self.arch}_{date}.sqh", f"{OUT_DIR}/root_{self.arch}.sqh.tmp")
@@ -439,8 +444,8 @@ class OS:
     def __install_boot(self, out_dir):
         extl_dir = f"{out_dir}/extlinux"
         extl_fn  = f"{extl_dir}/extlinux.conf"
-        dtb_file = self.board.parse_variables("%{DTB_FILE}%")
-        dto_dir = self.board.parse_variables("%{DTO_DIR}%")
+        dtb_file = parse_variables("%{DTB_FILE}%")
+        dto_dir = parse_variables("%{DTO_DIR}%")
         cmd  = f"mkdir -p {extl_dir} && touch {out_dir}/livecd && "
         cmd += f"echo 'menu title Boot Options.\n\n"
         cmd += f"timeout 20\ndefault Kernel_def\n\n"
@@ -452,7 +457,7 @@ class OS:
         if ("overlays" in self.board.installs):
             overlays = self.board.installs["overlays"]
             overlays = " ".join(overlays)
-            overlays = self.board.parse_variables(overlays)
+            overlays = parse_variables(overlays)
             cmd += f"\tfdtoverlays {overlays}\n"
         cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
@@ -512,14 +517,12 @@ class OS:
         Logger.install(f"Finished!")
 
 if __name__ == '__main__':
+    name = qemu_arch_name(sys.argv[1])
+    interp = f"/usr/bin/qemu-{name}"
     if (len(sys.argv) < 2) or (sys.argv[1] == "aarch64"):
-        name = "aarch64"
-        interp = f"/usr/bin/qemu-{name}"
         magic  = b"\\x7fELF\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\xb7\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     if (len(sys.argv) < 2) or (sys.argv[1] == "armv7a_hf"):
-        name = "arm"
-        interp = f"/usr/bin/qemu-{name}"
         magic  = b"\\x7fELF\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x28\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     else:
