@@ -519,10 +519,10 @@ class OS:
 if __name__ == '__main__':
     name = qemu_arch_name(sys.argv[1])
     interp = f"/usr/bin/qemu-{name}"
-    if (len(sys.argv) < 2) or (sys.argv[1] == "aarch64"):
+    if (len(sys.argv) == 2) and (sys.argv[1] == "aarch64"):
         magic  = b"\\x7fELF\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\xb7\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
-    if (len(sys.argv) < 2) or (sys.argv[1] == "armv7a_hf"):
+    elif (len(sys.argv) == 2) and (sys.argv[1] == "armv7a_hf"):
         magic  = b"\\x7fELF\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x28\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     else:

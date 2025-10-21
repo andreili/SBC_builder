@@ -91,7 +91,7 @@ class Sources:
             arch = parse_variables("%{ARCH}%")
             self.worktree = f"{self.name}_{arch}"
             self.worktree_dir = f"{self.bare_dir}/.git/worktrees/{self.worktree}"
-            self.work_dir = f"{BUILD_DIR}/common_{arch}/{self.name}"
+            self.work_dir = f"{BUILD_DIR}/common_{arch}/{self.worktree}"
             self.work_done_marker = f"{self.work_dir}/.git_done_marker"
         else:
             self.board_name = board_name
