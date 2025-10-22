@@ -82,7 +82,9 @@ class Sources:
     def __init__(self, name, url):
         self.name = name
         self.url = url
-        self.bare_dir = f"{ROOT_DIR}/bare_git/{name}"
+        dir_name = re.search(r'[^/]+(?=/$|$)', url)[0]
+        dir_name = dir_name.replace(".git", "")
+        self.bare_dir = f"{ROOT_DIR}/bare_git/{dir_name}"
         self.bare_done_marker = f"{self.bare_dir}/.git_done_marker"
 
     def init_source_path(self, board_name, is_shared):
