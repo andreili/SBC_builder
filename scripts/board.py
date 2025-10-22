@@ -70,6 +70,8 @@ class Board:
 
     def targets_list(self):
         lst = []
+        lst.append("all")
+        lst.append("initramfs")
         for target in self.targets:
             lst.append(target.name)
         return lst
@@ -111,7 +113,7 @@ class Board:
                 sub_target = targets[1]
         is_finded = self.__build(target_list, sub_target)
         if (not is_finded):
-            Logger.error("Don't find target!")
+            Logger.error(f"Don't find target! Available: {self.targets_list()}")
 
     def scan_kernel(self):
         target = self.get_kernel()
