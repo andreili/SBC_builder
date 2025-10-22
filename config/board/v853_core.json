@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "initramfs", "uboot_v853", "kernel_v853"
+        "initramfs", "uboot", "kernel"
     ],
     "variables":
     [
@@ -13,7 +13,7 @@
     "targets":
     [
         {
-            "name": "uboot_v853",
+            "name": "uboot",
             "type": "uboot",
             "url": "https://github.com/lindenis-org/lindenis-v853-lichee-brandy-2.0-u-boot-2018.git",
             "config": true,
@@ -36,7 +36,7 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% TARGET_BOARD=sun8iw21p1-soc-system"
         },
         {
-            "name": "kernel_v853",
+            "name": "kernel",
             "type": "kernel",
             "url": "https://github.com/lindenis-org/lindenis-v853-lichee-linux-4.9.git",
             "config": true,

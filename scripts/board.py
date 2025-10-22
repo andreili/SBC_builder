@@ -125,6 +125,6 @@ class Board:
 
     def get_kernel(self):
         for target in self.targets:
-            if (target.type == "kernel"):
+            if (target.name == "kernel"):
                 return target
         return None
