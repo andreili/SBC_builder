@@ -294,7 +294,7 @@ class OS:
         # remove temp directory
         self.__tmp_clean(temp_dir)
         self.__extract_tar(arch_path, temp_dir)
-        qemu_fn = qemu_name(self.arch)
+        qemu_fn = qemu_arch_name(self.arch)
         self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
         sqh_fn = f"{OUT_DIR}/root_{self.arch}_{date}.sqh"
         self.__make_sqh(temp_dir, sqh_fn)
