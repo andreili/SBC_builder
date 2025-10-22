@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "initramfs", "uboot", "kernel"
+        "initramfs", "uboot_v853", "kernel_v853"
     ],
     "variables":
     [
@@ -13,22 +13,27 @@
     "targets":
     [
         {
-            "parent": "uboot",
-            "version": "v2024.01",
-            "version_type": "tag",
-            "patch_dir": "uboot/sunxi",
+            "name": "uboot_v853",
+            "type": "uboot",
+            "url": "https://github.com/lindenis-org/lindenis-v853-lichee-brandy-2.0-u-boot-2018.git",
+            "config": true,
+            "config_target": "menuconfig",
+            "is_shared": false,
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": [ "uboot/old" ],
             "artifacts":
             [
                 {
-                    "file": "u-boot-sunxi-with-spl.bin",
+                    "file": "u-boot-sun8iw21p1.bin",
                     "store_type": "dd",
                     "block_size": "1k",
                     "img_offset": 8
                 }
             ],
             "target": [ "" ],
-            "config_def": "orangepi_zero2_defconfig",
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% BL31=%{out_dir}%/bl31.bin"
+            "config_def": "v853-lindenis_defconfig",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% TARGET_BOARD=sun8iw21p1-soc-system"
         },
         {
             "name": "kernel_v853",

@@ -1,0 +1,247 @@
+diff --git a/Makefile b/Makefile
+index 779feb8..983a779 100755
+--- a/Makefile
++++ b/Makefile
+@@ -283,16 +283,16 @@ endif
+ 
+ ifeq (x$(CONFIG_RISCV), xy)
+ CROSS_COMPILE := $(srctree)/../tools/toolchain/$(RISCV_PATH)/bin/riscv64-unknown-linux-gnu-
+-DTS_PATH := $(PWD)/arch/riscv/dts
++DTS_PATH := ./arch/riscv/dts
+ endif
+ 
+ ifeq (x$(CONFIG_ARM), xy)
+ CROSS_COMPILE := $(srctree)/../tools/toolchain/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi/bin/arm-linux-gnueabi-
+-DTS_PATH := $(PWD)/arch/arm/dts
++DTS_PATH := ./arch/arm/dts
+ endif
+ 
+ CROSS_COMPILE ?= $(srctree)/../tools/toolchain/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi/bin/arm-linux-gnueabi-
+-DTS_PATH ?= $(PWD)/arch/arm/dts
++DTS_PATH ?= ./arch/arm/dts
+ 
+ #######################################################################
+ # set default to nothing for native builds
+@@ -414,8 +414,9 @@ KBUILD_CPPFLAGS := -D__KERNEL__ -D__UBOOT__
+ KBUILD_CFLAGS   := -Wall -Wstrict-prototypes \
+ 		   -Wno-format-security \
+ 		   -fno-builtin -ffreestanding\
+-		   -Werror\
+-		   -Wno-packed-bitfield-compat
++		   -Wno-packed-bitfield-compat \
++		   -Wno-attributes \
++		   -Wno-tautological-compare
+ KBUILD_CFLAGS	+= -fshort-wchar
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
+ 
+@@ -1071,13 +1072,13 @@ TARGET_BIN_NAME := u-boot$(TARGET_BIN_DECORATOR)-$(CONFIG_SYS_CONFIG_NAME).bin
+ 
+ u-boot-$(CONFIG_SYS_CONFIG_NAME).bin:   u-boot.bin
+ 	@cp -v $<    $@
+-ifeq ($(TARGET_BUILD_VARIANT),tina)
+-	@cp -v $@ $(objtree)/../../../$(TARGET_BIN_DIR)/$(TARGET_BIN_NAME)
+-else
++#ifeq ($(TARGET_BUILD_VARIANT),tina)
++#	@cp -v $@ $(objtree)/../../../$(TARGET_BIN_DIR)/$(TARGET_BIN_NAME)
++#else
+ #LICHEE_BUSSINESS could be empty and result in "//", bui it will be treated as "/", it's fine
+-	@-cp -v $@ $(LICHEE_CHIP_CONFIG_DIR)/$(LICHEE_BUSSINESS)/bin/$(TARGET_BIN_NAME)
+-	@-cp -v $@ $(LICHEE_PLAT_OUT)/$(TARGET_BIN_NAME)
+-endif
++#	@-cp -v $@ $(LICHEE_CHIP_CONFIG_DIR)/$(LICHEE_BUSSINESS)/bin/$(TARGET_BIN_NAME)
++#	@-cp -v $@ $(LICHEE_PLAT_OUT)/$(TARGET_BIN_NAME)
++#endif
+ 
+ %.imx: %.bin
+ 	$(Q)$(MAKE) $(build)=arch/arm/mach-imx $@
+diff --git a/arch/arm/cpu/armv7/sunxi/timer.c b/arch/arm/cpu/armv7/sunxi/timer.c
+index 8818e91..c1fd83a 100644
+--- a/arch/arm/cpu/armv7/sunxi/timer.c
++++ b/arch/arm/cpu/armv7/sunxi/timer.c
+@@ -234,7 +234,7 @@ void watchdog_disable(void)
+ {
+ 	struct sunxi_timer_reg *timers = (struct sunxi_timer_reg *)SUNXI_TIMER_BASE;
+ 
+-	writel(timers->wdog[0].mode, 0);
++	writel(0, timers->wdog[0].mode);
+ 	return ;
+ }
+ 
+@@ -242,8 +242,8 @@ void watchdog_enable(void)
+ {
+ 	struct sunxi_timer_reg *timers = (struct sunxi_timer_reg *)SUNXI_TIMER_BASE;
+ 
+-	writel(timers->wdog[0].cfg, 1);
+-	writel(timers->wdog[0].mode, 1);
++	writel(1, &timers->wdog[0].cfg);
++	writel(1, &timers->wdog[0].mode);
+ 
+ 	return ;
+ }
+diff --git a/arch/arm/include/asm/arch-sunxi/pmic_bus.h b/arch/arm/include/asm/arch-sunxi/pmic_bus.h
+index 5efd1f6..74ade8e 100644
+--- a/arch/arm/include/asm/arch-sunxi/pmic_bus.h
++++ b/arch/arm/include/asm/arch-sunxi/pmic_bus.h
+@@ -6,7 +6,7 @@
+  */
+ 
+ #ifndef _SUNXI_PMIC_BUS_H
+-#define _SUNXI_PMIS_BUS_H
++#define _SUNXI_PMIC_BUS_H
+ 
+ int pmic_bus_init(u16 device_addr, u16 runtime_addr);
+ int pmic_bus_exit(void);
+diff --git a/arch/arm/mach-sunxi/board.c b/arch/arm/mach-sunxi/board.c
+index bbf3aee..e9be925 100644
+--- a/arch/arm/mach-sunxi/board.c
++++ b/arch/arm/mach-sunxi/board.c
+@@ -80,10 +80,12 @@ uint32_t sunxi_get_boot_device(void)
+ 	 * binary over USB. If it is found, it determines where SPL was
+ 	 * read from.
+ 	 */
+-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
++	u32 addr_bt = SPL_ADDR + 4;
++	if (!is_boot0_magic(addr_bt)) /* eGON.BT0 */
+ 		return BOOT_DEVICE_BOARD;
+ 
+-	boot_source = readb(SPL_ADDR + 0x28);
++	u32 addr_src = SPL_ADDR + 0x28;
++	boot_source = readb(addr_src);
+ 	switch (boot_source) {
+ 	case SUNXI_BOOTED_FROM_MMC0:
+ 		return BOOT_DEVICE_MMC1;
+diff --git a/board/sunxi/homlet/sunxi_hdcp_key.c b/board/sunxi/homlet/sunxi_hdcp_key.c
+index df508f9..eb168cb 100644
+--- a/board/sunxi/homlet/sunxi_hdcp_key.c
++++ b/board/sunxi/homlet/sunxi_hdcp_key.c
+@@ -179,11 +179,6 @@ int sunxi_deal_hdcp_key_hash(char *keydata, char *buffer_convert)
+ 	sunxi_efuse_key_info_t efuse_key_info;
+ 	const char *name = "hdcphash";
+ 
+-	if (obj->md5 == NULL) {
+-		pr_err("hdcp key file md5 is NULL\n");
+-		return -1;
+-	}
+-
+ 	ret = verify_hdcp_key_sha(obj->md5, buffer_convert);
+ 	if (ret < 0) {
+ 		pr_err("verify_hdcp_key_sha: failed\n");
+diff --git a/common/bootm.c b/common/bootm.c
+index 98b5805..0b092f6 100644
+--- a/common/bootm.c
++++ b/common/bootm.c
+@@ -738,7 +738,7 @@ int do_bootm_states(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[],
+ 
+ 	/* Load the OS */
+ 	if (!ret && (states & BOOTM_STATE_LOADOS)) {
+-		ulong load_end;
++		ulong load_end = 0;
+ 
+ 		iflag = bootm_disable_interrupts();
+ 		ret = bootm_load_os(images, &load_end, 0);
+diff --git a/common/command.c b/common/command.c
+index 52d47c1..390f42a 100644
+--- a/common/command.c
++++ b/common/command.c
+@@ -502,8 +502,8 @@ static int cmd_call(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+ 	return result;
+ }
+ 
+-enum command_ret_t cmd_process(int flag, int argc, char * const argv[],
+-			       int *repeatable, ulong *ticks)
++int cmd_process(int flag, int argc, char * const argv[],
++			       int *repeatable, unsigned long *ticks)
+ {
+ 	enum command_ret_t rc = CMD_RET_SUCCESS;
+ 	cmd_tbl_t *cmdtp;
+diff --git a/drivers/sunxi_power/bmu.c b/drivers/sunxi_power/bmu.c
+index 5f1964a..911f038 100644
+--- a/drivers/sunxi_power/bmu.c
++++ b/drivers/sunxi_power/bmu.c
+@@ -66,7 +66,7 @@ int bmu_set_ntc_onoff(int onoff, int ntc_cur)
+ }
+ 
+ /*get ntc temp*/
+-int bmu_get_ntc_temp(int param[16])
++int bmu_get_ntc_temp(int param[])
+ {
+ 	if ((sunxi_bmu_dev) && (sunxi_bmu_dev->get_ntc_temp))
+ 		return sunxi_bmu_dev->get_ntc_temp((int *)param);
+diff --git a/drivers/video/sunxi/disp2/disp/de/lowlevel_v2x/de_lcd_type_sun50iw10.h b/drivers/video/sunxi/disp2/disp/de/lowlevel_v2x/de_lcd_type_sun50iw10.h
+index 6936e0c..cb4741e 100644
+--- a/drivers/video/sunxi/disp2/disp/de/lowlevel_v2x/de_lcd_type_sun50iw10.h
++++ b/drivers/video/sunxi/disp2/disp/de/lowlevel_v2x/de_lcd_type_sun50iw10.h
+@@ -912,7 +912,7 @@ struct __de_lcd_dev_t {
+ };
+ 
+ s32 tcon_cmap(u32 sel, u32 mode, unsigned int lcd_cmap_tbl[2][3][4]);
+-s32 tcon_gamma(u32 sel, u32 mode, u32 gamma_tbl[256]);
++s32 tcon_gamma(u32 sel, u32 mode, u32 *gamma_tbl);
+ s32 tcon_ceu(u32 sel, u32 mode, s32 b, s32 c, s32 s, s32 h);
+ s32 tcon0_frm(u32 sel, u32 mode);
+ 
+diff --git a/include/linker_lists.h b/include/linker_lists.h
+index e0759d4..268df66 100644
+--- a/include/linker_lists.h
++++ b/include/linker_lists.h
+@@ -199,7 +199,9 @@
+ ({									\
+ 	static char start[0] __aligned(4) __attribute__((unused,	\
+ 		section(".u_boot_list_2_"#_list"_1")));			\
+-	(_type *)&start;						\
++	_type * tmp = (_type *)&start;					\
++	asm("":"+r"(tmp));						\
++	tmp;								\
+ })
+ 
+ /**
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index 22ab246..743c013 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -196,7 +196,7 @@
+  * this in the preprocessor, but we can live with this because they're
+  * unreleased.  Really, we need to have autoconf for the kernel.
+  */
+-#define unreachable() __builtin_unreachable()
++//#define unreachable() __builtin_unreachable()
+ 
+ /* Mark a function definition as prohibited from being cloned. */
+ #define __noclone	__attribute__((__noclone__))
+diff --git a/scripts/dtc/dtc-lexer.l b/scripts/dtc/dtc-lexer.l
+index fd825eb..24af549 100644
+--- a/scripts/dtc/dtc-lexer.l
++++ b/scripts/dtc/dtc-lexer.l
+@@ -38,7 +38,6 @@ LINECOMMENT	"//".*\n
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
+ extern bool treesource_error;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+diff --git a/scripts/dtc/dtc-lexer.lex.c_shipped b/scripts/dtc/dtc-lexer.lex.c_shipped
+index 011bb96..79952cd 100644
+--- a/scripts/dtc/dtc-lexer.lex.c_shipped
++++ b/scripts/dtc/dtc-lexer.lex.c_shipped
+@@ -631,7 +631,6 @@ char *yytext;
+ #include "srcpos.h"
+ #include "dtc-parser.tab.h"
+ 
+-YYLTYPE yylloc;
+ extern bool treesource_error;
+ 
+ /* CAUTION: this will stop working if we ever use yyless() or yyunput() */
+diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
+index 5075ebf..0f81ae6 100755
+--- a/scripts/kconfig/lxdialog/check-lxdialog.sh
++++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
+@@ -47,7 +47,7 @@ trap "rm -f $tmp" 0 1 2 3 15
+ check() {
+         $cc -x c - -o $tmp 2>/dev/null <<'EOF'
+ #include CURSES_LOC
+-main() {}
++int main() {return 0;}
+ EOF
+ 	if [ $? != 0 ]; then
+ 	    echo " *** Unable to find the ncurses libraries or the"       1>&2
