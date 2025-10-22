@@ -1,4 +1,4 @@
-import json, os, re
+import json, os, re, datetime
 from pathlib import Path
 from . import *
 
@@ -60,11 +60,13 @@ class Board:
     def __load_vars(self):
         add_vars(self.json["variables"])
         add_var("board_name", self.name)
+        add_var("build_root", BUILD_DIR)
         add_var("build_dir", f"{BUILD_DIR}/{self.name}")
-        add_var("common_dir", f"{BUILD_DIR}/common")
+        add_var("common_dir", "%{build_root}%/common_%{ARCH}%")
         add_var("out_dir", self.out_dir)
         add_var("out_sh", self.out_sh)
         add_var("ROOT_DIR", ROOT_DIR)
+        add_var("DATE", datetime.datetime.today().strftime('%Y_%m_%d'))
 
     def targets_list(self):
         lst = []

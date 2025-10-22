@@ -64,7 +64,7 @@
                     "subdir": "dtb/allwinner/overlay"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr",
             "modules":
             [
                 "rtl8189ES_linux"
@@ -90,7 +90,7 @@
             "version_type": "branch",
             "target": [ "modules", "install" ],
             "patch_dir": [ "rtl8189fs" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_sh}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_dir}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel_%{ARCH}%",
             "artifacts":
             []
         }

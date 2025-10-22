@@ -40,7 +40,7 @@
             "version": "@",
             "version_type": "head",
             "patch_dir": [ "kernel/old_4" ],
-            "target": [ "modules_prepare", "uImage", "modules", "dtbs", "modules_install" ],
+            "target": [ "modules_prepare", "zImage", "modules", "dtbs", "modules_install" ],
             "have_defconfig": false,
             "artifacts":
             [
@@ -50,11 +50,11 @@
                     "kmods": true
                 },
                 {
-                    "file": "arch/arm/boot/uImage",
+                    "file": "arch/arm/boot/zImage",
                     "store_type": "boot"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_sh}%/kmods/usr",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr",
             "config_def": "opi_zero2_printer_defconfig"
         }
     ],

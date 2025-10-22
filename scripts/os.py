@@ -1,4 +1,4 @@
-import subprocess, os, sys, datetime, getpass, shutil, requests, stat, re
+import subprocess, os, sys, getpass, shutil, requests, stat, re
 from pathlib import Path
 if __name__ != '__main__':
     from . import *
@@ -268,9 +268,9 @@ class OS:
 
     def make_sqh_kmod(self):
         self.__relaunch_as_sudo()
-        mod_path = f"{OUT_DIR}/modules"
+        mod_path = parse_variables("%{out_dir}%/modules")
         os.makedirs(mod_path, exist_ok=True)
-        kmod_fn = parse_variables("%{out_sh}%/kmods/usr/lib/modules")
+        kmod_fn = parse_variables("%{out_dir}%/kmods/usr/lib/modules")
         kmod = Path(kmod_fn)
         for f in kmod.iterdir():
             sqh_name = f.name
@@ -280,8 +280,8 @@ class OS:
     def sqh(self):
         #self.__relaunch_as_sudo()
         self.make_sqh_kmod()
-        date = datetime.datetime.today().strftime('%Y_%m_%d')
         temp_dir = f"{BUILD_DIR}/tmp"
+        out_dir = parse_variables("%{out_sh}%")
         # pack full system via tar
         arch_full_path = self.pack()
         self.__tmp_clean(temp_dir)
@@ -296,10 +296,11 @@ class OS:
         self.__extract_tar(arch_path, temp_dir)
         qemu_fn = qemu_arch_name(self.arch)
         self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
-        sqh_fn = f"{OUT_DIR}/root_{self.arch}_{date}.sqh"
-        self.__make_sqh(temp_dir, sqh_fn)
-        os.symlink(f"root_{self.arch}_{date}.sqh", f"{OUT_DIR}/root_{self.arch}.sqh.tmp")
-        os.rename(f"{OUT_DIR}/root_{self.arch}.sqh.tmp", f"{OUT_DIR}/root_{self.arch}.sqh")
+        sqh_fn = parse_variables("%{out_sh}%/root_%{ARCH}%_${DATE}%.sqh")
+        sqh_fn_short = parse_variables("%{out_sh}%/root_%{ARCH}%.sqh")
+        self.__make_sqh(temp_dir, f"{out_dir}/{sqh_fn}")
+        os.symlink(sqh_fn, f"{out_dir}/{sqh_fn_short}.tmp")
+        os.rename(f"{out_dir}/{sqh_fn_short}.tmp", f"{out_dir}/{sqh_fn_short}.sqh")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):
@@ -469,7 +470,7 @@ class OS:
         self.__copy_file(f"{self.board.out_sh}/uInitrd_{self.arch}", f"{out_dir}/")
         Logger.install(f"\tCopy root_{self.arch}.sqh")
         self.__sudo(["cp", "-H", f"{self.board.out_sh}/root_{self.arch}.sqh", f"{out_dir}/"])
-        self.__sudo(["cp", "-Hr", f"{self.board.out_sh}/modules", f"{out_dir}/"])
+        self.__sudo(["cp", "-Hr", f"{self.board.out_dir}/modules", f"{out_dir}/"])
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)

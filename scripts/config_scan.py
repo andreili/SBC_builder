@@ -468,21 +468,12 @@ class ConfigScan:
         self.opts = []
         self.compatible = dict()
         self.defconfig = dict()
-        self.vars = [
-            [ "SRCARCH", self.arch ],
-        ]
+        add_var("SRCARCH", self.arch)
     def __scan_arch_list(self, path):
         for dir_i in os.listdir(f"{path}/arch"):
             fn = f"{path}/arch/{dir_i}"
             if (os.path.isdir(fn)):
                 self.arch_list.append(dir_i)
-    def __parse_variables(self, string):
-        while True:
-            for var_d in self.vars:
-                string = string.replace("$("+var_d[0]+")", str(var_d[1]))
-            if not re.compile(r'$\(\S+\)').match(string):
-                break
-        return string
     def __find_opt(self, name):
         for opt in self.opts:
             if (opt.name == name):
@@ -526,12 +517,13 @@ class ConfigScan:
     def add_defconfig(self, name, list):
         self.defconfig[name] = list
     def scan(self, path):
+        path = parse_variables(path)
         print(f"Start scanning for options, directory '{path}'...")
         print("Step #1 - Scan Kconfig files")
         self.__scan_arch_list(path)
-        KconfigScan(path, self.__parse_variables, self.on_config_opt).scan()
+        KconfigScan(path, parse_variables, self.on_config_opt).scan()
         print("Step #2 - Scan Makefile for source files")
-        obj = KmakefileScan(path, self.__parse_variables, self.__insert_comp)
+        obj = KmakefileScan(path, parse_variables, self.__insert_comp)
         obj.scan()
         print("Step #3 - Scan 'compatible' strings")
         obj.scan_compatible()
@@ -579,7 +571,7 @@ class ConfigScan:
     def __cfg_add_cfg(self, cfg, val):
         # TODO - check a config override, conditions, value
         def_val = self.__cfg_get_default(cfg)
-        val = self.__parse_variables(val)
+        val = parse_variables(val)
         if (def_val == None):
             return
         opt = ConfigCondition(cfg)
@@ -690,5 +682,5 @@ class ConfigScan:
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")
-    cfg_scn.scan(f"{BUILD_DIR}/common/kernel")
+    cfg_scn.scan("%{common_dir}%/kernel")
     cfg_scn.save()
