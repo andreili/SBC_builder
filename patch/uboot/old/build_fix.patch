@@ -147,7 +147,7 @@ index 0000000..ef3d6f4
 +	dcdc2_vol = <1000900>;
 +	dcdc5_vol = <1200>;
 +	aldo1_vol = <1001800>;
-+	aldo2_vol = <1001800>;
++	aldo2_vol = <1001000>;
 +	aldo3_vol = <1003300>;
 +	aldo4_vol = <1003300>;
 +	bldo1_vol = <1001800>;
@@ -168,7 +168,7 @@ index 0000000..ef3d6f4
 +
 +&sunxi_flashmap {
 +    /* Unit: Sector */
-+	sdmmc_map {
++	/*sdmmc_map {
 +		logic_offset = <40960>;
 +		boot_param_start = <24504>;
 +		boot_param_size = <1>;
@@ -193,7 +193,7 @@ index 0000000..ef3d6f4
 +		uboot_start = <128>;
 +		uboot_size = <1888>;
 +		status = "okay";
-+	};
++	};*/
 +};
 +
 +&aliases {
@@ -624,94 +624,94 @@ index 0000000..ef3d6f4
 +    base_config_start   = <1>;
 +    lcd_used            = <1>;
 +
-+    lcd_driver_name     = "lindevb720p";
++    lcd_driver_name     = "default_lcd";
 +
-+    lcd_bl_0_percent    = <0>;
-+    lcd_bl_40_percent   = <23>;
-+    lcd_bl_100_percent  = <100>;
-+    lcd_backlight       = <150>;
++    lcd_if              = <0>;
++    lcd_hv_if           = <0>;
++    lcd_cpu_if          = <0>;
 +
-+    lcd_if              = <4>;
-+    lcd_x               = <720>;
-+    lcd_y               = <1280>;
-+    lcd_width           = <62>;
-+    lcd_height          = <110>;
++    lcd_x               = <480>;
++    lcd_y               = <272>;
++    lcd_width           = <83>;
++    lcd_height          = <54>;
 +
-+    lcd_dclk_freq       = <64>;
++    lcd_dclk_freq       = <16>;
++    lcd_ht              = <870>;
++    lcd_hbp             = <230>;
++    lcd_hspw            = <0>;
++    lcd_vt              = <317>;
++    lcd_vbp             = <33>;
++    lcd_vspw            = <0>;
 +
 +    lcd_pwm_used        = <1>;
-+    lcd_pwm_ch          = <9>;
++    lcd_pwm_ch          = <8>;
 +    lcd_pwm_freq        = <50000>;
-+    lcd_pwm_pol         = <1>;
++    lcd_pwm_pol         = <0>;
 +    lcd_pwm_max_limit   = <255>;
 +
-+    lcd_hbp             = <50>;
-+    lcd_ht              = <810>;
-+    lcd_hspw            = <10>;
-+    lcd_vbp             = <14>;
-+    lcd_vt              = <1310>;
-+    lcd_vspw            = <3>;
-+
-+    lcd_dsi_if          = <0>;
-+    lcd_dsi_lane        = <4>;
-+    lcd_dsi_format      = <0>;
-+    lcd_dsi_te          = <0>;
-+    lcd_dsi_eotp        = <0>;
-+
-+    lcd_frm             = <0>;
++    lcd_frm             = <1>;
 +    lcd_io_phase        = <0x0000>;
 +    lcd_hv_clk_phase    = <0>;
-+    lcd_hv_sync_polarity= <0>;
 +    lcd_gamma_en        = <0>;
-+    lcd_bright_curve_en = <0>;
 +    lcd_cmap_en         = <0>;
++    lcd_hv_sync_polarity= <0>;
 +
-+    lcdgamma4iep        = <22>;
++    //lcd_bl_0_percent    = <0>;
++    //lcd_bl_40_percent   = <23>;
++    //lcd_bl_100_percent  = <100>;
++    //lcd_backlight       = <150>;
 +
-+    lcd_gpio_0          = <&pio PD 19 1 0 3 1>;
-+    pinctrl-0           = <&dsi4lane_pins_a>;
-+    pinctrl-1           = <&dsi4lane_pins_b>;
++    //lcd_dsi_te          = <0>;
++    //lcd_dsi_te          = <0>;
++    //lcd_dsi_eotp        = <0>;
++    //lcd_bright_curve_en = <0>;
++
++    //lcdgamma4iep        = <22>;
++
++    pinctrl-0           = <&rgb18_pins_a>;
++    pinctrl-1           = <&rgb18_pins_b>;
 +    base_config_end     = <1>;
 +
-+
++    lcd_gpio_0          = <&pio PE 11 1 0 3 1>;
++    lcd_gpio_1          = <&pio PE 12 1 0 3 0>;
 +};
 +
 +&pio{
-+	rgb24_pins_a: rgb24@0 {
++	rgb18_pins_a: rgb18@0 {
 +		allwinner,pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7", "PD8", "PD9", \
 +		"PD10", "PD11", "PD12", "PD13", "PD14", "PD15", "PD16", "PD17", "PD18", "PD19", \
-+		"PD20", "PD21", "PD22", "PD23", "PD24", "PD25", "PD26", "PD27";
++		"PD20", "PD21";
 +		allwinner,pname = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7", "PD8", "PD9", \
 +		"PD10", "PD11", "PD12", "PD13", "PD14", "PD15", "PD16", "PD17", "PD18", "PD19", \
-+		"PD20", "PD21", "PD22", "PD23", "PD24", "PD25", "PD26", "PD27";
-+		allwinner,function = "rgb24";
++		"PD20", "PD21";
++		allwinner,function = "rgb18";
 +		allwinner,muxsel = <2>;
 +		allwinner,drive = <3>;
 +		allwinner,pull = <0>;
 +	};
-+	rgb24_pins_b: rgb24@1 {
++	rgb18_pins_b: rgb18@1 {
 +		allwinner,pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7", "PD8", "PD9", \
 +		"PD10", "PD11", "PD12", "PD13", "PD14", "PD15", "PD16", "PD17", "PD18", "PD19", \
-+		"PD20", "PD21", "PD22", "PD23", "PD24", "PD25", "PD26", "PD27";
++		"PD20", "PD21";
 +		allwinner,pname = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7", "PD8", "PD9", \
 +		"PD10", "PD11", "PD12", "PD13", "PD14", "PD15", "PD16", "PD17", "PD18", "PD19", \
-+		"PD20", "PD21", "PD22", "PD23", "PD24", "PD25", "PD26", "PD27";
++		"PD20", "PD21";
 +		allwinner,function = "rgb24_suspend";
-+		allwinner,muxsel = <7>;
++		allwinner,muxsel = <15>;
 +		allwinner,drive = <3>;
 +		allwinner,pull = <0>;
 +	};
 +};
 +
 +&disp {
-+	disp_init_enable         = <0>;
++	disp_init_enable         = <1>;
 +	disp_mode                = <0>;
 +
-+	screen0_output_type      = <0>;
-+	screen0_output_mode      = <0>;
++	screen0_output_type      = <1>;
++	screen0_output_mode      = <4>;
 +
-+	screen1_output_type      = <3>;
-+	screen1_output_mode      = <10>;
++	screen1_output_type      = <1>;
++	screen1_output_mode      = <4>;
 +
 +	screen1_output_format    = <0>;
 +	screen1_output_bits      = <0>;
@@ -722,22 +722,22 @@ index 0000000..ef3d6f4
 +	screen1_output_scan      = <0>;
 +	screen1_output_aspect_ratio = <8>;
 +
-+	dev0_output_type         = <0>;
-+	dev0_output_mode         = <0>;
++	dev0_output_type         = <1>;
++	dev0_output_mode         = <4>;
 +	dev0_screen_id           = <0>;
 +	dev0_do_hpd              = <0>;
 +
-+	dev1_output_type         = <0>;
-+	dev1_output_mode         = <0>;
-+	dev1_screen_id           = <0>;
-+	dev1_do_hpd              = <0>;
++	dev1_output_type         = <4>;
++	dev1_output_mode         = <10>;
++	dev1_screen_id           = <1>;
++	dev1_do_hpd              = <1>;
 +
 +	def_output_dev           = <0>;
 +	hdmi_mode_check          = <1>;
 +
 +	fb0_format               = <0>;
-+	fb0_width                = <1280>;
-+	fb0_height               = <720>;
++	fb0_width                = <0>;
++	fb0_height               = <0>;
 +
 +	fb1_format               = <0>;
 +	fb1_width                = <0>;
