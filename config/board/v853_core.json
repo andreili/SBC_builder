@@ -33,7 +33,7 @@
             ],
             "target": [ "" ],
             "config_def": "v853-lindenis_defconfig",
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% TARGET_BOARD=sun8iw21p1-soc-system"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% TARGET_BOARD=sun8i_v853_printer"
         },
         {
             "name": "kernel",
