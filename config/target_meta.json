@@ -40,28 +40,6 @@
                 {
                     "file": "arch/arm64/boot/Image",
                     "store_type": "boot"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dtb",
-                    "store_type": "boot",
-                    "subdir": "dtb/rockchip",
-                    "destdir": "dtb"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/rockchip/rk3566-*.dtbo",
-                    "store_type": "none",
-                    "subdir": "dtb/rockchip/overlays"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
-                    "store_type": "boot",
-                    "subdir": "dtb/allwinner",
-                    "destdir": "dtb"
-                },
-                {
-                    "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
-                    "store_type": "none",
-                    "subdir": "dtb/allwinner/overlay"
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr",

@@ -54,7 +54,21 @@
         },
         {
             "parent": "kernel",
-            "config_def": "btt_cb1_printer_defconfig"
+            "config_def": "btt_cb1_printer_defconfig",
+            "artifacts":
+            [
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1*.dtb",
+                    "store_type": "boot",
+                    "subdir": "dtb/allwinner",
+                    "destdir": "dtb"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/allwinner/overlay/sun50i-h616*.dtbo",
+                    "store_type": "none",
+                    "subdir": "dtb/allwinner/overlay"
+                }
+            ]
         }
     ],
     "install":
