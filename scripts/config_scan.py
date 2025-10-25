@@ -544,9 +544,7 @@ class ConfigScan:
         return obj
     def deserialize(self, js):
         self.arch = js["arch"]
-        self.vars = [
-            [ "SRCARCH", self.arch ],
-        ]
+        set_var("SRCARCH", self.arch)
         self.arch_list = js["arch_list"]
         self.compatible = js["compatible"]
         for o in js["opts"]:

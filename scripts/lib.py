@@ -14,6 +14,13 @@ def add_vars(lst):
     for var_def in lst:
         __variables.append(var_def.split(":"))
 
+def set_var(key, value):
+    for var_d in __variables:
+        if (var_d[0] == key):
+            var_d[1] = value
+            return
+    __variables.append([key, value])
+
 def parse_variables(string):
     finded = True
     while finded:
