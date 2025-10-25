@@ -1,0 +1,114 @@
+{
+    "build":
+    [
+        "uboot", "kernel"
+    ],
+    "variables":
+    [
+        "CHOST:aarch64-unknown-linux-gnu",
+        "KERNEL_ARCH:arm64",
+        "CROSS_C:%{CHOST}%-",
+        "TPL_BIN:rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.19.bin",
+        "BL31_BIN:rk3588_bl31_v1.51.elf",
+        "ARCH:aarch64",
+        "DTB_FILE:rockchip/rk3588-orangepi-5-plus.dtb",
+        "DTO_FILES:rockchip/rk3588-*.dtbo",
+        "DTO_DIR:rockchip/overlays"
+    ],
+    "targets":
+    [
+        {
+            "parent": "rkbin",
+            "version": "@",
+            "version_type": "head",
+            "target": [ "bl31" ],
+            "no_build": 1,
+            "artifacts":
+            [
+                {
+                    "file": "bin/rk35/%{TPL_BIN}%",
+                    "store_type": "temp"
+                },
+                {
+                    "file": "bin/rk35/%{BL31_BIN}%",
+                    "store_type": "temp"
+                }
+            ]
+        },
+        {
+            "parent": "uboot",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "uboot/btt",
+            "deps":
+            [
+                "rkbin"
+            ],
+            "artifacts":
+            [
+                {
+                    "file": "idbloader.img",
+                    "store_type": "dd",
+                    "block_size": "512b",
+                    "img_offset": 64
+                },
+                {
+                    "file": "u-boot.itb",
+                    "store_type": "dd",
+                    "block_size": "512b",
+                    "img_offset": 16384
+                },
+                {
+                    "file": "u-boot-rockchip-spi.bin",
+                    "store_type": "boot"
+                }
+            ],
+            "target": [ "" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCHV=%{ARCH}% ROCKCHIP_TPL=%{out_dir}%/%{TPL_BIN}% BL31=%{out_dir}%/%{BL31_BIN}%"
+        },
+        {
+            "parent": "kernel",
+            "config_def": "rk3588-orangepi-5-plus_defconfig",
+            "config_set": "arm64_linux_min,rk_all,printer_all,sys_rk809,nvme_blk",
+            "artifacts":
+            [
+                {
+                    "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
+                    "store_type": "boot",
+                    "subdir": "dtb/rockchip",
+                    "destdir": "dtb"
+                },
+                {
+                    "file": "arch/arm64/boot/dts/%{DTO_FILES}%",
+                    "store_type": "none",
+                    "subdir": "dtb/%{DTO_DIR}%"
+                }
+            ]
+        }
+    ],
+    "install":
+    {
+        "target": "image",
+        "type": "gpt",
+        "block_size": "512b",
+        "partitions":
+        [
+            {
+                "name": "boot",
+                "size": "1G",
+                "first_sector": "32768"
+            },
+            {
+                "name": "rw",
+                "size": "2G"
+            }
+        ],
+        "_overlays":
+        [
+            "/dtb/%{DTO_DIR}%/rk3566-sfc-nor.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-w1-gpio4-pb2.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-dsi1.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-pcie.dtbo"
+        ]
+    }
+}
