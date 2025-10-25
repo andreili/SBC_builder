@@ -95,7 +95,7 @@ class Target:
         self.sources.do_patch(self.board_name, self.patch_dir)
 
     def build(self, sub_target, out_dir):
-        self.source_sync()
+        #self.source_sync()
         if (sub_target != "config"):
             self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
@@ -109,8 +109,14 @@ class Target:
                     # initialize without arch - required only for parsing
                     cfg_scn = ConfigScan("")
                     cfg_scn.load()
-                    cfg_scn.save_defconfig(self.sources.work_dir, self.defconfig_name, self.config_set)
-                    opts.append(self.defconfig_name)
+                    cfg_scn.defconfig_start()
+                    if (self.defconfig_name is str):
+                        cfg_scn.defconfig_append(self.defconfig_name, self.config_set)
+                    else:
+                        for cfg_name in self.defconfig_name:
+                            cfg_scn.defconfig_append(cfg_name, self.config_set)
+                    cfg_scn.defconfig_save(self.sources.work_dir, "gen_config_set")
+                    opts.append("gen_config_set_defconfig")
                 elif (sub_target == "config"):
                     opts.append(self.config_target)
                 else:

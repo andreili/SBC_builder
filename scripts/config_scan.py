@@ -578,9 +578,11 @@ class ConfigScan:
         opt.set_val(val)
         for o in self.def_cfg:
             if (o.opt_str == cfg):
+                if (o.val != "") and (val == "?n"):
+                    return
                 if (val != "n") and (o.val == "n") and (not o.is_force) and (not o.is_flex):
                     # override "no" value only
-                    print(f"Override 'NO' value for config '{cfg}'!!!")
+                    print(f"Override 'NO' value for config '{cfg}'!!! (new='{val}')")
                     exit(1)
                 o.set_val(val)
                 return
@@ -658,12 +660,8 @@ class ConfigScan:
                 exit(1)
             else:
                 self.__add_set(s)
-    def save_defconfig(self, path, name, config_set):
-        path = f"{path}/arch/{self.arch}/configs/{name}"
-        cfg_name = re.findall(r'(\S+)_defconfig', name)[0]
-        print(f"Save defconfig for '{cfg_name}' into '{path}'")
+    def __apply_defconfig(self, cfg_name, config_set):
         cfgs = self.defconfig[cfg_name]
-        self.def_cfg = []
         # add architecture option
         self.__cfg_recursive(f"{self.arch.upper()}=y")
         # activate default configurations first
@@ -671,6 +669,14 @@ class ConfigScan:
         for cfg in cfgs:
             # walk through all platform configs
             self.__cfg_recursive(cfg)
+    def defconfig_start(self):
+        self.def_cfg = []
+    def defconfig_append(self, name, config_set):
+        print(f"Append defconfig for '{name}'")
+        self.__apply_defconfig(name, config_set)
+    def defconfig_save(self, path, name):
+        path = f"{path}/arch/{self.arch}/configs/{name}_defconfig"
+        print(f"Save defconfig for '{name}' into '{path}'")
         f = open(path, "w")
         for opt in self.def_cfg:
             s = opt.serialize()
@@ -679,6 +685,10 @@ class ConfigScan:
             else:
                 f.write(f"CONFIG_{s}\n")
         f.close()
+    def save_defconfig(self, path, name, config_set):
+        self.defconfig_start()
+        self.__apply_defconfig(name, config_set)
+        self.defconfig_save(path, name)
 
 if __name__ == '__main__':
     cfg_scn = ConfigScan("arm64")
