@@ -282,6 +282,8 @@ class Sources:
                 dir_o = out_dir + "/" + subdir + "/"
             else:
                 dir_o = out_dir + "/"
+            dir_o = parse_variables(dir_o)
+            file_name = parse_variables(file_name)
             os.makedirs(dir_o, exist_ok=True)
             if (file_name.find("*") == -1):
                 shutil.copy(file_name, dir_o)

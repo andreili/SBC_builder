@@ -428,6 +428,8 @@ class OS:
                 self.__sudo(["mkfs.ext2", "-F", f"{img_or_blk}{idx}"], stdout=subprocess.DEVNULL)
 
     def __copy_file(self, src, dst):
+        src = parse_variables(src)
+        dst = parse_variables(dst)
         Logger.install(f"\tCopy {src}")
         dir_ch = Path(src)
         self.__sudo(["mkdir", "-p", dst], stdout=subprocess.DEVNULL)
@@ -437,6 +439,7 @@ class OS:
             self.__sudo(["cp", src, dst], stdout=subprocess.DEVNULL)
 
     def __dd_bin(self, src, block_size, offset):
+        src = parse_variables(src)
         blk_sz = self.__parse_size(block_size)
         Logger.install(f"\tDD {src} (+{offset}:{blk_sz})")
         self.__sudo(["dd", f"if={src}", f"of={self.out_path}",
