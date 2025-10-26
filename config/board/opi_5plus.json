@@ -40,6 +40,7 @@
             "version": "@",
             "version_type": "head",
             "patch_dir": "uboot/btt",
+            "config_def": "orangepi-5-plus-rk3588_defconfig",
             "deps":
             [
                 "rkbin"
