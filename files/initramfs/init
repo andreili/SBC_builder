@@ -51,6 +51,9 @@ good_msg "Initial ramdisk script. Linux kernel ${KV}"
 log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
 echo "" > /proc/sys/kernel/hotplug
 
+good_msg "Additional wait for all devices is up."
+run sleep 3
+
 #run mkdir -p "${NEW_ROOT}"
 CHROOT="${NEW_ROOT}"
 run mount -n -t tmpfs tmpfs ${NEW_ROOT}
