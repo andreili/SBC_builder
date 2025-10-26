@@ -568,7 +568,6 @@ class ConfigScan:
         #if (cfg.lower() in self.arch_list):
         #    return None
         if (cfg in self.defaults):
-            print(f"Using default value for config '{cfg}': '{self.defaults[cfg]}'")
             return self.defaults[cfg]
         else:
             return "y"
@@ -578,7 +577,6 @@ class ConfigScan:
         val = parse_variables(val)
         if (val == ""):
             val = def_val
-        print(f"Set config '{cfg}' to '{val}' (default='{def_val}')")
         opt = ConfigCondition(cfg)
         opt.set_val(val)
         for o in self.def_cfg:
