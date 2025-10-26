@@ -137,7 +137,9 @@ class Sources:
     def git_work_tree_init(self):
         if (not Path(f"{self.work_dir}/.git").is_file()):
             Logger.git("\tAdd to worktree")
-            self.repo_bare.git.worktree("add", self.work_dir, "master", "--no-checkout", "--force")
+            show_result = self.repo_bare.git.remote("show", "origin")
+            matches = re.search(r"\s*HEAD branch:\s*(.*)", show_result)
+            self.repo_bare.git.worktree("add", self.work_dir, matches.group(1), "--no-checkout", "--force")
         git_rel_dir = os.path.relpath(self.worktree_dir, start=self.work_dir)
         with open(f"{self.work_dir}/.git", 'w') as f:
             f.write(f"gitdir: {git_rel_dir}")
