@@ -89,6 +89,17 @@
                     "subdir": "dtb/%{DTO_DIR}%"
                 }
             ]
+        },
+        {
+            "parent": "linuxfw",
+            "artifacts":
+            [
+                {
+                    "file": "arm/mali/arch10.8/*",
+                    "store_type": "temp",
+                    "subdir": "kmods/usr/lib/firmware/arm/mali/arch10.8"
+                }
+            ]
         }
     ],
     "install":

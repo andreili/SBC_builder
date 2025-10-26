@@ -50,6 +50,19 @@
         }
     },
     {
+        "linuxfw":
+        {
+            "type": "linuxfw",
+            "url": "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git",
+            "config": false,
+            "is_shared": false,
+            "version": "@",
+            "version_type": "head",
+            "target": "",
+            "makeopts": "DESTDIR=%{out_dir}%/kmods/usr"
+        }
+    },
+    {
         "busybox":
         {
             "url": "https://git.busybox.net/busybox",
