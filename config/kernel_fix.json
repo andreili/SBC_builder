@@ -532,6 +532,13 @@
                 "SOUND=!n",
                 "SND=!n"
             ]
+        },
+        {
+            "name": "typec_video",
+            "options":
+            [
+                "TYPEC_DP_ALTMODE=m"
+            ]
         }
     ],
     "sets":
