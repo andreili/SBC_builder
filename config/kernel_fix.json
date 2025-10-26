@@ -578,5 +578,10 @@
             "input_touch",
             "no_snd"
         ]
+    },
+    "defaults":
+    {
+        "DRM_PANFROST": "m",
+        "DRM_PANTHOR": "m"
     }
 }

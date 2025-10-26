@@ -468,6 +468,7 @@ class ConfigScan:
         self.opts = []
         self.compatible = dict()
         self.defconfig = dict()
+        self.defaults = dict()
         add_var("SRCARCH", self.arch)
     def __scan_arch_list(self, path):
         for dir_i in os.listdir(f"{path}/arch"):
@@ -511,6 +512,7 @@ class ConfigScan:
                     opt.opt_body_parse(f"depends on {deps[key]}", "")
             self.systems = js_data["systems"]
             self.sets = js_data["sets"]
+            self.defaults = js_data["defaults"]
             json_data.close()
     def on_config_opt(self, opt):
         self.opts.append(opt)
@@ -565,13 +567,18 @@ class ConfigScan:
     def __cfg_get_default(self, cfg):
         #if (cfg.lower() in self.arch_list):
         #    return None
-        return "y"
+        if (cfg in self.defaults):
+            print(f"Using default value for config '{cfg}': '{self.defaults[cfg]}'")
+            return self.defaults[cfg]
+        else:
+            return "y"
     def __cfg_add_cfg(self, cfg, val):
         # TODO - check a config override, conditions, value
         def_val = self.__cfg_get_default(cfg)
         val = parse_variables(val)
-        if (def_val == None):
-            return
+        if (val == ""):
+            val = def_val
+        print(f"Set config '{cfg}' to '{val}' (default='{def_val}')")
         opt = ConfigCondition(cfg)
         opt.set_val(val)
         for o in self.def_cfg:
@@ -601,7 +608,7 @@ class ConfigScan:
         else:
             is_enabled = False
             is_new = False
-            cfg_val = "y"
+            cfg_val = ""
             if ("=" in cfg):
                 # config have a predefined value
                 oo = cfg.split("=")
