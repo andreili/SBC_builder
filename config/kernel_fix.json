@@ -406,7 +406,8 @@
             [
                 "PCIE_ROCKCHIP_DW_HOST=y",
                 "ARM_SCPI_PROTOCOL=y",
-                "COMMON_CLK_SCMI=y"
+                "COMMON_CLK_SCMI=y",
+                "PL330_DMA=y"
             ]
         },
         {

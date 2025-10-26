@@ -4542,7 +4542,7 @@ CONFIG_DMA_OF=y
 # CONFIG_FSL_QDMA is not set
 # CONFIG_INTEL_IDMA64 is not set
 # CONFIG_MV_XOR_V2 is not set
-# CONFIG_PL330_DMA is not set
+CONFIG_PL330_DMA=y
 # CONFIG_PLX_DMA is not set
 # CONFIG_XILINX_DMA is not set
 # CONFIG_XILINX_XDMA is not set
