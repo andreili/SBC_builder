@@ -74,7 +74,7 @@
                 "rk3566-bigtreetech-cb2-manta",
                 "rk3588-orangepi-5-plus"
             ],
-            "config_set": "arm64_linux_min,rk_all,printer_all,sys_rk809,nvme_blk,typec_video",
+            "config_set": "arm64_linux_min,rk_all,printer_all,sys_rk809,nvme_blk,typec_video,net_rtl8125,net_ax210",
             "artifacts":
             [
                 {
@@ -94,6 +94,21 @@
             "parent": "linuxfw",
             "artifacts":
             [
+                {
+                    "file": "rtl_nic/*",
+                    "store_type": "temp",
+                    "subdir": "kmods/usr/lib/firmware/rtl_nic"
+                },
+                {
+                    "file": "intel/iwlwifi/iwlwifi-ty-a0-gf-a0-89.ucode",
+                    "store_type": "temp",
+                    "subdir": "kmods/usr/lib/firmware/intel/iwlwifi"
+                },
+                {
+                    "file": "intel/iwlwifi/iwlwifi-ty-a0-gf-a0.pnvm",
+                    "store_type": "temp",
+                    "subdir": "kmods/usr/lib/firmware/intel/iwlwifi"
+                },
                 {
                     "file": "arm/mali/arch10.8/*",
                     "store_type": "temp",

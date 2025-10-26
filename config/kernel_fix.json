@@ -111,7 +111,7 @@
                 "NET_VENDOR_HISILICON=n",
                 "NET_VENDOR_HUAWEI=n",
                 "NET_VENDOR_I825XX=n",
-                "NET_VENDOR_INTEL=n",
+                "NET_VENDOR_INTEL=?n",
                 "NET_VENDOR_ADI=n",
                 "NET_VENDOR_LITEX=n",
                 "NET_VENDOR_MELLANOX=n",
@@ -157,30 +157,13 @@
                 "NET_VENDOR_QLOGIC=n",
                 "NET_VENDOR_BROCADE=n",
                 "NET_VENDOR_RDC=n",
-                "NET_VENDOR_REALTEK=n",
+                "NET_VENDOR_REALTEK=?n",
                 "NET_VENDOR_SILAN=n",
                 "NET_VENDOR_SIS=n",
                 "NET_VENDOR_SUN=n",
                 "NET_VENDOR_TEHUTI=n",
                 "NET_VENDOR_TI=n",
                 "WLAN=?n",
-                "WLAN_VENDOR_ADMTEK=n",
-                "WLAN_VENDOR_ATH=n",
-                "WLAN_VENDOR_ATMEL=n",
-                "WLAN_VENDOR_INTEL=n",
-                "WLAN_VENDOR_INTERSIL=n",
-                "WLAN_VENDOR_MARVELL=n",
-                "WLAN_VENDOR_MEDIATEK=n",
-                "WLAN_VENDOR_MICROCHIP=n",
-                "WLAN_VENDOR_PURELIFI=n",
-                "WLAN_VENDOR_RALINK=n",
-                "WLAN_VENDOR_REALTEK=n",
-                "WLAN_VENDOR_RSI=n",
-                "WLAN_VENDOR_SILABS=n",
-                "WLAN_VENDOR_ST=n",
-                "WLAN_VENDOR_TI=n",
-                "WLAN_VENDOR_ZYDAS=n",
-                "WLAN_VENDOR_QUANTENNA=n",
                 "MEDIA_TUNER=n",
                 "MEDIA_USB_SUPPORT=?n",
                 "MEDIA_SUPPORT_FILTER=y",
@@ -539,6 +522,22 @@
             "options":
             [
                 "TYPEC_DP_ALTMODE=m"
+            ]
+        },
+        {
+            "name": "net_rtl8125",
+            "options":
+            [
+                "R8169=m"
+            ]
+        },
+        {
+            "name": "net_ax210",
+            "options":
+            [
+                "IWLWIFI=m",
+                "IWLDVM=m",
+                "IWLMVM=m"
             ]
         }
     ],
