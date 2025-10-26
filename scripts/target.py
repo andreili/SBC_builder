@@ -95,7 +95,7 @@ class Target:
         self.sources.do_patch(self.board_name, self.patch_dir)
 
     def build(self, sub_target, out_dir):
-        #self.source_sync()
+        self.source_sync()
         if (sub_target != "config"):
             self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
