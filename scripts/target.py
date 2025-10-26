@@ -106,17 +106,20 @@ class Target:
                 targets = self.target
             else:
                 if (sub_target == "defconfig"):
-                    # initialize without arch - required only for parsing
-                    cfg_scn = ConfigScan("")
-                    cfg_scn.load()
-                    cfg_scn.defconfig_start()
-                    if (self.defconfig_name is str):
-                        cfg_scn.defconfig_append(self.defconfig_name, self.config_set)
+                    if (self.name == "kernel"):
+                        # initialize without arch - required only for parsing
+                        cfg_scn = ConfigScan("")
+                        cfg_scn.load()
+                        cfg_scn.defconfig_start()
+                        if (self.defconfig_name is str):
+                            cfg_scn.defconfig_append(self.defconfig_name, self.config_set)
+                        else:
+                            for cfg_name in self.defconfig_name:
+                                cfg_scn.defconfig_append(cfg_name, self.config_set)
+                        cfg_scn.defconfig_save(self.sources.work_dir, "gen_config_set")
+                        opts.append("gen_config_set_defconfig")
                     else:
-                        for cfg_name in self.defconfig_name:
-                            cfg_scn.defconfig_append(cfg_name, self.config_set)
-                    cfg_scn.defconfig_save(self.sources.work_dir, "gen_config_set")
-                    opts.append("gen_config_set_defconfig")
+                        opts.append(self.defconfig_name)
                 elif (sub_target == "config"):
                     opts.append(self.config_target)
                 else:
