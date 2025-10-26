@@ -465,15 +465,18 @@ class OS:
             cmd += f"\tfdtoverlays {overlays}\n"
         cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
+        Logger.install(f"\tCopy target-specific files")
         for target in self.board.targets:
             if (target.is_shared):
                 target.install_files(out_dir, self.board.out_sh, "boot", self.__copy_file, self.__dd_bin)
             else:
                 target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
-        self.__copy_file(f"{self.board.out_sh}/uInitrd_{self.arch}", f"{out_dir}/")
-        Logger.install(f"\tCopy root_{self.arch}.sqh")
-        self.__sudo(["cp", "-H", f"{self.board.out_sh}/root_{self.arch}.sqh", f"{out_dir}/"])
-        self.__sudo(["cp", "-Hr", f"{self.board.out_dir}/modules", f"{out_dir}/"])
+        Logger.install(f"\tCopy initial RAM-disk")
+        self.__sudo(f" cp -H {self.board.out_sh}/uInitrd_{self.arch} {out_dir}/uInitrd")
+        Logger.install(f"\tCopy root_{self.arch}.sqh -> root.sqh")
+        self.__sudo(f"cp -H {self.board.out_sh}/root_{self.arch}.sqh {out_dir}/root.sqh")
+        Logger.install(f"\tCopy kernel modules")
+        self.__sudo(f"cp -Hr {self.board.out_dir}/modules {out_dir}/")
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)
