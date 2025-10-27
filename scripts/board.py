@@ -64,6 +64,7 @@ class Board:
         add_var("build_dir", f"{BUILD_DIR}/{self.name}")
         add_var("common_dir", "%{build_root}%/common_%{ARCH}%")
         add_var("out_dir", self.out_dir)
+        add_var("cfg_dir", f"cfg/{self.name}")
         add_var("out_sh", self.out_sh)
         add_var("ROOT_DIR", ROOT_DIR)
         add_var("DATE", datetime.datetime.today().strftime('%Y_%m_%d'))

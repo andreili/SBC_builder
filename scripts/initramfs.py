@@ -2,13 +2,22 @@ import json, os, shutil
 from pathlib import Path
 from . import *
 
+def try_cfg(name):
+    cfg_fn = f"{ROOT_DIR}" + "/%{cfg_dir}%/" + name
+    cfg_fn = parse_variables(cfg_fn)
+    cfg_path = Path(cfg_fn)
+    if (cfg_path.is_file()):
+        return cfg_fn
+    else:
+        return f"{ROOT_DIR}/cfg/{name}"
+
 class Initramfs:
     def __init__(self):
         self.arch = parse_variables("%{ARCH}%")
         self.busybox = Sources("busybox", "https://git.busybox.net/busybox")
         self.busybox.init_source_path("", True)
         self.busybox.set_git_params("@", "head")
-        self.busybox_cfg = f"{ROOT_DIR}/cfg/busybox_config"
+        self.busybox_cfg = try_cfg("busybox_config")
         self.eudev = Sources("eudev", "https://github.com/eudev-project/eudev.git")
         self.eudev.init_source_path("", True)
         self.eudev.set_git_params("@", "head")
@@ -39,7 +48,7 @@ class Initramfs:
         dir = "/media/busybox"
         os.sudo(f"cp {self.busybox_cfg} {self.busybox.work_dir}/.config", self.busybox.work_dir, None, None, True)
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
-        self.__chrooted(self.busybox, os, dir, "make -j5")
+        self.__chrooted(self.busybox, os, dir, "make clean && make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
         cfg_or = Path(self.busybox_cfg)
         if (cfg_or.is_file()):
@@ -187,8 +196,8 @@ class Initramfs:
         self.__mkshutdown()
 
     def build(self, os):
-        #self.__prepare()
-        #self.__busybox(os)
+        self.__prepare()
+        self.__busybox(os)
         self.__eudev(os)
         self.__e2fsp(os)
         self.__initrd()
