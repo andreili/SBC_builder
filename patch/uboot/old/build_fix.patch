@@ -80,7 +80,7 @@ index 8818e91..c1fd83a 100644
  }
 diff --git a/arch/arm/dts/sun8i_v853_printer-board.dts b/arch/arm/dts/sun8i_v853_printer-board.dts
 new file mode 100644
-index 0000000..ef3d6f4
+index 0000000..1b0b73d
 --- /dev/null
 +++ b/arch/arm/dts/sun8i_v853_printer-board.dts
 @@ -0,0 +1,663 @@
@@ -775,6 +775,19 @@ index 52d47c1..390f42a 100644
  {
  	enum command_ret_t rc = CMD_RET_SUCCESS;
  	cmd_tbl_t *cmdtp;
+diff --git a/disk/part.c b/disk/part.c
+index ab17568..28a1bdd 100644
+--- a/disk/part.c
++++ b/disk/part.c
+@@ -445,7 +445,7 @@ int blk_get_device_by_str(const char *ifname, const char *dev_hwpart_str,
+ 	 * Does not need to be done for hwpart 0 since it is default and
+ 	 * already loaded.
+ 	 */
+-	if(hwpart != 0)
++	//if(hwpart != 0)
+ 		part_init(*dev_desc);
+ #endif
+ 
 diff --git a/scripts/dtc/dtc-lexer.l b/scripts/dtc/dtc-lexer.l
 index fd825eb..24af549 100644
 --- a/scripts/dtc/dtc-lexer.l
