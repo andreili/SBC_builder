@@ -140,16 +140,20 @@ index 7bd7e0226..8a4a88287 100644
  
  	return s - buf;
  }
-@@ -3206,7 +3206,7 @@ static struct class_attribute axp_class_attrs[] = {
+@@ -3204,20 +3204,20 @@ static struct class_attribute axp_class_attrs[] = {
+ 	__ATTR(axp_reg,       S_IRUGO|S_IWUSR, axp_reg_show,   axp_reg_store),
+ 	__ATTR(debug_mask,    S_IRUGO|S_IWUSR, debugmask_show, debugmask_store),
  	__ATTR_NULL
  };
  
 -struct class axp_class = {
+-	.name = "axp",
 +struct class _axp_class = {
- 	.name = "axp",
++	.name = "axp_mfd",
  	.class_attrs = axp_class_attrs,
  };
-@@ -3215,7 +3215,7 @@ static int axp_sysfs_init(void)
+ 
+ static int axp_sysfs_init(void)
  {
  	int status;
  
@@ -158,6 +162,8 @@ index 7bd7e0226..8a4a88287 100644
  	if (status < 0)
  		pr_err("%s,%d err, status:%d\n", __func__, __LINE__, status);
  
+ 	return status;
+ }
 diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
 index 196f01fc1..fc5c66d5a 100644
 --- a/drivers/power/supply/Makefile
