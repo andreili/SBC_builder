@@ -110,7 +110,7 @@ index 618dd11b8..53a038194 100644
  	/*
  	 * Standard v7 proc info content
 diff --git a/drivers/mfd/axp2101.c b/drivers/mfd/axp2101.c
-index 7bd7e0226..8a4a88287 100644
+index 7bd7e0226..922ad7cb0 100644
 --- a/drivers/mfd/axp2101.c
 +++ b/drivers/mfd/axp2101.c
 @@ -3136,7 +3136,7 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
@@ -140,9 +140,7 @@ index 7bd7e0226..8a4a88287 100644
  
  	return s - buf;
  }
-@@ -3204,20 +3204,20 @@ static struct class_attribute axp_class_attrs[] = {
- 	__ATTR(axp_reg,       S_IRUGO|S_IWUSR, axp_reg_show,   axp_reg_store),
- 	__ATTR(debug_mask,    S_IRUGO|S_IWUSR, debugmask_show, debugmask_store),
+@@ -3206,8 +3206,8 @@ static struct class_attribute axp_class_attrs[] = {
  	__ATTR_NULL
  };
  
@@ -153,7 +151,7 @@ index 7bd7e0226..8a4a88287 100644
  	.class_attrs = axp_class_attrs,
  };
  
- static int axp_sysfs_init(void)
+@@ -3215,7 +3215,7 @@ static int axp_sysfs_init(void)
  {
  	int status;
  
@@ -162,8 +160,6 @@ index 7bd7e0226..8a4a88287 100644
  	if (status < 0)
  		pr_err("%s,%d err, status:%d\n", __func__, __LINE__, status);
  
- 	return status;
- }
 diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
 index 196f01fc1..fc5c66d5a 100644
 --- a/drivers/power/supply/Makefile
@@ -177,6 +173,19 @@ index 196f01fc1..fc5c66d5a 100644
  obj-$(CONFIG_AXP2101_POWER_EXT)	+= axp2101_battery.o
  obj-$(CONFIG_AXP2101_POWER_EXT)	+= axp2101_usb_power.o
  obj-$(CONFIG_AXP152_VBUS_POWER)	+= axp152_vbus_power.o
+diff --git a/drivers/power/supply/axp/axp-sysfs.c b/drivers/power/supply/axp/axp-sysfs.c
+index b5d43b4cf..d20f46a6b 100644
+--- a/drivers/power/supply/axp/axp-sysfs.c
++++ b/drivers/power/supply/axp/axp-sysfs.c
+@@ -325,7 +325,7 @@ static struct class_attribute axp_class_attrs[] = {
+ };
+ 
+ struct class axp_class = {
+-	.name = "axp",
++	.name = "axp_pwr",
+ 	.class_attrs = axp_class_attrs,
+ };
+ 
 diff --git a/drivers/power/supply/axp/axp2101/axp2101.c b/drivers/power/supply/axp/axp2101/axp2101.c
 index 3f415c288..8658f38ae 100644
 --- a/drivers/power/supply/axp/axp2101/axp2101.c
