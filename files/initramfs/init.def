@@ -41,4 +41,7 @@ CONSOLE_LOGLEVEL=3
 LOG_ENABLED=1
 INIT_LOG="/run/initramfs/init.log"
 
+LIVE_PART=""
+RW_PART=""
+
 KV=$(uname -r)

@@ -38,6 +38,12 @@ do
         loglevel=*)
             CONSOLE_LOGLEVEL=${x#*=}
             ;;
+        live=*)
+            LIVE_PART=${x#*=}
+            ;;
+        rw_part=*)
+            RW_PART=${x#*=}
+            ;;
     esac
 done
 
@@ -58,9 +64,28 @@ run sleep 3
 CHROOT="${NEW_ROOT}"
 run mount -n -t tmpfs tmpfs ${NEW_ROOT}
 DEVICES=$(devicelist)
-run findmediamount "cdrom"   "/livecd"  "REAL_ROOT" "${CDROOT_PATH}" "${DEVICES}" || run_emergency_shell
+if [ -z "${LIVE_PART}" ]
+then
+    run findmediamount "cdrom"   "/livecd"  "REAL_ROOT" "${CDROOT_PATH}" "${DEVICES}" || run_emergency_shell
+else
+    good_msg "Mounting live partition /dev/${LIVE_PART} to ${CDROOT_PATH}"
+    run mount -o defaults /dev/${LIVE_PART} "${CDROOT_PATH}"
+fi
 run mount -o remount,ro "${CDROOT_PATH}"
-run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
+if [ -z "${RW_PART}" ]
+then
+    run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
+else
+    good_msg "Mounting read-write partition /dev/${RW_PART} to ${RW_MNT}"
+    mount -o defaults /dev/${RW_PART} "${RW_MNT}"
+    if [ $? -ne 0 ]
+    then
+        good_msg "/dev/${RW_PART} not formatted, creating ext2 filesystem ..."
+        mkfs.ext2 /dev/${RW_PART} || run_emergency_shell
+        good_msg "Mounting read-write partition /dev/${RW_PART} to ${RW_MNT} ..."
+        mount -o defaults /dev/${RW_PART} "${RW_MNT}" || run_emergency_shell
+    fi
+fi
 #sh
 CHROOT=${NEW_ROOT}
 
