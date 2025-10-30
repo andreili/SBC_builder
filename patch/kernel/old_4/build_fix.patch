@@ -48,7 +48,7 @@ index f72088495..4851df706 100644
  input_data:
  	.incbin	"arch/arm/boot/compressed/piggy_data"
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c90363279..295d81ba5 100644
+index c90363279..38c758451 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
 @@ -838,15 +838,15 @@ dtb-$(CONFIG_ARCH_SUN8IW6P1) += \
@@ -89,13 +89,1496 @@ index c90363279..295d81ba5 100644
 +#dtb-$(CONFIG_ARCH_SUN8IW19P1) += \
 +#	board.dtb
  
--dtb-$(CONFIG_ARCH_SUN8IW21P1) += \
+ dtb-$(CONFIG_ARCH_SUN8IW21P1) += \
 -	board.dtb
-+#dtb-$(CONFIG_ARCH_SUN8IW21P1) += \
-+#	board.dtb
++	sun8iw21p1-printer.dtb
  
  dtb-$(CONFIG_ARCH_TANGO) += \
  	tango4-vantage-1172.dtb
+diff --git a/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi b/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
+index 031f0ee4a..6777904cf 100644
+--- a/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
++++ b/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
+@@ -59,38 +59,39 @@
+ 			};
+ 
+ 			twi0_pins_a: twi0@0 {
+-				allwinner,pins = "PB0", "PB1";
++				allwinner,pins = "PE16", "PE17";
+ 				allwinner,pname = "twi0_scl", "twi0_sda";
+ 				allwinner,function = "twi0";
+-				allwinner,muxsel = <4>;
+-				allwinner,drive = <1>;
+-				allwinner,pull = <0>;
++				allwinner,muxsel = <2>;
++				allwinner,drive = <0>;
++				allwinner,pull = <1>;
+ 			};
+ 
+ 			twi0_pins_b: twi0@1 {
+-				allwinner,pins = "PB0", "PB1";
++				allwinner,pins = "PE16", "PE17";
+ 				allwinner,function = "io_disabled";
+ 				allwinner,muxsel = <0xf>;
+-				allwinner,drive = <1>;
++				allwinner,drive = <0>;
+ 				allwinner,pull = <0>;
+ 			};
+ 
+ 			twi1_pins_a: twi1@0 {
+-				allwinner,pins = "PB4", "PB5";
++				allwinner,pins = "PA14", "PA15";
+ 				allwinner,pname = "twi1_scl", "twi1_sda";
+ 				allwinner,function = "twi1";
+-				allwinner,muxsel = <2>;
+-				allwinner,drive = <1>;
+-				allwinner,pull = <0>;
++				allwinner,muxsel = <4>;
++				allwinner,drive = <0>;
++				allwinner,pull = <1>;
+ 			};
+ 
+ 			twi1_pins_b: twi1@1 {
+-				allwinner,pins = "PB4", "PB5";
++				allwinner,pins = "PA14", "PA15";
+ 				allwinner,function = "io_disabled";
+ 				allwinner,muxsel = <0xf>;
+-				allwinner,drive = <1>;
++				allwinner,drive = <0>;
+ 				allwinner,pull = <0>;
+ 			};
++
+ 			sdc0_pins_a: sdc0@0 {
+ 				allwinner,pins = "PF0", "PF1", "PF2",
+ 						 "PF3", "PF4", "PF5";
+@@ -267,6 +268,20 @@
+ 				allwinner,pull = <0>;
+ 			};
+ 
++			pwm9_pin_a: pwm9@0 {
++				pins = "PD22";
++				function = "pwm9";
++				muxsel = <2>;
++				drive-strength = <10>;
++				bias-pull-up;
++			};
++
++			pwm9_pin_b: pwm9@1 {
++				pins = "PD22";
++				function = "gpio_in";
++				muxsel = <0>;
++			};
++
+ 			csi_mclk2_pins_a: csi_mclk2@0 {
+ 				allwinner,pins = "PE1";
+ 				allwinner,pname = "ncsi_mclk";
+@@ -392,6 +407,356 @@
+ 				allwinner,drive = <1>;
+ 				allwinner,pull = <0>;
+ 			};
++
++			uart1_pins_a: uart1@0 {
++				allwinner,pins = "PG6", "PG7";
++				allwinner,function = "uart1";
++				allwinner,muxsel = <4>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;
++			};
++
++			uart1_pins_b: uart1@1 {
++				allwinner,pins = "PG6", "PG7";
++				allwinner,function = "gpio_in";
++				allwinner,muxsel = <0>;
++			};
++
++			uart2_pins_a: uart2@0 {
++				allwinner,pins = "PE12", "PE13", "PE10", "PE11";
++				allwinner,function = "uart2";
++				allwinner,muxsel = <6>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;
++			};
++
++			uart2_pins_b: uart2@1 {
++				allwinner,pins = "PE12", "PE13", "PE10", "PE11";
++				allwinner,function = "gpio_in";
++				allwinner,muxsel = <0>;
++			};
++
++			uart3_pins_a: uart3@0 {
++				allwinner,pins = "PH0", "PH1";
++				allwinner,function = "uart3";
++				allwinner,muxsel = <5>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;
++			};
++
++			uart3_pins_b: uart3@1 {
++				allwinner,pins = "PH0", "PH1";
++				allwinner,function = "gpio_in";
++				allwinner,muxsel = <0>;
++			};
++
++			spi0_pins_a: spi0@0 {
++				allwinner,pins = "PC0", "PC2", "PC3";
++				allwinner,pname = "spi0_sclk", "spi0_mosi", "spi0_miso";
++				allwinner,function = "spi0";
++				allwinner,muxsel = <4>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			spi0_pins_b: spi0@1 {
++				allwinner,pins = "PC1", "PC5", "PC4";
++				allwinner,pname = "spi0_cs0", "spi0_hold", "spi0_wp";
++				allwinner,function = "spi0";
++				allwinner,muxsel = <4>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;   // only CS should be pulled up
++			};
++
++			spi0_pins_c: spi0@2 {
++				allwinner,pins = "PC0", "PC1", "PC2", "PC3", "PC4", "PC5";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			spi1_pins_a: spi1@0 {
++				allwinner,pins = "PF31", "PF24", "PF29",
++								"PF26", "PF30";
++				allwinner,pname = "spi0_sclk", "spi0_mosi",
++								"spi0_miso", "spi0_hold", "spi0_wp";
++				allwinner,function = "spi0";
++				allwinner,muxsel = <5>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			spi1_pins_b: spi1@1 {
++				allwinner,pins = "PF25";
++				allwinner,pname = "spi0_cs0";
++				allwinner,function = "spi0";
++				allwinner,muxsel = <5>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;   // only CS should be pulled up
++			};
++
++			spi1_pins_c: spi1@2 {
++				allwinner,pins = "PF24", "PF25", "PF26", "PF29", "PF30", "PF31";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			spi3_pins_a: spi3@0 {
++				allwinner,pins = "PH11", "PH12", "PH13";
++				allwinner,pname = "spi3_sclk", "spi3_mosi", "spi3_miso";
++				allwinner,function = "spi3";
++				allwinner,muxsel = <0x6>;
++				allwinner,drive = <0x1>;
++				allwinner,pull = <0x0>;
++			};
++
++			spi3_pins_b: spi3@1 {
++				allwinner,pins = "PH15";
++				allwinner,pname = "spi3_cs0";
++				allwinner,function = "spi3";
++				allwinner,muxsel = <0x6>;
++				allwinner,drive = <0x1>;
++				allwinner,pull = <0x1>;
++			};
++
++			spi3_pins_c: spi3@2 {
++				allwinner,pins = "PH11", "PH12", "PH13", "PH15";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <0x1>;
++				allwinner,pull = <0x0>;
++			};
++
++			spif0_pins_a: spif0@0 {
++				allwinner,pins = "PF24", "PF29", "PF26", "PF30",
++									"PF31","PF20", "PF21", "PF22",
++									"PF23";
++				allwinner,pname = "spif0_mosi", "spif0_miso", "spif0_hold", "spif0_wp",
++								"spif0_sck", "spif0_dq4", "spif0_dq5", "spif0_dq6",
++								"spif0_dq7", "spif0_dqs";
++				allwinner,function = "spif";
++				allwinner,muxsel = <3>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			spif0_pins_b: spif0@1 {
++				allwinner,pins = "PF25";
++				allwinner,pname = "spif0_cs0";
++				allwinner,function = "spif";
++				allwinner,muxsel = <3>;
++				allwinner,drive = <1>;
++				allwinner,pull = <1>;   // only CS should be pulled up
++			};
++
++			spif0_pins_c: spif0@2 {
++				allwinner,pins = "PF24", "PF29", "PF26", "PF30",
++								"PF31","PF20", "PF21", "PF22",
++								"PF23", "PF25", "PF11";
++				allwinner,pname = "spif0_mosi", "spif0_miso", "spif0_hold", "spif0_wp",
++								"spif0_sck", "spif0_dq4", "spif0_dq5", "spif0_dq6",
++								"spif0_dq7", "spif0_cs", "spif0_dqs";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xF>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			twi2_pins_a: twi2@0 {
++				allwinner,pins = "PH5", "PH6";
++				allwinner,pname = "twi2_scl", "twi2_sda";
++				allwinner,function = "twi2";
++				allwinner,muxsel = <4>;
++				allwinner,drive = <0>;
++				allwinner,pull = <1>;
++			};
++
++			twi2_pins_b: twi2@1 {
++				allwinner,pins = "PH5", "PH6";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <0>;
++				allwinner,pull = <0>;
++			};
++
++			twi3_pins_a: twi3@0 {
++				allwinner,pins = "PI3", "PI4";
++				allwinner,pname = "twi3_scl", "twi3_sda";
++				allwinner,function = "twi3";
++				allwinner,muxsel = <6>;
++				allwinner,drive = <0>;
++				allwinner,pull = <1>;
++			};
++
++			twi3_pins_b: twi3@1 {
++				allwinner,pins = "PI3", "PI4";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <0>;
++				allwinner,pull = <0>;
++			};
++
++			twi4_pins_a: twi4@0 {
++				allwinner,pins = "PI1", "PI2";
++				allwinner,pname = "twi4_scl", "twi4_sda";
++				allwinner,function = "twi4";
++				allwinner,muxsel = <6>;
++				allwinner,drive = <0>;
++				allwinner,pull = <1>;
++			};
++
++			twi4_pins_b: twi4@1 {
++				allwinner,pins = "PI1", "PI2";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <0>;
++				allwinner,pull = <0>;
++			};
++
++			dmic_pins_a: dmic@0 {
++				allwinner,pins = "PH0", "PH1", "PH2", "PH3", "PH4";
++				allwinner,function = "dmic";
++				allwinner,muxsel = <6>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			dmic_pins_b: dmic_sleep@0 {
++				allwinner,pins = "PH0", "PH1", "PH2", "PH3", "PH4";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			daudio0_pins_a: daudio0@0 {
++				allwinner,pins = "PH0", "PH1", "PH2", "PH3", "PH4";
++				allwinner,function = "i2s0";
++				allwinner,muxsel = <3>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			daudio0_pins_b: daudio0_sleep@0 {
++				allwinner,pins = "PH0", "PH1", "PH2", "PH3", "PH4";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			daudio1_pins_a: daudio1@0 {
++				allwinner,pins = "PE7", "PE8", "PE9", "PE10", "PE11";
++				allwinner,function = "i2s1";
++				allwinner,muxsel = <7>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			daudio1_pins_b: daudio1_sleep@0 {
++				allwinner,pins = "PE7", "PE8", "PE9", "PE10", "PE11";
++				allwinner,function = "io_disabled";
++				allwinner,muxsel = <0xf>;
++				allwinner,drive = <1>;
++				allwinner,pull = <0>;
++			};
++
++			pwm4_pin_a: pwm4@0 {
++				pins = "PH11";
++				function = "pwm4";
++				muxsel = <8>;
++				drive-strength = <10>;
++				bias-pull-up;
++			};
++
++			pwm4_pin_b: pwm4@1 {
++				pins = "PH11";
++				function = "gpio_in";
++				muxsel = <0>;
++			};
++
++			pwm1_pin_a: pwm1@0 {
++				pins = "PH1";
++				function = "pwm1";
++				muxsel = <0x2>;
++				drive-strength = <0xa>;
++				bias-pull-up;
++			};
++
++			pwm1_pin_b: pwm1@1 {
++				pins = "PH1";
++				function = "gpio_in";
++				muxsel = <0x0>;
++			};
++
++			wiegand_pins_a: wiegand@0 {
++				pins = "PH13", "PH14";
++				function = "wiegand";
++				muxsel = <7>;
++				drive-strength = <10>;
++				bias-pull-up;
++			};
++
++			wiegand_pins_b: wiegand@1 {
++				pins = "PH13", "PH14";
++				function = "io_disabled";
++				muxsel = <0xf>;
++			};
++
++			gmac0_pins_a: gmac0@0 {
++				allwinner,pins = "PE0", "PE1", "PE2", "PE3",
++						"PE4", "PE5", "PE6", "PE7",
++						"PE8", "PE9", "PE10", "PE11",
++						"PE12", "PE13", "PE14", "PE15";
++				allwinner,function = "rgmii";
++				allwinner,drive = <1>;
++				allwinner,muxsel = <3>;
++				allwinner,pull = <0>;
++			};
++
++			gmac0_pins_b: gmac0@1 {
++				allwinner,pins = "PE0", "PE1", "PE2", "PE3",
++						"PE4", "PE5", "PE6", "PE7",
++						"PE8", "PE9", "PE10", "PE11",
++						"PE12", "PE13", "PE14", "PE15";
++				allwinner,function = "gpio_in";
++				allwinner,drive = <0>;
++				allwinner,muxsel = <0>;
++				allwinner,pull = <0>;
++			};
++
++			rgb18_pins_a: rgb18@0 {
++				allwinner,pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", \
++					"PD6", "PD7", "PD8", "PD9", "PD10", "PD11", \
++					"PD12", "PD13", "PD14", "PD15", "PD16", "PD17", \
++					"PD18", "PD19", "PD20", "PD21";
++				allwinner,pname = "lcdd2", "lcdd3", "lcdd4", "lcdd5", "lcdd6", "lcdd7", \
++					"lcdd10", "lcdd11", "lcdd12", "lcdd13", "lcdd14", "lcdd15", \
++					"lcdd18", "lcdd19", "lcdd20", "lcdd21", "lcdd22", "lcdd23", \
++					"lcdpclk", "lcdde", "lcdhsync", "lcdvsync";
++				allwinner,function = "lcd"; 
++				allwinner,muxsel = <2>;
++				allwinner,drive = <3>;  
++				allwinner,pull = <0>; 
++			};
++
++			rgb18_pins_b: rgb18@1 {
++					allwinner,pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", \
++							"PD6", "PD7", "PD8", "PD9", "PD10", "PD11", \
++							"PD12", "PD13", "PD14", "PD15", "PD16", "PD17", \
++							"PD18", "PD19", "PD20", "PD21";
++					allwinner,pname = "lcdd2", "lcdd3", "lcdd4", "lcdd5", "lcdd6", "lcdd7", \
++							"lcdd10", "lcdd11", "lcdd12", "lcdd13", "lcdd14", "lcdd15", \
++							"lcdd18", "lcdd19", "lcdd20", "lcdd21", "lcdd22", "lcdd23", \
++							"lcdpclk", "lcdde", "lcdhsync", "lcdvsync";
++					allwinner,function = "rgb18_suspend";
++					allwinner,muxsel = <0xf>;
++					allwinner,drive = <1>;  
++					allwinner,pull = <0>; 
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/sun8iw21p1-printer.dts b/arch/arm/boot/dts/sun8iw21p1-printer.dts
+new file mode 100644
+index 000000000..942b6edab
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8iw21p1-printer.dts
+@@ -0,0 +1,714 @@
++/dts-v1/;
++
++#include "sun8iw21p1.dtsi"
++
++/ {
++    //model = "Merrii A80 Optimus Board";
++    //compatible = "v853,printer_core", "allwinner,sun8iw21p1";
++
++	usb_vbus: usb-vbus {
++		compatible = "regulator-fixed";
++		gpio = <&pio 7 2 1 2 0 1>;
++		regulator-name = "usb-vbus";
++		regulator-min-microvolt = <0x4c4b40>;
++		regulator-max-microvolt = <0x4c4b40>;
++		enable-active-high;
++	};
++
++	e_rproc: e907_rproc@0 {
++		compatible = "allwinner,sun8iw21p1-e907-rproc";
++		clock-frequency = <0x23c34600>;
++		memory-region = <&rv_mem 0xc3 0xc4 0xc5>;
++		mboxes = <&msgbox 0x0>;
++		mbox-names = "mbox-chan";
++		iommus = <&mmu_aw 5 1>;
++		memory-mappings = <0x48000000 0x400000 0x48000000>;
++		core-name = "sun8iw21p1-e907";
++		firmware-name = "melis-elf";
++		status = "disabled";
++	};
++
++	rpc: rpbuf_controller@0 {
++		compatible = "allwinner,rpbuf-controller";
++		remoteproc = <0xc6>;
++		ctrl_id = <0>;
++		iommus = <&mmu_aw 5 1>;
++		status = "disabled";
++	};
++
++	rps: rpbuf_sample@0 {
++		compatible = "allwinner,rpbuf-sample";
++		rpbuf = <0xc7>;
++		status = "disabled";
++	};
++};
++
++&pio {
++    wlan_pins_a: wlan@0 {
++        allwinner,pins = "PG6";
++        allwinner,function = "fanout0";
++        allwinner,muxsel = <3>;
++    };
++};
++
++&twi0 {
++    twi-supply = <&reg_dcdc1>;
++};
++
++&twi1 {
++    status = "okay";
++    twi-supply = <&reg_dcdc1>;
++};
++
++&twi2 {
++    status = "okay";
++    twi-supply = <&reg_dcdc1>;
++
++    tp0: ctp@14 {
++        compatible = "allwinner,gsl3680";
++        device_type = "ctp";
++        reg = <0x40>;
++        status = "disabled";
++        ctp_name = "gslX680_3680";
++        ctp_twi_id = <2>;
++        ctp_twi_addr = <0x40>;
++        ctp_screen_max_x = <1280>;
++        ctp_screen_max_y = <800>;
++        ctp_revert_x_flag = <0>;
++        ctp_revert_y_flag = <1>;
++        ctp_exchange_x_y_flag = <1>;
++        ctp_int_port = <&pio 7 7 6 1 3 0xffffffff>;
++        ctp_wakeup   = <&pio 7 8 1 1 3 0xffffffff>;
++    };
++
++    tp1: goodix {
++        status = "okay";
++        compatible = "goodix,gt911";
++        reg = <0x5d>;
++        int-gpios   = <&pio 7 7 0 0 1 0>;
++        reset-gpios = <&pio 7 0 0 0 1 0>;
++        touchscreen-size-x = <1024>;
++        touchscreen-size-y = <600>;
++    };
++
++    sens0: aht21@38 {
++        status = "okay";
++        reg = <0x38>;
++        compatible = "zygc,aht21";
++    };
++
++    tp2: ns2009@48 {
++        status = "okay";
++        compatible = "nsiway,ns2009";
++        reg = <0x48>;
++    };
++};
++
++&twi3 {
++    twi-supply = <&reg_aldo1>;
++};
++
++&twi4 {
++    status = "okay";
++    twi-supply = <&reg_aldo1>;
++
++    pmu0: pmu@0 {
++        compatible = "x-powers,axp2101";
++        reg = <0x34>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++        interrupt-parent = <&nmi_intc>;
++        status = "okay";
++        wakeup-source;
++
++        charger0: charger@0 {
++            compatible = "x-powers,axp2101-power-supply";
++            param = <&axp2101_parameter>;
++            status = "okay";
++            pmu_chg_ic_temp = <0>;
++            pmu_battery_cap = <888>;
++            pmu_runtime_chgcur = <500>;
++            pmu_suspend_chgcur = <1000>;
++            pmu_shutdown_chgcur = <1000>;
++            pmu_init_chgvol = <4200>;
++            pmu_usbpc_cur = <2000>;
++            pmu_battery_warning_level1 = <15>;
++            pmu_battery_warning_level2 = <5>;
++            pmu_chgled_type = <0>;
++            wakeup_usb_in;
++            wakeup_usb_out;
++            wakeup_bat_out;
++        };
++
++        powerkey0: powerkey@0 {
++            status = "okay";
++            compatible = "x-powers,axp2101-pek";
++            pmu_powkey_off_time = <6000>;
++            pmu_powkey_off_func = <0>;
++            pmu_powkey_off_en = <1>;
++            pmu_powkey_long_time = <1500>;
++            pmu_powkey_on_time = <512>;
++            wakeup_rising;
++            wakeup_falling;
++        };
++
++        regulator0: regulators@0 {
++
++            reg_dcdc1: dcdc1 {
++                regulator-name = "axp2101-dcdc1";
++                regulator-min-microvolt = <1500000>;
++                regulator-max-microvolt = <3400000>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_dcdc2: dcdc2 {
++                regulator-name = "axp2101-dcdc2";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <0x177fa0>;
++            };
++
++            reg_dcdc3: dcdc3 {
++                regulator-name = "axp2101-dcdc3";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <0x33e140>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_dcdc4: dcdc4 {
++                regulator-name = "axp2101-dcdc4";
++                regulator-min-microvolt = <500000>;
++                regulator-max-microvolt = <0x1c1380>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_dcdc5: dcdc5 {
++                regulator-name = "axp2101-dcdc5";
++                regulator-min-microvolt = <0x155cc0>;
++                regulator-max-microvolt = <0x387520>;
++            };
++
++            reg_rtcldo: rtcldo {
++                regulator-name = "axp2101-rtcldo";
++                regulator-min-microvolt = <0x1b7740>;
++                regulator-max-microvolt = <0x1b7740>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_rtcldo1: rtcldo1 {
++                regulator-name = "axp2101-rtcldo1";
++                regulator-min-microvolt = <0x1b7740>;
++                regulator-max-microvolt = <0x1b7740>;
++            };
++
++            reg_aldo1: aldo1 {
++                regulator-name = "axp2101-aldo1";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_aldo2: aldo2 {
++                regulator-name = "axp2101-aldo2";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_aldo3: aldo3 {
++                regulator-name = "axp2101-aldo3";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                linux,phandle = <0x54>;
++                phandle = <0x54>;
++            };
++
++            reg_aldo4: aldo4 {
++                regulator-name = "axp2101-aldo4";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++            };
++
++            reg_bldo1: bldo1 {
++                regulator-name = "axp2101-bldo1";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_bldo2: bldo2 {
++                regulator-name = "axp2101-bldo2";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                regulator-always-on;
++            };
++
++            reg_dldo1: dldo1 {
++                regulator-name = "axp2101-dldo1";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x3567e0>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_dldo2: dldo2 {
++                regulator-name = "axp2101-dldo2";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x155cc0>;
++                regulator-boot-on;
++                regulator-always-on;
++            };
++
++            reg_cpusldo: cpusldo {
++                regulator-name = "axp2101-cpusldo";
++                regulator-min-microvolt = <0x7a120>;
++                regulator-max-microvolt = <0x155cc0>;
++            };
++        };
++
++        virtual-dcdc1 {
++            compatible = "xpower-vregulator,dcdc1";
++            dcdc1-supply = <&reg_dcdc1>;
++        };
++        virtual-dcdc2 {
++            compatible = "xpower-vregulator,dcdc2";
++            dcdc2-supply = <&reg_dcdc2>;
++        };
++        virtual-dcdc3 {
++            compatible = "xpower-vregulator,dcdc3";
++            dcdc3-supply = <&reg_dcdc3>;
++        };
++
++        virtual-dcdc4 {
++            compatible = "xpower-vregulator,dcdc4";
++            dcdc4-supply = <&reg_dcdc4>;
++        };
++        virtual-dcdc5 {
++            compatible = "xpower-vregulator,dcdc5";
++            dcdc5-supply = <&reg_dcdc5>;
++        };
++
++        virtual-aldo1 {
++            compatible = "xpower-vregulator,aldo1";
++            aldo1-supply = <&reg_aldo1>;
++        };
++        virtual-aldo2 {
++            compatible = "xpower-vregulator,aldo2";
++            aldo2-supply = <&reg_aldo2>;
++        };
++        virtual-aldo3 {
++            compatible = "xpower-vregulator,aldo3";
++            aldo3-supply = <&reg_aldo3>;
++        };
++        virtual-aldo4 {
++            compatible = "xpower-vregulator,aldo4";
++            aldo4-supply = <&reg_aldo4>;
++        };
++
++        virtual-bldo1 {
++            compatible = "xpower-vregulator,bldo1";
++            bldo1-supply = <&reg_bldo1>;
++        };
++        virtual-bldo2 {
++            compatible = "xpower-vregulator,bldo2";
++            bldo2-supply = <&reg_bldo2>;
++        };
++
++        virtual-dldo1 {
++            compatible = "xpower-vregulator,dldo1";
++            dldo1-supply = <&reg_dldo1>;
++        };
++        virtual-dldo2 {
++            compatible = "xpower-vregulator,dldo2";
++            dldo2-supply = <&reg_dldo2>;
++        };
++
++        axp_gpio0: axp_gpio@0 {
++            gpio-controller;
++            #size-cells = <0>;
++            #gpio-cells = <6>;
++            status = "okay";
++        };
++    };
++};
++
++/{
++    axp2101_parameter:axp2101-parameter {
++        select = "battery-model";
++
++        battery-model {
++            parameter = /bits/ 8 <0x01 0xF5 0x00 0x00 0xFB 0x00 0x00 0xFB
++                0x00 0x1E 0x32 0x01 0x14 0x04 0xD8 0x04
++                0x74 0xFD 0x58 0x0B 0xB3 0x10 0x3F 0xFB
++                0xC8 0x00 0xBE 0x03 0x4E 0x06 0x3F 0x06
++                0x02 0x0A 0xD3 0x0F 0x74 0x0F 0x31 0x09
++                0xE5 0x0E 0xB9 0x0E 0xC0 0x04 0xBE 0x04
++                0xBB 0x09 0xB4 0x0E 0xA0 0x0E 0x92 0x09
++                0x79 0x0E 0x4C 0x0E 0x27 0x03 0xFC 0x03
++                0xD5 0x08 0xBC 0x0D 0x9C 0x0D 0x55 0x06
++                0xB8 0x2E 0x24 0x2E 0x2E 0x24 0x2E 0x24
++                0xC5 0x98 0x7E 0x66 0x4E 0x44 0x38 0x1A
++                0x12 0x0A 0xF6 0x00 0x00 0xF6 0x00 0xF6
++                0x00 0xFB 0x00 0x00 0xFB 0x00 0x00 0xFB
++                0x00 0x00 0xF6 0x00 0x00 0xF6 0x00 0xF6
++                0x00 0xFB 0x00 0x00 0xFB 0x00 0x00 0xFB
++                0x00 0x00 0xF6 0x00 0x00 0xF6 0x00 0xF6>;
++        };
++    };
++};
++
++&uart0 {
++    uart-supply = <&reg_dcdc1>;
++    status = "okay";
++};
++
++&uart1 {
++    uart-supply = <&reg_dcdc1>;
++    status = "okay";
++};
++
++&uart2 {
++    uart-supply = <&reg_dcdc1>;
++    status = "disabled";
++};
++
++&uart3 {
++    uart-supply = <&reg_dcdc1>;
++    status = "disabled";
++};
++
++&pinctrl_test {
++    status = "disabled";
++};
++
++&spi0 {
++    spi-supply = <&reg_dcdc3>;
++    status = "disabled";
++};
++
++&spi3 {
++    status = "okay";
++};
++
++&spi3_dev {
++    status = "okay";
++};
++
++&pwm1 {
++    status = "okay";
++};
++
++&pwm4 {
++    status = "disabled";
++};
++
++&gpadc {
++    channel_num = <1>;
++    channel_select = <0x01>;
++    channel_data_select = <0>;
++    channel_compare_select = <0x01>;
++    channel_cld_select = <0x01>;
++    channel_chd_select = <0>;
++    channel0_compare_lowdata = <1700000>;
++    channel0_compare_higdata = <1200000>;
++    channel1_compare_lowdata = <460000>;
++    channel1_compare_higdata = <1200000>;
++    key_cnt = <5>;
++    key0_vol = <210>;
++    key0_val = <115>;
++    key1_vol = <410>;
++    key1_val = <114>;
++    key2_vol = <590>;
++    key2_val = <139>;
++    key3_vol = <750>;
++    key3_val = <28>;
++    key4_vol = <880>;
++    key4_val = <102>;
++    status = "okay";
++};
++
++&sdc0 {
++    sunxi-dly-208M = <1 1 0 0 0 0>;
++    cd-used-24M;
++    sd-uhs-sdr50;
++    sd-uhs-ddr50;
++    sd-uhs-sdr104;
++    no-mmc;
++    no-sd;
++    sunxi-signal-vol-sw-without-pmu;
++    sunxi-power-save-mode;
++    /*sunxi-dis-signal-vol-sw;*/
++    max-frequency = <150000000>;
++    ctl-spec-caps = <0x408>;
++    vmmc-supply = <&reg_dcdc1>;
++    vqmmc33sw-supply = <&reg_dcdc1>;
++    vdmmc33sw-supply = <&reg_dcdc1>;
++    vqmmc18sw-supply = <&reg_bldo1>;
++    vdmmc18sw-supply = <&reg_bldo1>;
++    status = "okay";
++};
++
++&sdc1 {
++    bus-width = <4>;
++    no-mmc;
++    no-sd;
++    cap-sd-highspeed;
++    /*sd-uhs-sdr12*/
++    /*sd-uhs-sdr25*/
++    /*sd-uhs-sdr50;*/
++    /*sd-uhs-ddr50;*/
++    /*sd-uhs-sdr104*/
++    /*sunxi-power-save-mode;*/
++    sunxi-dis-signal-vol-sw;
++    cap-sdio-irq;
++    keep-power-in-suspend;
++    ignore-pm-notify;
++    max-frequency = <50000000>;
++    ctl-spec-caps = <0x8>;
++    status = "okay";
++};
++
++&sdc2 {
++    max-frequency = <100000000>;
++    mmc-ddr-1_8v;
++    mmc-hs200-1_8v;
++    mmc-hs400-1_8v;
++    sunxi-power-save-mode;
++    sunxi-dis-signal-vol-sw;
++    vmmc-supply = <&reg_dcdc1>;
++    /*sdio io vol 3.3v*/
++    vqmmc-supply = <&reg_bldo1>;
++    /*sdio io vol 1.8v*/
++    /*vqmmc-supply = <&reg_eldo1>;*/
++};
++
++&disp {
++    disp_init_enable         = <1>;
++    disp_mode                = <0>;
++
++    screen0_output_type      = <1>;
++    screen0_output_mode      = <4>;
++
++    screen1_output_type      = <3>;
++    screen1_output_mode      = <10>;
++
++    screen1_output_format    = <0>;
++    screen1_output_bits      = <0>;
++    screen1_output_eotf      = <4>;
++    screen1_output_cs        = <257>;
++    screen1_output_range     = <2>;
++    screen1_output_scan      = <0>;
++    screen1_output_aspect_ratio = <8>;
++
++    dev0_output_type         = <1>;
++    dev0_output_mode         = <4>;
++    dev0_screen_id           = <0>;
++    dev0_do_hpd              = <0>;
++
++    dev1_output_type         = <4>;
++    dev1_output_mode         = <10>;
++    dev1_screen_id           = <1>;
++    dev1_do_hpd              = <1>;
++
++    def_output_dev           = <0>;
++
++    fb0_format               = <0>;
++    fb0_width                = <0>;
++    fb0_height               = <0>;
++
++    fb1_format               = <0>;
++    fb1_width                = <0>;
++    fb1_height               = <0>;
++    chn_cfg_mode             = <1>;
++
++    disp_para_zone           = <1>;
++};
++
++&lcd0 {
++    base_config_start = <0x1>;
++
++    /* part 1 */
++    lcd_used            = <1>;
++    lcd_driver_name     = "default_lcd";
++    /*lcd_backlight	    = <100>;*/
++
++    /* part 2 */
++    lcd_if = <0>;
++    lcd_hv_if = <0>;
++    lcd_cpu_if = <0>;
++
++    /* part 3 */
++    lcd_x               = <480>;
++    lcd_y               = <272>;
++    lcd_width           = <83>;
++    lcd_height          = <54>;
++    lcd_dclk_freq       = <16>;
++    lcd_ht              = <870>;
++    lcd_hbp             = <230>;
++    lcd_hspw            = <0>;
++    lcd_vt              = <317>;
++    lcd_vbp             = <33>;
++    lcd_vspw            = <0>;
++
++    lcd_pwm_used        = <1>;
++    lcd_pwm_ch          = <8>;
++    lcd_pwm_freq        = <50000>;
++    lcd_pwm_pol         = <0>;
++    lcd_pwm_max_limit   = <255>;
++
++    /* part 5 */
++    lcd_frm = <1>;
++    lcd_io_phase = <0>;
++    lcd_hv_clk_phase = <0>;
++    lcd_gamma_en = <0>;
++    lcd_cmap_en = <0>;
++    lcd_hv_sync_polarity= <0>;
++                
++    /* part 6 */
++    /*lcd_power = "vcc-lcd";
++    lcd_pin_power = "vcc-pd";*/
++    pinctrl-0 = <&rgb18_pins_a>;
++    pinctrl-1 = <&rgb18_pins_b>;
++    base_config_end = <1>;
++};
++
++&usbc0 {
++    usb_port_type = <1>;
++    usb_id_gpio = <&pio 0x7 4 0 1 0xffffffff 0xffffffff>;
++    usb_det_vbus_gpio = "axp_ctrl";
++    usb_host_init_state = <1>;
++    usb_detect_mode = <0>;
++    det_vbus_supply = <&gpio_charger>;
++};
++
++&udc {
++    det_vbus_supply = <&gpio_charger>;
++};
++
++&ehci0 {
++    drvvbus-supply = <&usb_vbus>;
++};
++
++&ohci0 {
++    drvvbus-supply = <&usb_vbus>;
++};
++
++&dmic_plat {
++    rx-chmap = <0x76543210>;
++    data-vol = <0xb0>;
++    rxdelaytime = <0x0>;
++    pinctrl-used;
++    pinctrl-names = "default", "sleep";
++    pinctrl-0 = <&dmic_pins_a>;
++    pinctrl-1 = <&dmic_pins_b>;
++    rx-sync-en;
++};
++
++&daudio0_plat {
++    tdm-num = <0x0>;
++    tx-pin = <0x0>;
++    rx-pin = <0x0>;
++    tx-hub-en;
++    rx-sync-en;
++};
++
++&daudio0_mach {
++    soundcard-mach,frame-master = <0x91>;
++    soundcard-mach,bitclock-master = <0x91>;
++    soundcard-mach,slot-num = <0x2>;
++    soundcard-mach,slot-width = <0x20>;
++};
++
++&soc {
++    wlan: wlan@0 {
++        compatible = "allwinner,sunxi-wlan";
++        pinctrl-0 = <&wlan_pins_a>;
++        pinctrl-names = "default";
++        clock-names = "32k-fanout0";
++        clocks = <&clk_fanout0>;
++        wlan_busnum = <1>;
++        wlan_power_num = <1>;
++        wlan_power1 = "axp2101-dcdc1";
++        wlan_io_regulator = "axp2101-dcdc1";
++        wlan_power_voltage = <3300000>;
++        wlan_io_voltage = <3300000>;
++        wlan_regon    = <&pio 0x7 0xf 0x1 1 2 0>;
++        wlan_hostwake = <&pio 0x6 0x7 0xe 1 2 0>;
++        chip_en;
++        power_en;
++        status = "disabled";
++        wakeup-source;
++    };
++
++    bt: bt {
++        compatible = "allwinner,sunxi-bt";
++        clock-names = "32k-fanout0";
++        clocks = <&clk_fanout0>;
++        status = "disabled";
++    };
++
++    btlpm: btlpm {
++        compatible = "allwinner,sunxi-btlpm";
++        uart_index = <2>;
++        status = "disabled";
++    };
++
++    standby_param: standby_param {
++        vdd-cpu = <4>;
++        vdd-sys = <4>;
++        vcc-io = <1>;
++        vdd-pll = <2048>;
++    };
++
++    gpio_charger: gpio_charger@0 {
++        compatible = "gpio-charger";
++        gpios = <&pio 0x7 0x3 0x0 1 1 1>;
++        charger-type = "usb-sdp";
++        status = "disabled";
++    };
++};
++
++&gmac0 {
++    phy-mode = "rmii";
++    use_ephy25m = <1>;
++    pinctrl-0 = <&gmac0_pins_a>;
++    pinctrl-1 = <&gmac0_pins_b>;
++    pinctrl-names = "default", "sleep";
++    tx-delay = <0x7>;
++    rx-delay = <0x1f>;
++};
++
++&csi2 {
++    status = "disabled";
++};
++
++&sensor1 {
++    status = "disabled";
++};
++
++&vinc01 {
++    status = "disabled";
++};
++
++&vinc10 {
++    status = "disabled";
++};
++
++&vinc11 {
++    status = "disabled";
++};
++
++&vinc20 {
++    status = "disabled";
++};
++
++&vinc30 {
++    status = "disabled";
++};
+diff --git a/arch/arm/boot/dts/sun8iw21p1.dtsi b/arch/arm/boot/dts/sun8iw21p1.dtsi
+index 7c316c871..251ebd669 100755
+--- a/arch/arm/boot/dts/sun8iw21p1.dtsi
++++ b/arch/arm/boot/dts/sun8iw21p1.dtsi
+@@ -35,13 +35,28 @@
+ 			status = "okay";
+ 		};
+ 
+-/*
+-		npu_reserve {
+-			reg = <0 0x42000000 0 0x12C00000>;
++		rv_mem: riscv_memserve {
++			reg = <0x0 0x48000000 0x0 0x400000>;
+ 			no-map;
+-			status = "okay";
+ 		};
+-*/
++
++		vb0_mem: vdev0buffer@47000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x0 0x47000000 0x0 0x40000>;
++			no-map;
++		};
++
++		vv0_mem: vdev0vring0@47040000 {
++			reg = <0x0 0x47040000 0x0 0x20000>;
++			no-map;
++		};
++
++		vdev0vring1@47060000 {
++			reg = <0x0 0x47060000 0x0 0x20000>;
++			no-map;
++			linux,phandle = <0xc5>;
++			phandle = <0xc5>;
++		};
+ 
+ 	};
+ 	aliases {
+@@ -509,6 +524,9 @@
+ 			sunxi,uart-fifosize = <64>;
+ 			uart0_port = <0>;
+ 			uart0_type = <2>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&uart0_pins_a>;
++			pinctrl-1 = <&uart0_pins_b>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -521,6 +539,9 @@
+ 			sunxi,uart-fifosize = <128>;
+ 			uart1_port = <1>;
+ 			uart1_type = <4>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&uart1_pins_a>;
++			pinctrl-1 = <&uart1_pins_b>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -533,6 +554,9 @@
+ 			sunxi,uart-fifosize = <128>;
+ 			uart2_port = <2>;
+ 			uart2_type = <4>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&uart2_pins_a>;
++			pinctrl-1 = <&uart2_pins_b>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -545,6 +569,9 @@
+ 			sunxi,uart-fifosize = <128>;
+ 			uart3_port = <3>;
+ 			uart3_type = <4>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&uart3_pins_a>;
++			pinctrl-1 = <&uart3_pins_b>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -629,6 +656,33 @@
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_pll_periph0300m>, <&clk_spi0>;
+ 			status = "disabled";
++			clock-frequency = <100000000>;
++			pinctrl-0 = <&spi0_pins_a &spi0_pins_b>;
++			pinctrl-1 = <&spi0_pins_c>;
++			pinctrl-names = "default", "sleep";
++			spi_slave_mode = <0>;
++			spi_dbi_enable = <0>;
++			spi0_cs_number = <1>;
++
++			spi_board0 {
++				device_type = "spi_board0";
++				compatible = "spi-nor";
++				spi-max-frequency = <100000000>;
++				m25p,fast-read = <1>;
++				reg = <0>;
++				spi-rx-bus-width = <4>;
++				spi-tx-bus-width = <4>;
++				status = "disabled";
++			};
++
++			spi-nand@0 {
++				compatible = "spi-nand";
++				spi-max-frequency = <100000000>;
++				reg = <0>;
++				spi-rx-bus-width = <4>;
++				spi-tx-bus-width = <4>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		spi1: spi@04026000 {
+@@ -640,6 +694,23 @@
+ 			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_pll_periph0300m>, <&clk_spi1>;
+ 			status = "disabled";
++			clock-frequency = <100000000>;
++			pinctrl-0 = <&spi1_pins_a &spi1_pins_b>;
++			pinctrl-1 = <&spi1_pins_c>;
++			pinctrl-names = "default", "sleep";
++			spi_slave_mode = <0>;
++			spi_dbi_enable = <1>;
++			spi1_cs_number = <1>;
++
++			spi_board1@0 {
++				device_type = "spi_dbi";
++				compatible = "sunxi,spidbi";
++				spi-max-frequency = <100000000>;
++				reg = <0>;
++				spi-rx-bus-width = <4>;
++				spi-tx-bus-width = <4>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		spi3: spi@04028000 {
+@@ -651,6 +722,23 @@
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_pll_periph0300m>, <&clk_spi3>;
+ 			status = "disabled";
++			clock-frequency = <100000000>;
++			pinctrl-0 = <&spi3_pins_a &spi3_pins_b>;
++			pinctrl-1 = <&spi3_pins_c>;
++			pinctrl-names = "default", "sleep";
++			spi_slave_mode = <0>;
++			spi_cs_bitmap = <1>;
++			spi3_cs_number = <1>;
++
++			spi3_dev: spidev@0 {
++				device_type = "spidev";
++				compatible = "rohm,dh2228fv";
++				spi-max-frequency = <100000000>;
++				reg = <0x0>;
++				spi-rx-bus-width = <1>;
++				spi-tx-bus-width = <1>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		spi5: spif@04f00000 {
+@@ -663,6 +751,20 @@
+ 			clocks = <&clk_pll_periph0300m>, <&clk_spif>;
+ 			clock-names = "pclk", "mclk";
+ 			status = "disabled";
++			clock-frequency = <10000000>;
++			pinctrl-0 = <&spif0_pins_a &spif0_pins_b>;
++			pinctrl-1 = <&spif0_pins_c>;
++			pinctrl-names = "default", "sleep";
++
++			spi_board1@0 {
++				device_type = "spi_board1";
++				compatible = "rohm,dh2228fv";
++				spi-max-frequency = <100000000>;
++				reg = <0>;
++				spi-rx-bus-width = <4>;
++				spi-tx-bus-width = <4>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		msgbox: msgbox@3003000 {
+@@ -687,6 +789,13 @@
+ 			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_twi0>;
+ 			status = "disabled";
++			clock-frequency = <400000>;
++			pinctrl-0 = <&twi0_pins_a>;
++			pinctrl-1 = <&twi0_pins_b>;
++			pinctrl-names = "default", "sleep";
++			/* For stability and backwards compatibility, we recommend setting ‘twi_drv_used’ to 0  */
++			twi_drv_used = <0>;
++			twi_pkt_interval = <0>;
+ 		};
+ 
+ 		twi1: twi@0x02502400{
+@@ -698,6 +807,13 @@
+ 			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_twi1>;
+ 			status = "disabled";
++			clock-frequency = <400000>;
++			pinctrl-0 = <&twi1_pins_a>;
++			pinctrl-1 = <&twi1_pins_b>;
++			pinctrl-names = "default", "sleep";
++			/* For stability and backwards compatibility, we recommend setting ‘twi_drv_used’ to 0  */
++			twi_drv_used = <0>;
++			twi_pkt_interval = <0>;
+ 		};
+ 
+ 		twi2: twi@0x02502800{
+@@ -709,6 +825,13 @@
+ 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_twi2>;
+ 			status = "disabled";
++			clock-frequency = <400000>;
++			pinctrl-0 = <&twi2_pins_a>;
++			pinctrl-1 = <&twi2_pins_b>;
++			pinctrl-names = "default", "sleep";
++			/* For stability and backwards compatibility, we recommend setting ‘twi_drv_used’ to 0  */
++			twi_drv_used = <0>;
++			twi_pkt_interval = <0>;
+ 		};
+ 
+ 		twi3: twi@0x02502c00{
+@@ -720,6 +843,13 @@
+ 			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_twi3>;
+ 			status = "disabled";
++			clock-frequency = <400000>;
++			pinctrl-0 = <&twi3_pins_a>;
++			pinctrl-1 = <&twi3_pins_b>;
++			pinctrl-names = "default", "sleep";
++			/* For stability and backwards compatibility, we recommend setting ‘twi_drv_used’ to 0  */
++			twi_drv_used = <0>;
++			twi_pkt_interval = <0>;
+ 		};
+ 
+ 		twi4: twi@0x02503000{
+@@ -731,6 +861,14 @@
+ 			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clk_twi4>;
+ 			status = "disabled";
++			clock-frequency = <400000>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&twi4_pins_a>;
++			pinctrl-1 = <&twi4_pins_b>;
++			/* For stability and backwards compatibility, we recommend setting ‘twi_drv_used’ to 0  */
++			twi_drv_used = <0>;
++			twi_pkt_interval = <0>;
++			no_suspend = <1>;
+ 		};
+ 
+ 		dma0: dma-controller@03002000 {
+@@ -761,6 +899,9 @@
+ 			compatible = "allwinner,sunxi-pwm1";
+ 			reg = <0x0 0x02000c11 0x0 0x4>;
+ 			reg_base = <0x02000c00>;
++			pinctrl-names = "active", "sleep";
++			pinctrl-0 = <&pwm1_pin_a>;
++			pinctrl-1 = <&pwm1_pin_b>;
+ 		};
+ 
+ 		pwm2: pwm2@2000c12 {
+@@ -779,6 +920,9 @@
+ 			compatible = "allwinner,sunxi-pwm4";
+ 			reg = <0x0 0x02000c14 0x0 0x4>;
+ 			reg_base = <0x02000c00>;
++			pinctrl-names = "active", "sleep";
++			pinctrl-0 = <&pwm4_pin_a>;
++			pinctrl-1 = <&pwm4_pin_b>;
+ 		};
+ 
+ 		pwm5: pwm5@2000c15 {
+@@ -809,6 +953,9 @@
+ 			compatible = "allwinner,sunxi-pwm9";
+ 			reg = <0x0 0x02000c19 0x0 0x4>;
+ 			reg_base = <0x02000c00>;
++		/*	pinctrl-names = "active", "sleep";
++			pinctrl-0 = <&pwm9_pin_a>;
++			pinctrl-1 = <&pwm9_pin_b>;*/
+ 		};
+ 
+ 		pwm10: pwm10@2000c1a {
+@@ -823,7 +970,7 @@
+ 			reg_base = <0x02000c00>;
+ 		};
+ 
+-		sid@3006000 {
++		sid@03006000 {
+ 			compatible = "allwinner,sun8iw21p1-sid", "allwinner,sunxi-sid";
+ 			reg = <0x0 0x03006000 0 0x1000>;
+ 			#address-cells = <1>;
+@@ -947,7 +1094,6 @@
+ 			/*vdmc = "";*/
+ 			cap-sd-highspeed;
+ 			cap-wait-while-busy;
+-			no-sdio;
+ 			no-mmc;
+ 			/*sd-uhs-sdr50;*/
+ 			/*sd-uhs-ddr50;*/
+@@ -1121,6 +1267,22 @@
+ 					  <&clk_codec_dac>,
+ 					  <&clk_codec_adc>;
+ 			status = "disabled";
++			/* external-avcc; */
++			/* avcc-supply	= <&reg_aldo1>; */
++			avcc-vol	= <1800000>;	/* uv */
++			lineout-vol	= <31>;
++			mic1gain	= <31>;
++			mic2gain	= <31>;
++			adcdelaytime	= <0>;
++			/* lineout-single; */
++			/* mic1-single; */
++			/* mic2-single; */
++			pa-pin-max	= <1>;		/* set pa */
++			pa-pin-0	= <&pio PH 4 1 1 1 1>;
++			pa-pin-level-0	= <1>;
++			pa-pin-msleep-0	= <0>;
++			tx-hub-en;
++			rx-sync-en;
+ 		};
+ 
+ 		codec_plat:codec_plat {
+@@ -1175,6 +1337,7 @@
+ 			status = "disabled";
+ 			soundcard-mach,cpu {
+ 				sound-dai = <&dmic_plat>;
++				soundcard-mach,pll-fs = <1>;
+ 			};
+ 			soundcard-mach,codec {
+ 			};
 diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
 index 618dd11b8..53a038194 100644
 --- a/arch/arm/mm/proc-v7.S
