@@ -48,6 +48,9 @@ class Initramfs:
         dir = "/media/busybox"
         os.sudo(f"cp {self.busybox_cfg} {self.busybox.work_dir}/.config", self.busybox.work_dir, None, None, True)
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
+        self.__chrooted(self.busybox, os, dir, "sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\\>::g' Makefile.flags")
+        self.__chrooted(self.busybox, os, dir, "sed -i -e 's:-static-libgcc::' Makefile.flags")
+        #self.__chrooted(self.busybox, os, dir, "make clean && make -j5")
         self.__chrooted(self.busybox, os, dir, "make clean && make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
         cfg_or = Path(self.busybox_cfg)
@@ -75,11 +78,10 @@ class Initramfs:
     def __e2fsp(self, os):
         Logger.build(f"Compile e2fsprogs")
         dir = "/media/e2fsp"
-        bin1 = "e2fsck/e2fsck"
-        bin2 = "resize/resize2fs"
+        bins = [ "e2fsck/e2fsck", "resize/resize2fs", "misc/mke2fs" ]
         cfg_cmd  = "--bindir=/bin"
         #--disable-fsck
-        cfg_cmd += " --with-root-prefix=\"\" --disable-nls"
+        cfg_cmd += " --bindir=/bin --with-root-prefix=\"\" --disable-nls"
         cfg_cmd += " --enable-libblkid --enable-libuuid"
         cfg_cmd += " --disable-uuidd --disable-debugfs"
         cfg_cmd += " --disable-imager --enable-resizer"
@@ -88,9 +90,10 @@ class Initramfs:
         makefile = Path(f"{self.e2fsp.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
-        self.__chrooted(self.e2fsp, os, dir, f"make -j5 && strip --strip-all {bin1} {bin2}")
-        shutil.copy(self.e2fsp.work_dir + f"/{bin1}", f"{self.files_dir}/")
-        shutil.copy(self.e2fsp.work_dir + f"/{bin2}", f"{self.files_dir}/")
+        self.__chrooted(self.e2fsp, os, dir, f"make -j5 && strip --strip-all {" ".join(bins)}")
+        for bin in bins:
+            shutil.copy(self.e2fsp.work_dir + f"/{bin}", f"{self.files_dir}/")
+        shutil.copy(self.e2fsp.work_dir + f"/misc/mke2fs.conf", f"{self.files_dir}/")
 
     def __cpio(self):
         Logger.build(f"\tCreate init.cpio")
@@ -134,6 +137,7 @@ class Initramfs:
         f.write("slink /bin/ts                           busybox                         755 0 0\n")
         f.write("slink /lib64                            /lib                            755 0 0\n")
         f.write("slink /sbin                             /bin                            755 0 0\n")
+        f.write("slink /etc/mtab                         /proc/self/mounts               755 0 0\n")
         f.write("slink /dev/stderr                       /proc/self/fd/2                 777 0 0\n")
         f.write("slink /dev/stdin                        /proc/self/fd/0                 777 0 0\n")
         f.write("slink /dev/std/out                      /proc/self/fd/1                 777 0 0\n")
@@ -141,10 +145,17 @@ class Initramfs:
         f.write(f"file /bin/udevadm            build/common_{self.arch}/initrd/udevadm            755 0 0\n")
         f.write(f"file /bin/e2fsck             build/common_{self.arch}/initrd/e2fsck             755 0 0\n")
         f.write(f"file /bin/resize2fs          build/common_{self.arch}/initrd/resize2fs          755 0 0\n")
+        f.write(f"file /etc/mke2fs.conf        build/common_{self.arch}/initrd/mke2fs.conf        755 0 0\n")
+        f.write(f"file /bin/mke2fs2            build/common_{self.arch}/initrd/mke2fs             755 0 0\n")
         f.write("file /etc/init.def           files/initramfs/init.def        755 0 0\n")
         f.write("file /etc/init.script        files/initramfs/init.script     755 0 0\n")
         f.write("file /init                   files/initramfs/init            755 0 0\n")
         f.write("file /shutdown               files/initramfs/shutdown        755 0 0\n")
+        f.write("file /etc/fstab              files/initramfs/fstab           755 0 0\n")
+        f.write("file /etc/group              files/initramfs/group           755 0 0\n")
+        #f.write("file /etc/ld.so.conf         files/initramfs/ld.so.conf      755 0 0\n")
+        f.write("file /etc/passwd             files/initramfs/passwd          755 0 0\n")
+        f.write("file /etc/shadow             files/initramfs/shadow          755 0 0\n")
         f.close()
         f = open(f"{self.files_dir}/init.cpio", "wb")
         p = subprocess.Popen(["/usr/src/linux/usr/gen_init_cpio",
