@@ -3,8 +3,6 @@ import re, json, os.path, fnmatch
 from rich.progress import Progress
 from . import *
 
-CFG_NAME=f"{CONFIG_DIR}/kernel_cfg.json"
-
 class ConfigCondition:
     def __init__(self, line):
         self.opt_str = ""
@@ -119,9 +117,8 @@ class ConfigOpt:
         self.__parse_dep(js["deps"])
 
 class KconfigScan:
-    def __init__(self, path, cb_var, cb_on_opt):
+    def __init__(self, path, cb_on_opt):
         self.path = path
-        self.cb_var = cb_var
         self.cb_on_opt = cb_on_opt
     def scan(self, sub_dir="", if_opt=""):
         full_path = f"{self.path}/{sub_dir}"
@@ -134,7 +131,9 @@ class KconfigScan:
             m_source = re.match(r'^source\s+\"(\S+)/Kconfig\"', line)
             if (m_source):
                 # current line - include another config
-                inc_parsed = self.cb_var(m_source[1])
+                inc_parsed = parse_variables(m_source[1])
+                while ("$" in inc_parsed):
+                    inc_parsed = inc_parsed.replace("$SRCARCH", parse_variables("%{SRCARCH}%"))
                 self.scan(inc_parsed, if_opt)
             m_cfg = re.match(r'^(?:config|menuconfig)\s+(\S+)', line)
             if (m_cfg):
@@ -175,9 +174,8 @@ r_km_comp = re.compile(r'(?:(?:OF_DECLARE\S*|IRQCHIP_DECLARE)\(\S+,\s+\"(\S+)\",
     r'(?:of_device_is_compatible\(\S+,\s+\"(\S+)\"\))')
 
 class KmakefileScan:
-    def __init__(self, path, cb_var, on_comp):
+    def __init__(self, path, on_comp):
         self.path = path
-        self.cb_var = cb_var
         self.on_comp = on_comp
         self.sources = []
     def __do_fn(self,  sub_dir, cond, fn):
@@ -189,7 +187,7 @@ class KmakefileScan:
             self.sources.append({ "path":f"{sub_dir}/{fn[:-2]}.c",
                                   "cond":cond})
     def __do_line(self, f, sub_dir, cond, line, rec=False):
-        line = self.cb_var(line)
+        line = parse_variables(line)
         if (rec):
             m_obj_cfg = re.findall(r'^(\s+)(\s*)((?:\s*' + r_km_obj_mask + r')+)', line)
         else:
@@ -236,28 +234,17 @@ class KmakefileScan:
                 if (target_name == obj) and (obj_new != ""):
                     while (obj_new[0] == " "):
                         obj_new = obj_new[1:]
-                    self.__do_fn(sub_dir, cond_loc, obj_new)
+                    objs = obj_new.split(" ")
+                    for o in objs:
+                        self.__do_fn(sub_dir, cond_loc, o)
                 else:
                     # not a synonym - process line again
                     self.__do_line(f, sub_dir, cond_loc, line)
             else:
                 # not a synonym - process line again
                 self.__do_line(f, sub_dir, cond_loc, line)
-    def scan(self, sub_dir="", cond=""):
-        if (sub_dir == ""):
-            full_path = self.path
-        else:
-            full_path = f"{self.path}/{sub_dir}"
-        #print(f"\tDir: {sub_dir}")
-        mk_fn1 = f"{full_path}/Kbuild"
-        mk_fn2 = f"{full_path}/Makefile"
-        if (os.path.isfile(mk_fn1)):
-            f = open(mk_fn1, "rt")
-        elif (os.path.isfile(mk_fn2)):
-            f = open(mk_fn2, "rt")
-        else:
-            print(f"Unable to find build file at '{full_path}'!!!")
-            exit(1)
+    def __scan(self, fn, sub_dir="", cond=""):
+        f = open(fn, "rt")
         while 1:
             line = f.readline()
             if (line == ""):
@@ -268,6 +255,21 @@ class KmakefileScan:
                 continue
             self.__do_line(f, sub_dir, cond, line)
         f.close()
+    def scan(self, sub_dir="", cond=""):
+        if (sub_dir == ""):
+            full_path = self.path
+        else:
+            full_path = f"{self.path}/{sub_dir}"
+        #print(f"\tDir: {sub_dir}")
+        mk_fn1 = f"{full_path}/Kbuild"
+        mk_fn2 = f"{full_path}/Makefile"
+        if (os.path.isfile(mk_fn1)):
+            self.__scan(mk_fn1, sub_dir, cond)
+        if (os.path.isfile(mk_fn2)):
+            self.__scan(mk_fn2, sub_dir, cond)
+        #else:
+        #    print(f"Unable to find build file at '{full_path}'!!!")
+        #    exit(1)
     def scan_compatible(self):
         progress = Progress()
         progress.start()
@@ -275,9 +277,10 @@ class KmakefileScan:
         for obj in self.sources:
             progress.update(task, advance=1)
             fn = f"{self.path}/{obj["path"]}"
+            #print(f"Processing file '{fn}'...")
             if (not os.path.isfile(fn)):
                 continue
-            f = open(fn, "r")
+            f = open(fn, "r", encoding='ISO-8859-1')
             while (1):
                 line = f.readline()
                 if (line == ""):
@@ -495,8 +498,10 @@ class ConfigScan:
             if (fnmatch.fnmatch(val, sk)):
                 return ""
         return False
-    def __apply_fixes(self):
-        with open(f"{CONFIG_DIR}/kernel_fix.json") as json_data:
+    def __apply_fixes(self, path):
+        if (path == ""):
+            path = CONFIG_DIR
+        with open(f"{path}/kernel_fix.json") as json_data:
             js_data = json.load(json_data)
             compatibles = js_data["compatibles"]
             for key in compatibles:
@@ -518,19 +523,20 @@ class ConfigScan:
         self.opts.append(opt)
     def add_defconfig(self, name, list):
         self.defconfig[name] = list
-    def scan(self, path):
+    def scan(self, path, cfg_path=""):
         path = parse_variables(path)
         print(f"Start scanning for options, directory '{path}'...")
         print("Step #1 - Scan Kconfig files")
         self.__scan_arch_list(path)
-        KconfigScan(path, parse_variables, self.on_config_opt).scan()
+        KconfigScan(path, self.on_config_opt).scan()
         print("Step #2 - Scan Makefile for source files")
-        obj = KmakefileScan(path, parse_variables, self.__insert_comp)
+        obj = KmakefileScan(path, self.__insert_comp)
         obj.scan()
+        self.sources = obj.sources
         print("Step #3 - Scan 'compatible' strings")
         obj.scan_compatible()
         print("Step #4 - Apply fixes")
-        self.__apply_fixes()
+        self.__apply_fixes(cfg_path)
         print("Step #5 - Scan DTS and make defconfigs")
         DTSScan(path, self.arch, self.__find_comp, self.add_defconfig).scan()
     def serialize(self):
@@ -541,7 +547,7 @@ class ConfigScan:
                 "arch_list":self.arch_list,
                 "compatible":self.compatible,
                 "defconfig": self.defconfig,
-                #"sources":self.sources,
+                "sources":self.sources,
                 "opts":opts }
         return obj
     def deserialize(self, js):
@@ -554,16 +560,20 @@ class ConfigScan:
             opt.deserialize(o)
             self.opts.append(opt)
         self.defconfig = js["defconfig"]
-    def save(self):
-        f = open(CFG_NAME, "w")
+    def save(self, path=""):
+        if (path == ""):
+            path = CONFIG_DIR
+        f = open(f"{path}/kernel_cfg.json", "w")
         json.dump(self.serialize(), f, indent=1)
         f.close()
-    def load(self):
-        with open(CFG_NAME) as json_data:
+    def load(self, path=""):
+        if (path == ""):
+            path = CONFIG_DIR
+        with open(f"{path}/kernel_cfg.json") as json_data:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
-        self.__apply_fixes()
+        self.__apply_fixes(path)
     def __cfg_get_default(self, cfg):
         #if (cfg.lower() in self.arch_list):
         #    return None
@@ -692,8 +702,3 @@ class ConfigScan:
         self.defconfig_start()
         self.__apply_defconfig(name, config_set)
         self.defconfig_save(path, name)
-
-if __name__ == '__main__':
-    cfg_scn = ConfigScan("arm64")
-    cfg_scn.scan("%{common_dir}%/kernel")
-    cfg_scn.save()
