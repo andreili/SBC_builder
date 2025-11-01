@@ -96,7 +96,7 @@ index c90363279..38c758451 100644
  dtb-$(CONFIG_ARCH_TANGO) += \
  	tango4-vantage-1172.dtb
 diff --git a/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi b/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
-index 031f0ee4a..6777904cf 100644
+index 031f0ee4a..fa98f60d2 100644
 --- a/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
 +++ b/arch/arm/boot/dts/sun8iw21p1-pinctrl.dtsi
 @@ -59,38 +59,39 @@
@@ -172,10 +172,16 @@ index 031f0ee4a..6777904cf 100644
  			csi_mclk2_pins_a: csi_mclk2@0 {
  				allwinner,pins = "PE1";
  				allwinner,pname = "ncsi_mclk";
-@@ -392,6 +407,356 @@
+@@ -392,6 +407,362 @@
  				allwinner,drive = <1>;
  				allwinner,pull = <0>;
  			};
++
++			wlan_pins_a: wlan@0 {
++				allwinner,pins = "PG6";
++				allwinner,function = "fanout0";
++				allwinner,muxsel = <3>;
++			};
 +
 +			uart1_pins_a: uart1@0 {
 +				allwinner,pins = "PG6", "PG7";
@@ -531,10 +537,10 @@ index 031f0ee4a..6777904cf 100644
  };
 diff --git a/arch/arm/boot/dts/sun8iw21p1-printer.dts b/arch/arm/boot/dts/sun8iw21p1-printer.dts
 new file mode 100644
-index 000000000..942b6edab
+index 000000000..81f3208c0
 --- /dev/null
 +++ b/arch/arm/boot/dts/sun8iw21p1-printer.dts
-@@ -0,0 +1,714 @@
+@@ -0,0 +1,797 @@
 +/dts-v1/;
 +
 +#include "sun8iw21p1.dtsi"
@@ -578,14 +584,6 @@ index 000000000..942b6edab
 +		rpbuf = <0xc7>;
 +		status = "disabled";
 +	};
-+};
-+
-+&pio {
-+    wlan_pins_a: wlan@0 {
-+        allwinner,pins = "PG6";
-+        allwinner,function = "fanout0";
-+        allwinner,muxsel = <3>;
-+    };
 +};
 +
 +&twi0 {
@@ -1157,10 +1155,37 @@ index 000000000..942b6edab
 +};
 +
 +&daudio0_mach {
-+    soundcard-mach,frame-master = <0x91>;
-+    soundcard-mach,bitclock-master = <0x91>;
++    soundcard-mach,frame-master = <&da0_mcpu>;
++    soundcard-mach,bitclock-master = <&da0_mcpu>;
 +    soundcard-mach,slot-num = <0x2>;
 +    soundcard-mach,slot-width = <0x20>;
++
++    da0_mcpu: soundcard-mach,cpu {
++        sound-dai = <&daudio0_plat>;
++        soundcard-mach,pll-fs = <0x1>;
++        soundcard-mach,mclk-fs = <0x0>;
++    };
++};
++
++&daudio1_plat {
++    tdm-num = <1>;
++    tx-pin = <0>;
++    rx-pin = <0>;
++    tx-hub-en;
++    rx-sync-en;
++};
++
++&daudio1_mach {
++    soundcard-mach,frame-master = <&da1_mcpu>;
++    soundcard-mach,bitclock-master = <&da1_mcpu>;
++    soundcard-mach,slot-num = <0x2>;
++    soundcard-mach,slot-width = <0x20>;
++
++    da1_mcpu: soundcard-mach,cpu {
++        sound-dai = <&daudio1_plat>;
++        soundcard-mach,pll-fs = <0x1>;
++        soundcard-mach,mclk-fs = <0x0>;
++    };
 +};
 +
 +&soc {
@@ -1226,31 +1251,95 @@ index 000000000..942b6edab
 +    status = "disabled";
 +};
 +
++&sensor0 {
++    sensor0_iovdd-supply = <0x56>;
++    sensor0_avdd-supply = <0x57>;
++    sensor0_dvdd-supply = <0x59>;
++    sensor0_dvdd_vol = <0x155cc0>;
++    sensor0_reset = <&pio 0x0 0x12 0x1 0x0 0x1 0x0>;
++    sensor0_pwdn = <&pio 0x0 0x13 0x1 0x0 0x1 0x0>;
++};
++
 +&sensor1 {
++    sensor1_mname = "tp9953";
++    sensor1_twi_cci_id = <0x0>;
++    sensor1_twi_addr = <0x88>;
++    sensor1_mclk_id = <0x2>;
++    sensor1_iovdd-supply = <0x53>;
++    sensor1_iovdd_vol = <0x1b7740>;
++    sensor1_avdd_vol = <0x325aa0>;
++    sensor1_dvdd_vol = <0x124f80>;
++    sensor1_power_en = <&pio 0x8 0x0 0x1 0x0 0x1 0x0>;
++    sensor1_reset = <&pio 0x7 0xd 0x1 0x0 0x1 0x0>;
 +    status = "disabled";
++};
++
++&vinc00 {
++    work_mode = <1>;
++    status = "okay";
 +};
 +
 +&vinc01 {
-+    status = "disabled";
++    vinc1_csi_sel = <1>;
++    vinc1_mipi_sel = <1>;
++    vinc1_isp_tx_ch = <0>;
++    vinc1_rear_sensor_sel = <1>;
++    vinc1_front_sensor_sel = <1>;
++    status = "okay";
 +};
 +
 +&vinc10 {
-+    status = "disabled";
++    vinc4_mipi_sel = <0>;
++    vinc4_rear_sensor_sel = <0>;
++    vinc4_front_sensor_sel = <0>;
++    work_mode = <1>;
++    status = "okay";
 +};
 +
 +&vinc11 {
-+    status = "disabled";
++    vinc5_csi_sel = <1>;
++    vinc5_mipi_sel = <1>;
++    vinc5_isp_tx_ch = <0>;
++    vinc5_rear_sensor_sel = <1>;
++    vinc5_front_sensor_sel = <1>;
++    status = "okay";
 +};
 +
 +&vinc20 {
-+    status = "disabled";
++    vinc8_csi_sel = <0>;
++    vinc8_mipi_sel = <0>;
++    vinc8_isp_sel = <0>;
++    vinc8_isp_tx_ch = <0>;
++    vinc8_tdm_rx_sel = <0>;
++    work_mode = <1>;
++    status = "okay";
 +};
 +
 +&vinc30 {
-+    status = "disabled";
++    vinc12_csi_sel = <0>;
++    vinc12_mipi_sel = <0>;
++    work_mode = <1>;
++    status = "okay";
++};
++
++&cpu0 {
++    cpu-supply = <&reg_dcdc3>;
++};
++
++&wiegand {
++    protocol-type = <0x0>;
++    signal-duration = <0x6e>;
++    signal-period = <0x49a>;
++    high-parity-polar = <0x1>;
++    low-parity-polar = <0x0>;
++    data-polar = <0x1>;
++    clock-div = <0x18>;
++    pinctrl-names = "default", "sleep";
++    pinctrl-0 = <&wiegand_pins_a>;
++    pinctrl-1 = <&wiegand_pins_b>;
 +};
 diff --git a/arch/arm/boot/dts/sun8iw21p1.dtsi b/arch/arm/boot/dts/sun8iw21p1.dtsi
-index 7c316c871..251ebd669 100755
+index 7c316c871..9b004d31d 100755
 --- a/arch/arm/boot/dts/sun8iw21p1.dtsi
 +++ b/arch/arm/boot/dts/sun8iw21p1.dtsi
 @@ -35,13 +35,28 @@
@@ -1287,7 +1376,191 @@ index 7c316c871..251ebd669 100755
  
  	};
  	aliases {
-@@ -509,6 +524,9 @@
+@@ -142,148 +157,52 @@
+ 	cpu_opp_l_table0: opp_l_table0 {
+ 		/* compatible = "operating-points-v2"; */
+ 		compatible = "allwinner,sun50i-operating-points";
+-		nvmem-cells = <&cpubin_efuse>;
++		//nvmem-cells = <&cpubin_efuse>;
+ 		nvmem-cell-names = "bin";
+ 		opp-shared;
+ 		/* compatible = "allwinner,opp_l_table0"; */
+ 
+ 		opp@408000000-92 {
+ 			opp-hz = /bits/ 64 <408000000>;
+-			opp-microvolt = <920000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++			opp-microvolt = <900000>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0x42B>;
+ 		};
+-		opp@408000000-96 {
+-			opp-hz = /bits/ 64 <408000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0xA54>;
+-		};
+-		opp@408000000-100 {
+-			opp-hz = /bits/ 64 <408000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@408000000-105 {
+-			opp-hz = /bits/ 64 <408000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+ 		opp@600000000-92 {
+ 			opp-hz = /bits/ 64 <600000000>;
+-			opp-microvolt = <920000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++			opp-microvolt = <900000>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0x42B>;
+ 		};
+-		opp@600000000-96 {
+-			opp-hz = /bits/ 64 <600000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0xA54>;
+-		};
+-		opp@600000000-100 {
+-			opp-hz = /bits/ 64 <600000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@600000000-105 {
+-			opp-hz = /bits/ 64 <600000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+ 		opp@720000000-92 {
+ 			opp-hz = /bits/ 64 <720000000>;
+-			opp-microvolt = <920000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++			opp-microvolt = <900000>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0x42B>;
+ 		};
+-		opp@720000000-96 {
+-			opp-hz = /bits/ 64 <720000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0xA54>;
+-		};
+-		opp@720000000-100 {
+-			opp-hz = /bits/ 64 <720000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@720000000-105 {
+-			opp-hz = /bits/ 64 <720000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+-		opp@900000000-92 {
+-			opp-hz = /bits/ 64 <900000000>;
+-			opp-microvolt = <920000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++		opp@912000000-92 {
++			opp-hz = /bits/ 64 <912000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0x42B>;
+ 		};
+-		opp@900000000-96 {
+-			opp-hz = /bits/ 64 <900000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0xA54>;
+-		};
+-		opp@900000000-100 {
+-			opp-hz = /bits/ 64 <900000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@900000000-105 {
+-			opp-hz = /bits/ 64 <900000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+ 		opp@1008000000-96 {
+ 			opp-hz = /bits/ 64 <1008000000>;
+-			opp-microvolt = <960000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++			opp-microvolt = <950000>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0xE54>;
+ 		};
+-		opp@1008000000-100 {
+-			opp-hz = /bits/ 64 <1008000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@1008000000-105 {
+-			opp-hz = /bits/ 64 <1008000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+ 		opp@1104000000-100 {
+ 			opp-hz = /bits/ 64 <1104000000>;
+ 			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
++			clock-latency-ns = <2000000>; /* 8 32k periods */
+ 			opp-supported-hw = <0xC80>;
+ 		};
+-		opp@1104000000-105 {
+-			opp-hz = /bits/ 64 <1104000000>;
+-			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
+-		};
+ 		opp@1200000000-100 {
+-			opp-hz = /bits/ 64 <1200000000>;
+-			opp-microvolt = <1000000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x80>;
+-		};
+-		opp@1200000000-105 {
+ 			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <1050000>;
+-			clock-latency-ns = <244144>; /* 8 32k periods */
+-			opp-supported-hw = <0x100>;
++			clock-latency-ns = <2000000>; /* 8 32k periods */
++			opp-supported-hw = <0x80>;
+ 		};
+ 	};
+ 
+@@ -368,6 +287,18 @@
+ 		reg = <0x0 0x03000000 0x0 0x100>;
+ 	};
+ 
++	sunxi-sid@3006000 {
++		compatible = "allwinner,sunxi-sid";
++		device_type = "sid";
++		reg = <0x0 0x3006000 0x0 0x200>;
++	};
++
++	chipid: sunxi-chipid@03006200 {
++		compatible = "allwinner,sunxi-chipid";
++		device_type = "chipid";
++		reg = <0x0 0x03006200 0 0xC0>;
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>, /* Secure Phys IRQ */
+@@ -509,6 +440,9 @@
  			sunxi,uart-fifosize = <64>;
  			uart0_port = <0>;
  			uart0_type = <2>;
@@ -1297,7 +1570,7 @@ index 7c316c871..251ebd669 100755
  			status = "disabled";
  		};
  
-@@ -521,6 +539,9 @@
+@@ -521,6 +455,9 @@
  			sunxi,uart-fifosize = <128>;
  			uart1_port = <1>;
  			uart1_type = <4>;
@@ -1307,7 +1580,7 @@ index 7c316c871..251ebd669 100755
  			status = "disabled";
  		};
  
-@@ -533,6 +554,9 @@
+@@ -533,6 +470,9 @@
  			sunxi,uart-fifosize = <128>;
  			uart2_port = <2>;
  			uart2_type = <4>;
@@ -1317,7 +1590,7 @@ index 7c316c871..251ebd669 100755
  			status = "disabled";
  		};
  
-@@ -545,6 +569,9 @@
+@@ -545,6 +485,9 @@
  			sunxi,uart-fifosize = <128>;
  			uart3_port = <3>;
  			uart3_type = <4>;
@@ -1327,7 +1600,7 @@ index 7c316c871..251ebd669 100755
  			status = "disabled";
  		};
  
-@@ -629,6 +656,33 @@
+@@ -629,6 +572,33 @@
  			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_pll_periph0300m>, <&clk_spi0>;
  			status = "disabled";
@@ -1361,7 +1634,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		spi1: spi@04026000 {
-@@ -640,6 +694,23 @@
+@@ -640,6 +610,23 @@
  			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_pll_periph0300m>, <&clk_spi1>;
  			status = "disabled";
@@ -1385,7 +1658,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		spi3: spi@04028000 {
-@@ -651,6 +722,23 @@
+@@ -651,6 +638,23 @@
  			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_pll_periph0300m>, <&clk_spi3>;
  			status = "disabled";
@@ -1409,7 +1682,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		spi5: spif@04f00000 {
-@@ -663,6 +751,20 @@
+@@ -663,6 +667,20 @@
  			clocks = <&clk_pll_periph0300m>, <&clk_spif>;
  			clock-names = "pclk", "mclk";
  			status = "disabled";
@@ -1430,7 +1703,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		msgbox: msgbox@3003000 {
-@@ -687,6 +789,13 @@
+@@ -687,6 +705,13 @@
  			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_twi0>;
  			status = "disabled";
@@ -1444,7 +1717,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		twi1: twi@0x02502400{
-@@ -698,6 +807,13 @@
+@@ -698,6 +723,13 @@
  			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_twi1>;
  			status = "disabled";
@@ -1458,7 +1731,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		twi2: twi@0x02502800{
-@@ -709,6 +825,13 @@
+@@ -709,6 +741,13 @@
  			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_twi2>;
  			status = "disabled";
@@ -1472,7 +1745,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		twi3: twi@0x02502c00{
-@@ -720,6 +843,13 @@
+@@ -720,6 +759,13 @@
  			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_twi3>;
  			status = "disabled";
@@ -1486,7 +1759,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		twi4: twi@0x02503000{
-@@ -731,6 +861,14 @@
+@@ -731,6 +777,14 @@
  			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
  			clocks = <&clk_twi4>;
  			status = "disabled";
@@ -1501,7 +1774,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		dma0: dma-controller@03002000 {
-@@ -761,6 +899,9 @@
+@@ -761,6 +815,9 @@
  			compatible = "allwinner,sunxi-pwm1";
  			reg = <0x0 0x02000c11 0x0 0x4>;
  			reg_base = <0x02000c00>;
@@ -1511,7 +1784,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		pwm2: pwm2@2000c12 {
-@@ -779,6 +920,9 @@
+@@ -779,6 +836,9 @@
  			compatible = "allwinner,sunxi-pwm4";
  			reg = <0x0 0x02000c14 0x0 0x4>;
  			reg_base = <0x02000c00>;
@@ -1521,7 +1794,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		pwm5: pwm5@2000c15 {
-@@ -809,6 +953,9 @@
+@@ -809,6 +869,9 @@
  			compatible = "allwinner,sunxi-pwm9";
  			reg = <0x0 0x02000c19 0x0 0x4>;
  			reg_base = <0x02000c00>;
@@ -1531,7 +1804,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		pwm10: pwm10@2000c1a {
-@@ -823,7 +970,7 @@
+@@ -823,7 +886,7 @@
  			reg_base = <0x02000c00>;
  		};
  
@@ -1540,15 +1813,37 @@ index 7c316c871..251ebd669 100755
  			compatible = "allwinner,sun8iw21p1-sid", "allwinner,sunxi-sid";
  			reg = <0x0 0x03006000 0 0x1000>;
  			#address-cells = <1>;
-@@ -947,7 +1094,6 @@
+@@ -833,18 +896,12 @@
+ 				reg = <0x14 8>;
+ 			};
+ 
+-			cpubin_efuse: bin@18 {
++			/*cpubin_efuse: bin@18 {
+ 				reg = <0x18 4>;
+-			};
++			};*/
+ 
+ 		};
+ 
+-		chipid: sunxi-chipid@03006200 {
+-			compatible = "allwinner,sunxi-chipid";
+-			device_type = "chipid";
+-			reg = <0x0 0x03006200 0 0xC0>;
+-		};
+-
+ 
+ 		gpadc:gpadc@2009000 {
+ 			compatible = "allwinner,sunxi-gpadc";
+@@ -947,8 +1004,6 @@
  			/*vdmc = "";*/
  			cap-sd-highspeed;
  			cap-wait-while-busy;
 -			no-sdio;
- 			no-mmc;
+-			no-mmc;
  			/*sd-uhs-sdr50;*/
  			/*sd-uhs-ddr50;*/
-@@ -1121,6 +1267,22 @@
+ 			/*cap-sdio-irq;*/
+@@ -1121,6 +1176,22 @@
  					  <&clk_codec_dac>,
  					  <&clk_codec_adc>;
  			status = "disabled";
@@ -1571,7 +1866,7 @@ index 7c316c871..251ebd669 100755
  		};
  
  		codec_plat:codec_plat {
-@@ -1175,6 +1337,7 @@
+@@ -1175,6 +1246,7 @@
  			status = "disabled";
  			soundcard-mach,cpu {
  				sound-dai = <&dmic_plat>;

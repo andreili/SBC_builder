@@ -8,7 +8,8 @@
         "CHOST:armv7a-unknown-linux-gnueabihf",
         "KERNEL_ARCH:arm",
         "CROSS_C:%{CHOST}%-",
-        "ARCH:armv7a_hf"
+        "ARCH:armv7a_hf",
+        "DTB_FILE:sun8iw21p1-printer.dtb"
     ],
     "targets":
     [
@@ -57,6 +58,12 @@
                 {
                     "file": "arch/arm/boot/zImage",
                     "store_type": "boot"
+                },
+                {
+                    "file": "arch/arm/boot/dts/%{DTB_FILE}%",
+                    "store_type": "boot",
+                    "subdir": "dtb/allwinner",
+                    "destdir": "dtb"
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr",
