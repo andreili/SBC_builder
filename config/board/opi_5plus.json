@@ -102,12 +102,12 @@
                 {
                     "file": "intel/iwlwifi/iwlwifi-ty-a0-gf-a0-89.ucode",
                     "store_type": "temp",
-                    "subdir": "kmods/usr/lib/firmware/intel/iwlwifi"
+                    "subdir": "kmods/usr/lib/firmware"
                 },
                 {
                     "file": "intel/iwlwifi/iwlwifi-ty-a0-gf-a0.pnvm",
                     "store_type": "temp",
-                    "subdir": "kmods/usr/lib/firmware/intel/iwlwifi"
+                    "subdir": "kmods/usr/lib/firmware"
                 },
                 {
                     "file": "arm/mali/arch10.8/*",
