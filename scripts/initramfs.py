@@ -82,11 +82,11 @@ class Initramfs:
         cfg_cmd  = "--bindir=/bin"
         #--disable-fsck
         cfg_cmd += " --bindir=/bin --with-root-prefix=\"\" --disable-nls"
-        cfg_cmd += " --enable-libblkid --enable-libuuid"
+        cfg_cmd += " --disable-libblkid --disable-libuuid"
         cfg_cmd += " --disable-uuidd --disable-debugfs"
         cfg_cmd += " --disable-imager --enable-resizer"
         cfg_cmd += " --disable-defrag"
-        cfg_cmd += " --enable-lto "
+        #cfg_cmd += " --enable-lto "
         makefile = Path(f"{self.e2fsp.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
