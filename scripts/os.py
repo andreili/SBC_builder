@@ -124,7 +124,13 @@ class OS:
                 if (clean_type == "default"):
                     self.__chroot(f"emerge -ac", dir=dir)
                 if (clean_type == "bdeps"):
-                    self.__chroot(f"emerge --depclean --with-bdeps=n --exclude sys-devel/gcc && ldconfig", dir=dir)
+                    ex_lst = ""
+                    ex_lst += " --exclude sys-devel/gcc"
+                    ex_lst += " --exclude dev-build/cmake"
+                    ex_lst += " --exclude dev-perl/*"
+                    ex_lst += " --exclude dev-build/autoconf"
+                    ex_lst += " --exclude dev-build/automake"
+                    self.__chroot(f"emerge --depclean --with-bdeps=n {ex_lst} && ldconfig", dir=dir)
             if ("sudo" in step):
                 cmd = parse_variables(step["sudo"])
                 Logger.os(f"\tSudo command {cmd}...")
