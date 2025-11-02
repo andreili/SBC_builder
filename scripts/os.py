@@ -302,11 +302,11 @@ class OS:
         self.__extract_tar(arch_path, temp_dir)
         qemu_fn = qemu_arch_name(self.arch)
         self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
-        sqh_fn = parse_variables("%{out_sh}%/root_%{ARCH}%_${DATE}%.sqh")
-        sqh_fn_short = parse_variables("%{out_sh}%/root_%{ARCH}%.sqh")
+        sqh_fn = parse_variables("root_%{ARCH}%_%{DATE}%.sqh")
+        sqh_fn_short = parse_variables("root_%{ARCH}%.sqh")
         self.__make_sqh(temp_dir, f"{out_dir}/{sqh_fn}")
         os.symlink(sqh_fn, f"{out_dir}/{sqh_fn_short}.tmp")
-        os.rename(f"{out_dir}/{sqh_fn_short}.tmp", f"{out_dir}/{sqh_fn_short}.sqh")
+        os.rename(f"{out_dir}/{sqh_fn_short}.tmp", f"{out_dir}/{sqh_fn_short}")
         self.__tmp_clean(temp_dir)
 
     def action(self, action):
