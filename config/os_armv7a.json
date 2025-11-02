@@ -1,0 +1,8 @@
+{
+    "stage3_info":
+    {
+        "marker": "stage3_armv7a_extracted",
+        "server_dir": "https://distfiles.gentoo.org/releases/arm/autobuilds/current-stage3-armv7a-systemd/",
+        "info_file": "latest-stage3-armv7a-systemd.txt"
+    }
+}

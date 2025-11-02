@@ -9,7 +9,7 @@ MARKER_ROOTFS_READY = "rootfs_%{ARCH}%_ready"
 def qemu_arch_name(arch):
     if (arch == "aarch64"):
         return "aarch64"
-    if (arch == "armv7a_hf"):
+    if (fnmatch.fnmatch(arch, "armv*")):
         return "arm"
     return ""
 
@@ -535,7 +535,7 @@ if __name__ == '__main__':
     if (len(sys.argv) == 2) and (sys.argv[1] == "aarch64"):
         magic  = b"\\x7fELF\\x02\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\xb7\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
-    elif (len(sys.argv) == 2) and (sys.argv[1] == "armv7a_hf"):
+    elif (len(sys.argv) == 2) and (fnmatch.fnmatch(sys.argv[1], "armv*")):
         magic  = b"\\x7fELF\\x01\\x01\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x28\\x00"
         mask   = b"\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff\\xff"
     else:

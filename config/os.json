@@ -83,6 +83,14 @@
                 "lines": [ "regulatory.db" ]
             },
             {
+                "file": "/etc/portage/package.mask/stable",
+                "append": false,
+                "lines":
+                [
+                    ">sys-libs/glibc-2.41-r6"
+                ]
+            },
+            {
                 "file": "/etc/portage/package.use/system",
                 "append": false,
                 "lines":

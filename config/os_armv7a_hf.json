@@ -1,7 +1,7 @@
 {
     "stage3_info":
     {
-        "marker": "stage3_armv4a_hf_extracted",
+        "marker": "stage3_armv7a_hf_extracted",
         "server_dir": "https://distfiles.gentoo.org/releases/arm/autobuilds/current-stage3-armv7a_hardfp-systemd/",
         "info_file": "latest-stage3-armv7a_hardfp-systemd.txt"
     }
