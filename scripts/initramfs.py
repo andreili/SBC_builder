@@ -50,8 +50,8 @@ class Initramfs:
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
         self.__chrooted(self.busybox, os, dir, "sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\\>::g' Makefile.flags")
         self.__chrooted(self.busybox, os, dir, "sed -i -e 's:-static-libgcc::' Makefile.flags")
-        #self.__chrooted(self.busybox, os, dir, "make clean && make -j5")
         self.__chrooted(self.busybox, os, dir, "make clean && make -j5")
+        #self.__chrooted(self.busybox, os, dir, "make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
         cfg_or = Path(self.busybox_cfg)
         if (cfg_or.is_file()):

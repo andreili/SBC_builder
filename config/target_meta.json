@@ -42,7 +42,7 @@
                     "store_type": "boot"
                 }
             ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1",
             "modules":
             [
                 "rtl8189ES_linux"
@@ -79,9 +79,9 @@
             "is_shared": true,
             "version": "rtl8189fs",
             "version_type": "branch",
-            "target": [ "modules", "install" ],
+            "target": [ "modules", "strip", "install" ],
             "patch_dir": [ "rtl8189fs" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_dir}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel_%{ARCH}%",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=arm64 MODDESTDIR=%{out_dir}%/kmods/usr/lib/modules/*/kernel/drivers/net/wireless KSRC=%{common_dir}%/kernel_%{ARCH}% INSTALL_MOD_STRIP=1",
             "artifacts":
             []
         }
