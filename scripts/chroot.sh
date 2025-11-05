@@ -40,6 +40,7 @@ else
     chroot ${DDIR}/ /bin/bash -c "${@:4}"
     ret=$?
 fi
+sleep 1s
 umount ${DDIR}/var/tmp
 umount ${DDIR}/usr/src/linux-${KV}
 umount ${DDIR}/proc

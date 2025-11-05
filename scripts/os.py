@@ -1,4 +1,4 @@
-import subprocess, os, sys, getpass, shutil, requests, stat, re
+import subprocess, os, sys, getpass, shutil, requests, stat, re, fnmatch
 from pathlib import Path
 if __name__ != '__main__':
     from . import *
