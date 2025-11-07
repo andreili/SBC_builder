@@ -8,7 +8,7 @@
         "CHOST:armv7a-unknown-linux-gnueabi",
         "KERNEL_ARCH:arm",
         "CROSS_C:%{CHOST}%-",
-        "ARCH:armv7a",
+        "ARCH:armv7a_hf",
         "DTB_FILE:sun8iw21p1-printer.dtb"
     ],
     "targets":
