@@ -79,7 +79,7 @@ new file mode 100644
 index 000000000000..410763276a6b
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-printer.dtso
-@@ -0,0 +1,213 @@
+@@ -0,0 +1,218 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -292,4 +292,9 @@ index 000000000000..410763276a6b
 +       pinctrl-0 = <&gpio_dht11>;
 +       status = "okay";
 +   };
++};
++&uart9 {
++	pinctrl-0 = <&uart9m1_xfer>;
++	pinctrl-names = "default";
++	status = "okay";
 +};
