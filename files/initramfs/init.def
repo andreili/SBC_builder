@@ -3,7 +3,7 @@ CDROOT_PATH="/mnt/cdrom"
 RW_MNT="/mnt/rw_part"
 STATIC="/mnt/livecd"
 OVERLAY="/mnt/overlay"
-LOOP="/root.sqh"
+LOOP="root.sqh"
 LOOPTYPE="squashfs"
 
 BACK_UP="\033[1K\033[0G"
