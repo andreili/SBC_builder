@@ -78,7 +78,7 @@ class Initramfs:
     def __e2fsp(self, os):
         Logger.build(f"Compile e2fsprogs")
         dir = "/media/e2fsp"
-        bins = [ "e2fsck/e2fsck", "resize/resize2fs", "misc/mke2fs" ]
+        bins = [ "e2fsck/e2fsck", "resize/resize2fs" ]#, "misc/mke2fs" ]
         cfg_cmd  = "--bindir=/bin"
         #--disable-fsck
         cfg_cmd += " --bindir=/bin --with-root-prefix=\"\" --disable-nls"
@@ -93,7 +93,7 @@ class Initramfs:
         self.__chrooted(self.e2fsp, os, dir, f"make -j5 && strip --strip-all {" ".join(bins)}")
         for bin in bins:
             shutil.copy(self.e2fsp.work_dir + f"/{bin}", f"{self.files_dir}/")
-        shutil.copy(self.e2fsp.work_dir + f"/misc/mke2fs.conf", f"{self.files_dir}/")
+        #shutil.copy(self.e2fsp.work_dir + f"/misc/mke2fs.conf", f"{self.files_dir}/")
 
     def __cpio(self):
         Logger.build(f"\tCreate init.cpio")
@@ -145,8 +145,8 @@ class Initramfs:
         f.write(f"file /bin/udevadm            build/common_{self.arch}/initrd/udevadm            755 0 0\n")
         f.write(f"file /bin/e2fsck             build/common_{self.arch}/initrd/e2fsck             755 0 0\n")
         f.write(f"file /bin/resize2fs          build/common_{self.arch}/initrd/resize2fs          755 0 0\n")
-        f.write(f"file /etc/mke2fs.conf        build/common_{self.arch}/initrd/mke2fs.conf        755 0 0\n")
-        f.write(f"file /bin/mke2fs2            build/common_{self.arch}/initrd/mke2fs             755 0 0\n")
+        #f.write(f"file /etc/mke2fs.conf        build/common_{self.arch}/initrd/mke2fs.conf        755 0 0\n")
+        #f.write(f"file /bin/mke2fs2            build/common_{self.arch}/initrd/mke2fs             755 0 0\n")
         f.write("file /etc/init.def           files/initramfs/init.def        755 0 0\n")
         f.write("file /etc/init.script        files/initramfs/init.script     755 0 0\n")
         f.write("file /init                   files/initramfs/init            755 0 0\n")
