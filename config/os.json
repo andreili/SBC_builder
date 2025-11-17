@@ -117,7 +117,8 @@
                     "sys-kernel/linux-firmware savedconfig",
                     "sys-kernel/genkernel -firmware",
                     "net-misc/networkmanager tools",
-                    "sys-apps/util-linux static-libs"
+                    "sys-apps/util-linux static-libs",
+                    "app-crypt/gnupg nls"
                 ]
             },
             {
@@ -205,7 +206,8 @@
                     "app-portage/gentoolkit",
                     "sys-devel/crossdev",
                     "sys-process/htop",
-                    "virtual/klipper"
+                    "virtual/klipper",
+                    "sec-keys/openpgp-keys-gentoo-developers"
                 ],
                 "oneshot": false
             },
