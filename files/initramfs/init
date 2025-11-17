@@ -69,6 +69,7 @@ then
     run findmediamount "cdrom"   "/livecd"  "REAL_ROOT" "${CDROOT_PATH}" "${DEVICES}" || run_emergency_shell
 else
     good_msg "Mounting live partition /dev/${LIVE_PART} to ${CDROOT_PATH}"
+    run e2fsck -p /dev/${LIVE_PART}
     run mount -o defaults /dev/${LIVE_PART} "${CDROOT_PATH}"
 fi
 run mount -o remount,ro "${CDROOT_PATH}"
@@ -77,12 +78,14 @@ then
     run findmediamount "rw_part" "/rw_part" "RW_ROOT"   "${RW_MNT}"      "${DEVICES}" || run_emergency_shell
 else
     good_msg "Mounting read-write partition /dev/${RW_PART} to ${RW_MNT}"
+    run e2fsck -p /dev/${RW_PART}
     mount -o defaults /dev/${RW_PART} "${RW_MNT}"
     if [ $? -ne 0 ]
     then
         good_msg "/dev/${RW_PART} not formatted, creating ext2 filesystem ..."
         mkfs.ext2 /dev/${RW_PART} || run_emergency_shell
         good_msg "Mounting read-write partition /dev/${RW_PART} to ${RW_MNT} ..."
+        run e2fsck -p /dev/${RW_PART}
         mount -o defaults /dev/${RW_PART} "${RW_MNT}" || run_emergency_shell
     fi
 fi
@@ -90,14 +93,14 @@ fi
 CHROOT=${NEW_ROOT}
 
 run cd "${CHROOT}"
-good_msg 'Mounting squashfs filesystem'
+good_msg 'Mounting ${LOOPTYPE} filesystem'
 upperdir="${RW_MNT}/.upper"
 workdir="${RW_MNT}/.work"
 for i in "${RW_MNT}" "${STATIC}" "${OVERLAY}" "${upperdir}" "${workdir}"
 do
     [ ! -d "${i}" ] && run mkdir -p "${i}"
 done
-run mount -t squashfs -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}" || run_emergency_shell
+run mount -v -t ${LOOPTYPE} -o loop,ro "${CDROOT_PATH}/${LOOP}" "${STATIC}" || run_emergency_shell
 if [ -d ${CDROOT_PATH}/modules ]
 then
     good_msg "Adding all modules in ${CDROOT_PATH}/modules"
@@ -109,7 +112,7 @@ then
         then
             run mkdir -p "${OVERLAY}/.${mod}" || run_emergency_shell
         fi
-        run mount -o loop,ro "${module}" "${OVERLAY}/.${mod}" || run_emergency_shell
+        run mount -t ${LOOPTYPE} -o loop,ro "${module}" "${OVERLAY}/.${mod}" || run_emergency_shell
         mod_path="${mod_path}:${OVERLAY}/.${mod}"
         # Assign variable with paths to modules mount point
         mods="${mods} ${OVERLAY}/.${mod}"
