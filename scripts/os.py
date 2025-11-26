@@ -407,15 +407,15 @@ class OS:
             if (part_size > (90 * 1024 * 1024)) and (i == idx):
                 # required partition
                 #print(f"\tIdx:{i} Size:{part_size}")
-                self.__sudo(f"losetup -o {offset} --sizelimit {part_size} /dev/loop0 {img_or_blk}",
-                    cwd=ROOT_DIR, shell=True)#, stdout=subprocess.DEVNULL)
+                self.__sudo(f"losetup -o {offset} --sizelimit {part_size} /dev/loop1 {img_or_blk}",
+                    cwd=ROOT_DIR)#, stdout=subprocess.DEVNULL)
                 return True
             i += 1
             offset += part_size
         return False
 
     def __umount_loop(self):
-        self.__sudo(["losetup", "-d", "/dev/loop0"], stdout=subprocess.DEVNULL)
+        self.__sudo("losetup -d /dev/loop1 && sleep 2s", stdout=subprocess.DEVNULL)
 
     def __mount_dev(self, dev, dir):
         self.__sudo(["mount", dev, dir], stdout=subprocess.DEVNULL)
@@ -427,7 +427,7 @@ class OS:
         Logger.install("\tCreate filesystems...")
         for i in range(len(self.partitions)):
             if (not is_blk) and (self.__mount_loop(img_or_blk, i)):
-                self.__sudo(["mkfs.ext2", "/dev/loop0"], stdout=subprocess.DEVNULL)
+                self.__sudo(["mkfs.ext2", "/dev/loop1"], stdout=subprocess.DEVNULL)
                 self.__umount_loop()
             if is_blk:
                 idx = i + 1
@@ -499,7 +499,7 @@ class OS:
                 self.__mount_dev(f"{img_or_blk}{idx}", self.mount_dir)
             else:
                 self.__mount_loop(img_or_blk, i)
-                self.__mount_dev("/dev/loop0", self.mount_dir)
+                self.__mount_dev("/dev/loop1", self.mount_dir)
             if (part.name == "boot"):
                 self.__install_boot(self.mount_dir)
             if (part.name == "rw"):
