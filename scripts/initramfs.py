@@ -137,7 +137,7 @@ class Initramfs:
         f.write("slink /bin/ts                           busybox                         755 0 0\n")
         f.write("slink /lib64                            /lib                            755 0 0\n")
         f.write("slink /sbin                             /bin                            755 0 0\n")
-        f.write("slink /etc/mtab                         /proc/self/mounts               755 0 0\n")
+        f.write("slink /etc/mtab                         /proc/self/mounts               777 0 0\n")
         f.write("slink /dev/stderr                       /proc/self/fd/2                 777 0 0\n")
         f.write("slink /dev/stdin                        /proc/self/fd/0                 777 0 0\n")
         f.write("slink /dev/std/out                      /proc/self/fd/1                 777 0 0\n")
