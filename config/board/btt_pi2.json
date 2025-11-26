@@ -53,10 +53,18 @@
                     "img_offset": 64
                 },
                 {
+                    "file": "idbloader.img",
+                    "store_type": "boot"
+                },
+                {
                     "file": "u-boot.itb",
                     "store_type": "dd",
                     "block_size": "512b",
                     "img_offset": 16384
+                },
+                {
+                    "file": "u-boot.itb",
+                    "store_type": "boot"
                 },
                 {
                     "file": "u-boot-rockchip-spi.bin",
@@ -105,10 +113,9 @@
         ],
         "overlays":
         [
-            "/dtb/%{DTO_DIR}%/rk3566-sfc-nor.dtbo",
-            "/dtb/%{DTO_DIR}%/rk3566-w1-gpio4-pb2.dtbo",
-            "/dtb/%{DTO_DIR}%/rk3566-dsi1.dtbo",
-            "/dtb/%{DTO_DIR}%/rk3566-pcie.dtbo"
+            "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-printer.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-sfc.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-dsi1.dtbo"
         ]
     }
 }
