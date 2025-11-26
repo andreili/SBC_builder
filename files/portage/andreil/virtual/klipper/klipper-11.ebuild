@@ -31,4 +31,5 @@ RDEPEND="
 	sys-apps/i2c-tools
 	sys-fs/f2fs-tools
 	dev-python/python-mpv
+	app-misc/mosquitto
 "
