@@ -50,6 +50,7 @@ class Initramfs:
         #self.__chrooted(self.busybox, os, dir, "make menuconfig")
         self.__chrooted(self.busybox, os, dir, "sed -i -r -e 's:[[:space:]]?-(Werror|Os|falign-(functions|jumps|loops|labels)=1|fomit-frame-pointer)\\>::g' Makefile.flags")
         self.__chrooted(self.busybox, os, dir, "sed -i -e 's:-static-libgcc::' Makefile.flags")
+        self.__chrooted(self.busybox, os, dir, "make clean")
         self.__chrooted(self.busybox, os, dir, "make -j5")
         #self.__chrooted(self.busybox, os, dir, "make -j5")
         shutil.copy(self.busybox.work_dir + "/busybox", f"{self.files_dir}/")
@@ -72,6 +73,7 @@ class Initramfs:
         makefile = Path(f"{self.eudev.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.eudev, os, dir, f"./autogen.sh && ./configure {cfg_cmd}")
+        self.__chrooted(self.eudev, os, dir, "make clean")
         self.__chrooted(self.eudev, os, dir, f"make -j5 && strip --strip-all {udev_bin}")
         shutil.copy(self.eudev.work_dir + f"/{udev_bin}", f"{self.files_dir}/")
 
@@ -90,6 +92,7 @@ class Initramfs:
         makefile = Path(f"{self.e2fsp.work_dir}/Makefile")
         if (not makefile.is_file()):
             self.__chrooted(self.e2fsp, os, dir, f"LDFLAGS='-static' ./configure {cfg_cmd}")
+        self.__chrooted(self.e2fsp, os, dir, "make clean")
         self.__chrooted(self.e2fsp, os, dir, f"make -j5 && strip --strip-all {" ".join(bins)}")
         for bin in bins:
             shutil.copy(self.e2fsp.work_dir + f"/{bin}", f"{self.files_dir}/")
