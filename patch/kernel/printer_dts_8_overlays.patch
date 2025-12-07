@@ -299,7 +299,7 @@ index 000000000000..410763276a6b
 +		compatible = "pwm-fan";
 +		#cooling-cells = <2>;
 +		cooling-levels = <0 50 100 150 200 255>;
-+		pwms = <&pwm5 0 10000000>;
++		pwms = <&pwm5 0 10000000 PWM_POLARITY_INVERTED>;
 +		status = "okay";
 +	};
 +
