@@ -32,4 +32,6 @@ RDEPEND="
 	sys-fs/f2fs-tools
 	dev-python/python-mpv
 	app-misc/mosquitto
+	x11-apps/xset
+	x11-apps/xsetroot
 "
