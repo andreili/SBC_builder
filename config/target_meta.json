@@ -24,7 +24,7 @@
             "config": true,
             "config_target": "menuconfig",
             "is_shared": true,
-            "version": "v6.18-rc3",
+            "version": "v6.18",
             "version_type": "tag",
             "patch_dir": [ "kernel", "kernel/rockchip64-6.18" ],
             "config_def": "printer_defconfig",

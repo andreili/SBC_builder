@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 6.18.0-rc3 Kernel Configuration
+# Linux/arm64 6.18.0 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="aarch64-unknown-linux-gnu-gcc (Gentoo 14.3.1_p20251017 p4) 14.3.1 20251017"
 CONFIG_CC_IS_GCC=y
