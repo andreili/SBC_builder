@@ -39,7 +39,7 @@ class Tree:
 
     def print(self, level, level_max, minsz):
         self.childs = sorted(self.childs, key=lambda x: x.size, reverse=True)
-        if (level > level_max):# or (self.size == 0) or (self.size < minsz):
+        if (level > level_max) or (self.size == 0) or (self.size < minsz):
             return
         s = "\t" * level
         sz = sizeof_fmt(self.size - self.size_self)
@@ -61,4 +61,4 @@ for line in p.stdout:
     size = parts[3]
     fn = parts[5].decode("utf-8").replace(f"{bn}/", "")
     root.add(fn, int(size))
-root.print(0, 10, 1024*80)
+root.print(0, 3, 1024*2)

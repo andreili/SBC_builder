@@ -50,6 +50,20 @@ class OS:
             self.st3_install = js_data["install"]
             self.finalize = js_data["finalize"]
             add_vars(js_data["variables"])
+        if self.os_target != "":
+            with open(f"{CONFIG_DIR}/os_{self.os_target}.json") as json_data:
+                js_data = json.load(json_data)
+                json_data.close()
+                if ("prepare" in js_data):
+                    self.st3_prepare["steps"].append(js_data["prepare"]["steps"])
+                if ("update" in js_data):
+                    self.st3_update["steps"].append(js_data["update"]["steps"])
+                if ("install" in js_data):
+                    self.st3_install["steps"].append(js_data["install"]["steps"])
+                if ("finalize" in js_data):
+                    self.finalize["steps"].append(js_data["finalize"]["steps"])
+                if ("variables" in js_data):
+                    add_vars(js_data["variables"])
         add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
@@ -159,10 +173,11 @@ class OS:
                 marker_set(st[0]["marker"], self.board)
         marker_set(MARKER_ROOTFS_READY, self.board)
 
-    def set_board(self, board):
+    def set_board(self, board, os_target):
         self.board = board
+        self.os_target = os_target
         self.arch = parse_variables("%{ARCH}%")
-        self.root_dir = f"{ROOT_DIR}/root_{self.arch}"
+        self.root_dir = f"{ROOT_DIR}/root_{self.os_target}_{self.arch}"
         add_var("ROOTFS", self.root_dir)
 
     def sudo(self, args, cwd=None, env=None, stdout=None, shell=None):

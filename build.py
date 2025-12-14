@@ -14,6 +14,7 @@ parser.add_argument('--target', type=str, default='', help=f'Target to build, de
     ' Kernel target supports sub-targets: "kernel-defconfig,kernel-config"')
 parser.add_argument('--sync', action='store_true', help='Sync all source with latest')
 parser.add_argument('--kernel-scan', action='store_true', help='Scan all kernel drivers with DTS')
+parser.add_argument('--os_target', type=str, default='printer', help=f'Target for OS installation')
 parser.add_argument('--os_act', type=str, default='', help=f'Actions to OS ({os_actions}), comma separated list')
 parser.add_argument('--install', type=str, default='', help='Install to selected directory/device')
 args = parser.parse_args()
@@ -24,7 +25,7 @@ if (args.board == ''):
 
 targets_meta = Target.load_meta(f"config/target_meta.json")
 target_board = Board(args.board, f"config/board/{args.board}.json", targets_meta)
-os.set_board(target_board)
+os.set_board(target_board, args.os_target)
 os.load_info()
 
 os.check_rootfs()

@@ -83,7 +83,7 @@ else
     if [ $? -ne 0 ]
     then
         good_msg "/dev/${RW_PART} not formatted, creating ext2 filesystem ..."
-        mkfs.ext2 /dev/${RW_PART} || run_emergency_shell
+        #mkfs.ext2 /dev/${RW_PART} || run_emergency_shell
         good_msg "Mounting read-write partition /dev/${RW_PART} to ${RW_MNT} ..."
         run e2fsck -p /dev/${RW_PART}
         mount -o defaults /dev/${RW_PART} "${RW_MNT}" || run_emergency_shell

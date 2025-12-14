@@ -1,0 +1,29 @@
+{
+    "variables":
+    [
+        "USER_LOGIN:srv",
+        "USER_ID:1100"
+    ],
+    "install":
+    {
+        "steps":
+        [
+            {
+                "soft_inst":
+                [
+                    "sys-devel/crossdev",
+                    "virtual/klipper"
+                ],
+                "oneshot": false
+            },
+            { "chroot": "crossdev -s4 arm-none-eabi" }
+        ]
+    },
+    "finalize":
+    {
+        "steps":
+        [
+            { "soft_clean": "default" }
+        ]
+    }
+}
