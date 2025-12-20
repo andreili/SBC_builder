@@ -132,45 +132,6 @@
                     "net-misc/networkmanager -bluetooth -modemmanager -ppp"
                 ]
             },
-            {
-                "file": "/etc/portage/package.use/klipper",
-                "append": false,
-                "lines":
-                [
-                    "virtual/klipper mainsail",
-                    "app-misc/mime-types nginx",
-                    "media-libs/mesa -proprietary-codecs",
-                    "x11-base/xorg-server minimal",
-                    "sys-apps/iproute2 minimal",
-                    "dev-perl/* minimal",
-                    "dev-lang/perl dev-perl",
-                    "sys-apps/systemd policykit",
-                    "x11-libs/cairo X",
-                    "dev-python/pycairo X",
-                    "media-libs/libepoxy -egl",
-                    "net-wireless/wpa_supplicant dbus",
-                    "#x11-base/xorg-server suid",
-                    "cross-arm-none-eabi/newlib nano",
-                    "media-libs/libepoxy egl",
-                    "#net-misc/networkmanager -tools",
-                    "media-libs/libglvnd X",
-                    "media-libs/libv4l bpf",
-                    "media-video/ffmpeg x264 x265 v4l",
-                    "#media-libs/libv4l -bpf",
-                    "sys-devel/gcc fortran",
-                    "dev-python/pillow webp",
-                    "virtual/imagemagick-tools jpeg tiff",
-                    "media-gfx/imagemagick jpeg tiff",
-                    "sci-libs/atlas lapack threads",
-                    "dev-lang/rust system-llvm",
-                    "sys-apps/busybox static -pam savedconfig",
-                    "virtual/libcrypt static-libs",
-                    "sys-libs/libxcrypt static-libs",
-                    "sys-fs/e2fsprogs static-libs",
-                    "media-video/mpv xv",
-                    "media-libs/freetype harfbuzz"
-                ]
-            },
             { "chroot": "emerge-webrsync" }
         ]
     },
@@ -216,9 +177,16 @@
                     "OVERLAY_CACHE_METHOD='sqlite'"
                 ]
             },
+            { "chroot": "dispatch-conf" },
             { "chroot": "eselect news read" },
-            { "chroot": "eix-update" },
-            { "soft_clean": "default" }
+            {
+                "soft_inst":
+                [
+                    "app-eselect/eselect-repository"
+                ],
+                "oneshot": false
+            },
+            { "chroot": "eix-update" }
         ]
     },
     "finalize":

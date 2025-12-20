@@ -9,21 +9,140 @@
         "steps":
         [
             {
+                "file": "/etc/portage/package.use/system",
+                "append": false,
+                "lines":
+                [
+                    "app-portage/eix sqlite",
+                    "sys-kernel/genkernel -firmware",
+                    "#sys-kernel/linux-firmware savedconfig",
+                    "net-misc/networkmanager modemmanager -ppp wifi -wext bluetooth",
+                    "sys-process/htop lm-sensors",
+                    "net-wireless/wpa_supplicant dbus",
+                    "sys-kernel/genkernel firmware",
+                    "sys-kernel/linux-firmware savedconfig"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/zabbix",
+                "append": false,
+                "lines":
+                [
+                    "net-analyzer/zabbix -sqlite curl frontend ldap mysql server snmp ssh -postgres -agent2 agent",
+                    "net-analyzer/fping suid"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/happ",
+                "append": false,
+                "lines":
+                [
+                    "app-misc/homeassistant-min bluetooth_le_tracker mysql nextcloud systemmonitor utility_meter tuya smartthings accuweather homekit_controller github",
+                    "net-proxy/haproxy -slz",
+                    "app-crypt/certbot -certbot-nginx"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/gitea",
+                "append": false,
+                "lines":
+                [
+                    "acct-user/git gitea"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/nextcloud",
+                "append": false,
+                "lines":
+                [
+                    "dev-lang/php nls sysvipc sockets bcmath mysqli curl pdo xmlwriter gd truetype zip intl xmlreader fpm mysql jpeg png ldap ftp exif gmp sodium pcntl imap fpm",
+                    "media-libs/gd truetype",
+                    "app-eselect/eselect-php fpm",
+                    "app-misc/mime-types nginx",
+                    "virtual/setver -sqlite mysql",
+                    "www-servers/nginx NGINX_MODULES_HTTP: v2 v3",
+                    "media-libs/vips exif fftw heif imagemagick jpeg2k jpegxl pango pdf svg tiff webp",
+                    "app-text/poppler cairo",
+                    "app-text/poppler png tiff",
+                    "media-libs/libheif ffmpeg x265",
+                    "media-libs/tiff jpeg webp",
+                    "media-video/ffmpeg svg theora webp x264 x265 qsv X",
+                    "sci-libs/dlib ffmpeg jpeg png webp lapack cblas X",
+                    "media-libs/freetype harfbuzz",
+                    "app-misc/mosquitto websockets",
+                    "sys-devel/gcc fortran"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/mail",
+                "append": false,
+                "lines":
+                [
+                    "net-mail/dovecot mysql ldap",
+                    "app-antivirus/clamav rar",
+                    "mail-filter/spamassassin mysql ldap",
+                    "mail-filter/amavisd-new clamav ldap mysql spamassassin",
+                    "dev-perl/perl-ldap sasl",
+                    "mail-client/roundcube vhosts mysql",
+                    "www-apps/postfixadmin vhosts imap",
+                    "mail-mta/postfix ldap mysql sasl",
+                    "dev-db/phpmyadmin vhosts"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.accept_keywords/mail",
+                "append": false,
+                "lines":
+                [
+                    "<www-apps/postfixadmin-9999 **",
+                    "<mail-client/roundcube-9999 **",
+                    "<dev-perl/MIME-EncWords-9999 **",
+                    "<dev-php/pdlib-9999 **",
+                    "<sci-libs/dlib-9999 **",
+                    "<dev-db/mysql-9999 **"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.unmask",
+                "append": false,
+                "lines":
+                [
+                    "<dev-db/mysql-9999"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.license",
+                "append": false,
+                "lines":
+                [
+                    "app-arch/unrar unRAR",
+                    "app-arch/lha lha",
+                    "net-analyzer/fping fping"
+                ]
+            },
+            { "comment": "Need to add a required package access" },
+            { "chroot": "eselect repository add jkolo git https://git.kolosowscy.pl/jkolo/gentoo-overlay.git" },
+            { "chroot": "eselect repository list -i" },
+            { "chroot": "eix-sync" },
+            { "action": "update" },
+            { "comment": "Install MySQL first - othervise can install other DB engine" },
+            { "chroot": "emerge -av1b net-libs/libtirpc dev-db/mysql" },
+            {
                 "soft_inst":
                 [
-                    "sys-devel/crossdev",
-                    "virtual/klipper"
+                    "virtual/server",
+                    "virtual/mail"
                 ],
                 "oneshot": false
             },
-            { "chroot": "crossdev -s4 arm-none-eabi" }
+            { "soft_clean": "default" }
         ]
     },
     "finalize":
     {
         "steps":
         [
-            { "soft_clean": "default" }
+            { "soft_clean": "bdeps" }
         ]
     }
 }

@@ -55,13 +55,13 @@ class OS:
                 js_data = json.load(json_data)
                 json_data.close()
                 if ("prepare" in js_data):
-                    self.st3_prepare["steps"].append(js_data["prepare"]["steps"])
+                    self.st3_prepare["steps"] += js_data["prepare"]["steps"]
                 if ("update" in js_data):
-                    self.st3_update["steps"].append(js_data["update"]["steps"])
+                    self.st3_update["steps"] += js_data["update"]["steps"]
                 if ("install" in js_data):
-                    self.st3_install["steps"].append(js_data["install"]["steps"])
+                    self.st3_install["steps"] += js_data["install"]["steps"]
                 if ("finalize" in js_data):
-                    self.finalize["steps"].append(js_data["finalize"]["steps"])
+                    self.finalize["steps"] += js_data["finalize"]["steps"]
                 if ("variables" in js_data):
                     add_vars(js_data["variables"])
         add_var("ROOT_FS", self.root_dir)
@@ -137,7 +137,9 @@ class OS:
                 clean_type = step["soft_clean"]
                 if (clean_type == "default"):
                     self.__chroot(f"emerge -ac", dir=dir)
-                if (clean_type == "bdeps"):
+                elif (clean_type == "bdeps"):
+                    self.__chroot(f"emerge --depclean --with-bdeps=n && ldconfig", dir=dir)
+                elif (clean_type == "bdeps_light"):
                     ex_lst = ""
                     ex_lst += " --exclude sys-devel/gcc"
                     ex_lst += " --exclude dev-build/cmake"
@@ -253,7 +255,7 @@ class OS:
         my_env = os.environ.copy()
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         date = datetime.datetime.today().strftime('%Y_%m_%d')
-        arch_path = parse_variables("%{out_sh}%/back_" + self.arch + "_" + name + "_" + date + ".tar.xz")
+        arch_path = parse_variables("%{out_sh}%/" + f"back_{self.os_target}_{self.arch}_{name}_{date}.tar.xz")
         self.__sudo(["tar", "-cJpf", arch_path,
             f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
             cwd=dir, env=my_env)
@@ -317,8 +319,8 @@ class OS:
         self.__extract_tar(arch_path, temp_dir)
         qemu_fn = qemu_arch_name(self.arch)
         self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
-        sqh_fn = parse_variables("root_%{ARCH}%_%{DATE}%.sqh")
-        sqh_fn_short = parse_variables("root_%{ARCH}%.sqh")
+        sqh_fn = parse_variables(f"root_{self.os_target}" + "%{ARCH}%_%{DATE}%.sqh")
+        sqh_fn_short = parse_variables(f"root_{self.os_target}" + "%{ARCH}%.sqh")
         self.__make_sqh(temp_dir, f"{out_dir}/{sqh_fn}")
         os.symlink(sqh_fn, f"{out_dir}/{sqh_fn_short}.tmp")
         os.rename(f"{out_dir}/{sqh_fn_short}.tmp", f"{out_dir}/{sqh_fn_short}")

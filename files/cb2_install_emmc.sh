@@ -15,8 +15,8 @@ n
 
 w
 EOF
-dd if=/mnt/cdrom/idbloader.img of= ${TGTDEV} bs=512 seek=64
-dd if=/mnt/cdrom/u-boot.itb of= ${TGTDEV} bs=512 seek=16384
+dd if=/mnt/cdrom/idbloader.img of=${TGTDEV} bs=512 seek=64
+dd if=/mnt/cdrom/u-boot.itb of=${TGTDEV} bs=512 seek=16384
 mkfs.ext4 ${TGTDEV}p1
 mkfs.ext4 ${TGTDEV}p2
 mount ${TGTDEV}p1 /media
