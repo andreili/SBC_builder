@@ -9,7 +9,7 @@
         "KERNEL_ARCH:arm64",
         "CROSS_C:%{CHOST}%-",
         "TPL_BIN:rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.19.bin",
-        "ATF_PLATFORM:rk3568",
+        "ATF_PLATFORM:rk3588",
         "BL31_BIN:bl31.elf",
         "ARCH:aarch64",
         "DTB_FILE:rockchip/rk3588-orangepi-5-plus.dtb",
