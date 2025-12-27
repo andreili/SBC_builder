@@ -44,6 +44,9 @@ do
         rw_part=*)
             RW_PART=${x#*=}
             ;;
+        rescue|emergency)
+            INIT_SHELL=1
+            ;;
     esac
 done
 
@@ -59,6 +62,11 @@ echo "" > /proc/sys/kernel/hotplug
 
 good_msg "Additional wait for all devices is up."
 run sleep 3
+
+if [ "${INIT_SHELL}" -eq "1" ]
+then
+    run_emergency_shell
+fi
 
 #run mkdir -p "${NEW_ROOT}"
 CHROOT="${NEW_ROOT}"

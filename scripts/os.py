@@ -64,6 +64,7 @@ class OS:
                     self.finalize["steps"] += js_data["finalize"]["steps"]
                 if ("variables" in js_data):
                     add_vars(js_data["variables"])
+        add_var("OS_TARGET", self.os_target)
         add_var("ROOT_FS", self.root_dir)
 
     def actions_list(self):
@@ -476,17 +477,18 @@ class OS:
         dto_dir = parse_variables("%{DTO_DIR}%")
         cmd  = f"mkdir -p {extl_dir} && touch {out_dir}/livecd && "
         cmd += f"echo 'menu title Boot Options.\n\n"
-        cmd += f"timeout 20\ndefault Kernel_def\n\n"
-        cmd += f"label Kernel_def\n"
-        cmd += f"\tkernel /Image\n"
-        cmd += f"\tfdtdir /dtb/\n"
-        cmd += f"\tdevicetree /dtb/{dtb_file}\n"
-        cmd += f"\tinitrd /uInitrd\n"
+        cmd += f"timeout 20\ndefault Kernel_def\n"
+        cmd_k  = f"\tkernel /Image\n"
+        cmd_k += f"\tfdtdir /dtb/\n"
+        cmd_k += f"\tdevicetree /dtb/{dtb_file}\n"
+        cmd_k += f"\tinitrd /uInitrd\n"
         if ("overlays" in self.board.installs):
             overlays = self.board.installs["overlays"]
             overlays = " ".join(overlays)
             overlays = parse_variables(overlays)
-            cmd += f"\tfdtoverlays {overlays}\n"
+            cmd_k += f"\tfdtoverlays {overlays}\n"
+        cmd += f"\nlabel Kernel_def\n{cmd_k}"
+        cmd += f"\nlabel Kernel_emergency\n{cmd_k}\tappend emergency"
         cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
         Logger.install(f"\tCopy target-specific files")
