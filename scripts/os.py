@@ -281,7 +281,8 @@ class OS:
         Logger.os("Create squashed archive...")
         t_file = Path(to_file)
         if (t_file.is_file()):
-            shutil.move(to_file, f"{to_file}.bak")
+            shutil.rmtree(to_file, ignore_errors=True)
+            #shutil.move(to_file, f"{to_file}.bak")
         self.__sudo(f"mksquashfs {root_path} {to_file} -comp xz -xattrs-exclude ^system.nfs {extra}", shell=True)
         user = getpass.getuser()
         self.__sudo(["chown", user + ":" + user, to_file])
