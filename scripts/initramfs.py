@@ -14,6 +14,7 @@ def try_cfg(name):
 class Initramfs:
     def __init__(self):
         self.arch = parse_variables("%{ARCH}%")
+        self.os_target = parse_variables("%{OS_TARGET}%")
         self.busybox = Sources("busybox", "https://git.busybox.net/busybox")
         self.busybox.init_source_path("", True)
         self.busybox.set_git_params("@", "head")
@@ -27,7 +28,7 @@ class Initramfs:
         self.build_dir = f"{BUILD_DIR}/common_{self.arch}"
         self.files_dir = f"{self.build_dir}/initrd"
         self.out_dir = f"{OUT_DIR}"
-        self.root_dir = f"{ROOT_DIR}/root_{self.arch}/media/initramfs_tmp"
+        self.root_dir = f"{ROOT_DIR}/root_{self.os_target}_{self.arch}/media/initramfs_tmp"
         os.makedirs(self.files_dir, exist_ok=True)
 
     def __prepare(self):
@@ -196,7 +197,7 @@ class Initramfs:
         p = subprocess.Popen(f"sudo cat {self.files_dir}/init.cpio | sudo cpio -idm && sudo tar cJpf ../{fn} . && cp ../{fn} {self.out_dir}/{fn}",
             shell=True, cwd=dir_tmp)
         p.wait()
-        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/{fn}", f"{ROOT_DIR}/root_{self.arch}/usr/shutdown.tar.xz"])
+        p = subprocess.Popen(["sudo", "cp", f"{self.out_dir}/{fn}", f"{ROOT_DIR}/root_{self.os_target}_{self.arch}/usr/shutdown.tar.xz"])
         p.wait()
         p = subprocess.Popen(["sudo", "rm", "-rf", dir_tmp])
         p.wait()
