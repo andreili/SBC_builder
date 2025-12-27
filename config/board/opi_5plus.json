@@ -9,7 +9,8 @@
         "KERNEL_ARCH:arm64",
         "CROSS_C:%{CHOST}%-",
         "TPL_BIN:rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.19.bin",
-        "BL31_BIN:rk3588_bl31_v1.51.elf",
+        "ATF_PLATFORM:rk3568",
+        "BL31_BIN:bl31.elf",
         "ARCH:aarch64",
         "DTB_FILE:rockchip/rk3588-orangepi-5-plus.dtb",
         "DTO_FILES:rockchip/rk3588-*.dtbo",
@@ -17,6 +18,21 @@
     ],
     "targets":
     [
+        {
+            "parent": "atf",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "",
+            "target": [ "bl31" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0",
+            "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/bl31/bl31.elf",
+                    "store_type": "temp"
+                }
+            ]
+        },
         {
             "parent": "rkbin",
             "version": "@",
@@ -27,10 +43,6 @@
             [
                 {
                     "file": "bin/rk35/%{TPL_BIN}%",
-                    "store_type": "temp"
-                },
-                {
-                    "file": "bin/rk35/%{BL31_BIN}%",
                     "store_type": "temp"
                 }
             ]
@@ -43,7 +55,7 @@
             "config_def": "orangepi-5-plus-rk3588_defconfig",
             "deps":
             [
-                "rkbin"
+                "atf", "rkbin"
             ],
             "artifacts":
             [

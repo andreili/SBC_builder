@@ -8,8 +8,9 @@
         "CHOST:aarch64-unknown-linux-gnu",
         "KERNEL_ARCH:arm64",
         "CROSS_C:%{CHOST}%-",
+        "ATF_PLATFORM:rk3568",
         "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
-        "BL31_BIN:rk3568_bl31_v1.45.elf",
+        "BL31_BIN:bl31.elf",
         "ARCH:aarch64",
         "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb",
         "DTO_FILES:rockchip/rk3566-*.dtbo",
@@ -17,6 +18,21 @@
     ],
     "targets":
     [
+        {
+            "parent": "atf",
+            "version": "@",
+            "version_type": "head",
+            "patch_dir": "",
+            "target": [ "bl31" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0",
+            "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/bl31/bl31.elf",
+                    "store_type": "temp"
+                }
+            ]
+        },
         {
             "parent": "rkbin",
             "version": "@",
@@ -28,10 +44,6 @@
                 {
                     "file": "bin/rk35/%{TPL_BIN}%",
                     "store_type": "temp"
-                },
-                {
-                    "file": "bin/rk35/%{BL31_BIN}%",
-                    "store_type": "temp"
                 }
             ]
         },
@@ -42,7 +54,7 @@
             "patch_dir": "uboot/btt",
             "deps":
             [
-                "rkbin"
+                "atf", "rkbin"
             ],
             "artifacts":
             [
