@@ -32,4 +32,5 @@ RDEPEND="
 	x11-apps/xsetroot
 	x11-apps/xset
 	sys-fs/f2fs-tools
+	sys-apps/i2c-tools
 "
