@@ -279,11 +279,11 @@ class OS:
         self.__sudo(["tar", "xf", arch_fn], cwd=to_path, env=my_env)
 
     def __make_sqh(self, root_path, to_file, extra=""):
-        Logger.os("Create squashed archive...")
+        Logger.os(f"Create squashed archive {to_file}...")
         t_file = Path(to_file)
         if (t_file.is_file()):
-            shutil.rmtree(to_file, ignore_errors=True)
-            #shutil.move(to_file, f"{to_file}.bak")
+            # remove existing file
+            os.remove(to_file)
         self.__sudo(f"mksquashfs {root_path} {to_file} -comp xz -xattrs-exclude ^system.nfs {extra}", shell=True)
         user = getpass.getuser()
         self.__sudo(["chown", user + ":" + user, to_file])
