@@ -455,9 +455,13 @@ class OS:
     def __copy_file(self, src, dst):
         src = parse_variables(src)
         dst = parse_variables(dst)
-        Logger.install(f"\tCopy {src}")
-        dir_ch = Path(src)
-        self.__sudo(["mkdir", "-p", dst], stdout=subprocess.DEVNULL)
+        Logger.install(f"\tCopy {src} -> {dst}")
+        if (dst[-1] != '/'):
+            p_dst = Path(os.path.dirname(dst))
+        else:
+            p_dst = Path(dst)
+        dir_ch = Path(p_dst)
+        self.__sudo(["mkdir", "-p", p_dst], stdout=subprocess.DEVNULL)
         if (dir_ch.is_dir()):
             self.__sudo(["cp", "-Hr", src, dst], stdout=subprocess.DEVNULL)
         else:
@@ -497,12 +501,14 @@ class OS:
                 target.install_files(out_dir, self.board.out_sh, "boot", self.__copy_file, self.__dd_bin)
             else:
                 target.install_files(out_dir, self.board.out_dir, "boot", self.__copy_file, self.__dd_bin)
-        Logger.install(f"\tCopy initial RAM-disk")
-        self.__sudo(f" cp -H {self.board.out_sh}/uInitrd_{self.arch} {out_dir}/uInitrd")
-        Logger.install(f"\tCopy root_{self.os_target}_{self.arch}.sqh -> root.sqh")
-        self.__sudo(f"cp -H {self.board.out_sh}/root_{self.os_target}_{self.arch}.sqh {out_dir}/root.sqh")
-        Logger.install(f"\tCopy kernel modules")
-        self.__sudo(f"cp -Hr {self.board.out_dir}/modules {out_dir}/")
+        self.__copy_file(f"{self.board.out_sh}/uInitrd_{self.arch}", f"{out_dir}/uInitrd")
+        self.__copy_file(f"{self.board.out_sh}/root_{self.os_target}_{self.arch}.sqh", f"{out_dir}/root.sqh")
+        #Logger.install(f"\tCopy kernel modules")
+        self.__copy_file(f"{self.board.out_dir}/modules", f"{out_dir}/modules")
+        for ff in self.board.installs["files"]:
+            if (ff["dest"] == "boot"):
+                dest_dir = ff["dir"]
+                self.__copy_file(ff["src"], f"{out_dir}/{dest_dir}/")
 
     def __install_rw(self, out_dir):
         self.__sudo(["touch", f"{out_dir}/rw_part"], stdout=subprocess.DEVNULL)

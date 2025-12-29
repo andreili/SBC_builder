@@ -128,6 +128,14 @@
             "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-printer.dtbo",
             "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-sfc.dtbo",
             "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-dsi1.dtbo"
+        ],
+        "files":
+        [
+            {
+                "src": "files/cb2_install_emmc.sh",
+                "dest": "boot",
+                "dir": "/"
+            }
         ]
     }
 }
