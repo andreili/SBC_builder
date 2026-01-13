@@ -29,7 +29,6 @@
             "patch_dir": [ "kernel", "kernel/rockchip64-6.18" ],
             "config_def": "printer_defconfig",
             "target": [ "Image", "modules", "dtbs", "modules_install" ],
-            "have_defconfig": true,
             "artifacts":
             [
                 {

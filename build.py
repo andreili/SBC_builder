@@ -1,6 +1,6 @@
 #!/bin/python
 
-import argparse, json
+import argparse, json, fnmatch
 from scripts import *
 
 os = OS()
@@ -28,7 +28,8 @@ target_board = Board(args.board, f"config/board/{args.board}.json", targets_meta
 os.set_board(target_board, args.os_target)
 os.load_info()
 
-os.check_rootfs()
+if not (fnmatch.fnmatch(args.target, "kernel*")):
+    os.check_rootfs()
 
 if (args.sync):
     target_board.sync()

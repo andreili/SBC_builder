@@ -47,7 +47,6 @@
             "version_type": "head",
             "patch_dir": [ "kernel/old_4" ],
             "target": [ "modules_prepare", "zImage", "modules", "dtbs", "modules_install" ],
-            "have_defconfig": false,
             "artifacts":
             [
                 {

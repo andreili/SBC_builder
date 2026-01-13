@@ -1,4 +1,4 @@
-import subprocess, os, sys, getpass, shutil, requests, stat, re, fnmatch
+import subprocess, os, sys, getpass, shutil, requests, stat, re, fnmatch, platform
 from pathlib import Path
 if __name__ != '__main__':
     from . import *
@@ -7,11 +7,16 @@ units = { "B": 1, "K": 2**10, "M": 2**20, "G": 2**30 }
 MARKER_ROOTFS_READY = "rootfs_%{ARCH}%_ready"
 
 def qemu_arch_name(arch):
+    if (arch == "x86_64"):
+        return "x86_64"
     if (arch == "aarch64"):
         return "aarch64"
     if (fnmatch.fnmatch(arch, "armv*")):
         return "arm"
     return ""
+
+def host_arch_name():
+    return platform.machine()
 
 class Partition(object):
     pass
@@ -205,6 +210,11 @@ class OS:
 
     def __prepare(self):
         qemu_fn = qemu_arch_name(self.arch)
+        host_arch = host_arch_name()
+        print(f"Host arch is '{host_arch}', target arch is '{qemu_fn}'")
+        if (qemu_fn.lower() == host_arch.lower()):
+            print("Nothing, exit...")
+            return
         qemu_f = Path(f"/proc/sys/fs/binfmt_misc/qemu-{qemu_fn}")
         if (not qemu_f.is_file()):
             self.__sudo(["python", os.path.abspath(__file__), self.arch])
