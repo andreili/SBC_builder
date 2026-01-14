@@ -113,7 +113,8 @@
                     "sys-kernel/genkernel -firmware",
                     "net-misc/networkmanager tools",
                     "sys-apps/util-linux static-libs",
-                    "app-crypt/gnupg nls"
+                    "app-crypt/gnupg nls",
+                    "app-alternatives/gpg nls"
                 ]
             },
             {
@@ -139,7 +140,7 @@
             {
                 "file": "/etc/locale.gen",
                 "append": false,
-                "lines": [ "en_US.UTF-8 UTF-8" ]
+                "lines": [ "en_US UTF-8" ]
             },
             { "chroot": "locale-gen" },
             { "chroot": "eselect kernel set 1" },
@@ -161,9 +162,17 @@
                     "app-portage/eix",
                     "app-portage/gentoolkit",
                     "sys-process/htop",
-                    "sec-keys/openpgp-keys-gentoo-developers"
+                    "sec-keys/openpgp-keys-gentoo-developers",
+                    "app-eselect/eselect-repository"
                 ],
                 "oneshot": false
+            },
+            {
+                "soft_inst":
+                [
+                    "dev-vcs/git"
+                ],
+                "oneshot": true
             },
             {
                 "file": "/etc/eixrc/00-eixrc",
@@ -192,15 +201,9 @@
                     "sync-openpgp-key-refresh = keyserver"
                 ]
             },
+            { "chroot": "rm -rf /var/db/repos/gentoo && emerge --sync" },
             { "chroot": "dispatch-conf" },
             { "chroot": "eselect news read" },
-            {
-                "soft_inst":
-                [
-                    "app-eselect/eselect-repository"
-                ],
-                "oneshot": false
-            },
             { "chroot": "eix-update" }
         ]
     },

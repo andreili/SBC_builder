@@ -9,18 +9,16 @@
         "steps":
         [
             {
-                "file": "/etc/portage/package.use/system",
+                "file": "/etc/portage/package.use/srv",
                 "append": false,
                 "lines":
                 [
                     "app-portage/eix sqlite",
-                    "sys-kernel/genkernel -firmware",
-                    "#sys-kernel/linux-firmware savedconfig",
                     "net-misc/networkmanager modemmanager -ppp wifi -wext bluetooth",
                     "sys-process/htop lm-sensors",
                     "net-wireless/wpa_supplicant dbus",
                     "sys-kernel/genkernel firmware",
-                    "sys-kernel/linux-firmware savedconfig"
+                    "virtual/server mysql"
                 ]
             },
             {
@@ -124,9 +122,9 @@
             { "chroot": "eselect repository add jkolo git https://git.kolosowscy.pl/jkolo/gentoo-overlay.git" },
             { "chroot": "eselect repository list -i" },
             { "chroot": "eix-sync" },
-            { "action": "update" },
             { "comment": "Install MySQL first - othervise can install other DB engine" },
-            { "chroot": "emerge -av1b net-libs/libtirpc dev-db/mysql" },
+            { "soft_inst": [ "net-libs/libtirpc" ], "oneshot": true },
+            { "soft_inst": [ "dev-db/mysql" ], "oneshot": true },
             {
                 "soft_inst":
                 [

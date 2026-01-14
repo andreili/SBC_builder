@@ -112,6 +112,7 @@ class OS:
             dir = self.root_dir
         Logger.os(text)
         self.__sudo(["cp", "/etc/resolv.conf", f"{dir}/etc/resolv.conf"])
+        # first - apply all config files from all sources
         for step in info["steps"]:
             if ("file" in step):
                 is_append = "-a" if step["append"] else ""
@@ -126,6 +127,15 @@ class OS:
                 if ("chmod" in step):
                     mode = step["chmod"]
                     self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
+            if ("copy" in step):
+                path_from = parse_variables(step["copy"][0])
+                path_to = parse_variables(step["copy"][1])
+                if (Path(path_from).is_dir()):
+                    self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
+                else:
+                    self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
+        # next - run actions with a fully configured step
+        for step in info["steps"]:
             if ("chroot" in step):
                 cmd = parse_variables(step["chroot"])
                 self.__chroot(cmd, dir=dir)
@@ -157,13 +167,6 @@ class OS:
                 cmd = parse_variables(step["sudo"])
                 Logger.os(f"\tSudo command {cmd}...")
                 self.__sudo(cmd, cwd=dir, shell=True)
-            if ("copy" in step):
-                path_from = parse_variables(step["copy"][0])
-                path_to = parse_variables(step["copy"][1])
-                if (Path(path_from).is_dir()):
-                    self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
-                else:
-                    self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
 
     def check_rootfs(self):
         if marker_check(MARKER_ROOTFS_READY, self.board):
