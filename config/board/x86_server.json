@@ -16,7 +16,9 @@
             "parent": "kernel",
             "config_def": "x86_64_defconfig",
             "config_set": "linux_min,rk_all,system_live,no_snd,nvme_blk",
-            "artifacts": []
+            "artifacts": [],
+            "is_shared": false,
+            "target": [ "bzImage", "modules", "modules_install" ]
         }
     ],
     "install":

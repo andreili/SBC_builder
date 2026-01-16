@@ -27,4 +27,5 @@ RDEPEND="
         www-servers/nginx
         dev-db/phpmyadmin
         app-misc/mosquitto
+	sys-apps/smartmontools
 "

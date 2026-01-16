@@ -65,8 +65,14 @@ class Target:
             _artifacts = info_js["artifacts"]
             for art in _artifacts:
                 self.artifacts.append(art)
+            if (len(_artifacts) == 0):
+                self.artifacts = []
         if ("modules" in info_js):
             self.modules = info_js["modules"]
+        if ("is_shared" in info_js):
+            self.is_shared = info_js["is_shared"]
+        if ("target" in info_js):
+            self.target = info_js["target"]
 
     def load_detail(self, board_name, detail_js):
         self.board_name = board_name
@@ -89,7 +95,7 @@ class Target:
         self.sources.do_patch(self.board_name, self.patch_dir)
 
     def build(self, sub_target, out_dir):
-        self.source_sync()
+        #self.source_sync()
         if (sub_target != "config"):
             self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
