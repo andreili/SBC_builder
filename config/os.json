@@ -79,7 +79,9 @@
                 "lines":
                 [
                     "[andreil]",
-                    "location = /usr/portage/andreil"
+                    "location = /usr/portage/andreil",
+                    "sync-type = git",
+                    "sync-uri = https://git.andreil.by/andreil/gentoo_overlay.git"
                 ]
             },
             {
