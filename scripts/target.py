@@ -80,7 +80,8 @@ class Target:
         if (detail_js != None):
             self.__load_info(detail_js)
         if (self.is_shared):
-            self.config_name = f"{ROOT_DIR}/cfg/{self.name}"
+            arch = parse_variables("%{ARCH}%")
+            self.config_name = f"{ROOT_DIR}/cfg/{arch}_{self.name}"
         else:
             self.config_name = f"{ROOT_DIR}/cfg/{board_name}/{self.name}"
         if (self.version != "") and (self.version != "@"):
