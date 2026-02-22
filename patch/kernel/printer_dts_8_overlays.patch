@@ -12,11 +12,11 @@ index 4bf84622db47..b1a8b52d33c9 100644
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer.dtbo
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-dsi1.dtbo
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-sfc.dtbo
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-tinker-board-3.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-tinker-board-3s.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-9tripod-x3568-v4.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-anbernic-rg-ds.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r68s.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-hinlink-h66k.dtb
 @@ -277,5 +281,21 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
  	rk3588-rock-5b-pcie-srns.dtbo
  

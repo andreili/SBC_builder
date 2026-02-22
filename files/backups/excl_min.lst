@@ -3,3 +3,9 @@ media/*
 var/cache/binpkgs/*
 var/cache/distfiles/*
 var/log/*.log
+sys/*
+proc/*
+var/tmp/*
+tmp/*
+usr/src/*
+dev/*
