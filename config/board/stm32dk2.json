@@ -1,0 +1,91 @@
+{
+    "build":
+    [
+        "uboot", "kernel"
+    ],
+    "variables":
+    [
+        "CHOST:armv7a-unknown-linux-gnueabihf",
+        "KERNEL_ARCH:arm",
+        "CROSS_C:%{CHOST}%-",
+        "ARCH:armv7a_hf"
+    ],
+    "targets":
+    [
+        {
+            "parent": "kernel",
+            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig",
+            "config_set": "linux_min,system_live,no_snd",
+            "is_shared": false,
+            "version": "@",
+            "version_type": "head",
+            "target": [ "modules_prepare", "zImage", "modules", "dtbs", "modules_install" ],
+            "artifacts":
+            [
+            ]
+        }
+    ],
+    "install":
+    {
+        "target": "image",
+        "type": "gpt",
+        "block_size": "512b",
+        "partitions":
+        [
+            {
+                "name": "fsbl1",
+                "size": "256K",
+                "first_sector": "34",
+                "guid_type": "8DA63339-0007-60C0-C436-083AC8230908"
+            },
+            {
+                "name": "fsbl2",
+                "size": "256K",
+                "guid_type": "8DA63339-0007-60C0-C436-083AC8230908"
+            },
+            {
+                "name": "metadata1",
+                "size": "256K",
+                "guid_type": "8A7A84A0-8387-40F6-AB41-A8B9A5A60D23"
+            },
+            {
+                "name": "metadata2",
+                "size": "256K",
+                "guid_type": "8A7A84A0-8387-40F6-AB41-A8B9A5A60D23"
+            },
+            {
+                "name": "fip-a",
+                "size": "4M",
+                "guid_type": "19D5DF83-11B0-457b-BE2C-7559C13142A5",
+                "guid_part": "4FD84C93-54EF-463F-A7EF-AE25FF887087"
+            },
+            {
+                "name": "fip-b",
+                "size": "4M",
+                "guid_type": "19D5DF83-11B0-457b-BE2C-7559C13142A5",
+                "guid_part": "09C54952-D5BF-45AF-ACEE-335303766FB3"
+            },
+            {
+                "name": "u-boot-env",
+                "size": "128K",
+                "guid_type": "3DE21764-95BD-54BD-A5C3-4ABE786F38A8"
+            },
+            {
+                "name": "boot",
+                "size": "64M"
+            },
+            {
+                "name": "vendorfs",
+                "size": "16M"
+            },
+            {
+                "name": "rootfs",
+                "size": "4G"
+            },
+            {
+                "name": "userfs",
+                "size": "4G"
+            }
+        ]
+    }
+}
