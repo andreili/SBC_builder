@@ -79,11 +79,14 @@ class GitRemoteProgress(git.RemoteProgress):
             )
 
 class Sources:
-    def __init__(self, name, url):
+    def __init__(self, name, url, bare_dir=""):
         self.name = name
         self.url = url
-        dir_name = re.search(r'[^/]+(?=/$|$)', url)[0]
-        dir_name = dir_name.replace(".git", "")
+        if (bare_dir != ""):
+            dir_name = bare_dir
+        else:
+            dir_name = re.search(r'[^/]+(?=/$|$)', url)[0]
+            dir_name = dir_name.replace(".git", "")
         self.bare_dir = f"{ROOT_DIR}/bare_git/{dir_name}"
         self.bare_done_marker = f"{self.bare_dir}/.git_done_marker"
 

@@ -90,6 +90,15 @@
             "artifacts":
             [
                 {
+                    "file": "",
+                    "store_type": "none",
+                    "kmods": true
+                },
+                {
+                    "file": "arch/arm64/boot/Image",
+                    "store_type": "boot"
+                },
+                {
                     "file": "arch/arm64/boot/dts/%{DTB_FILE}%",
                     "store_type": "boot",
                     "subdir": "dtb/rockchip",

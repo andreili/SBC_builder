@@ -19,7 +19,6 @@ class Target:
                 raise "Invalid target definition!"
             self.name = key
             meta_info = meta_js[key]
-            self.sources = Sources(self.name, meta_info["url"])
             self.have_config = meta_info["config"]
             if (self.have_config):
                 self.config_target = meta_info["config_target"]
@@ -45,6 +44,11 @@ class Target:
         return res
 
     def __load_info(self, info_js):
+        if ("url" in info_js):
+            if ("bare_dir" in info_js):
+                self.sources = Sources(self.name, info_js["url"], info_js["bare_dir"])
+            else:
+                self.sources = Sources(self.name, info_js["url"])
         if ("version" in info_js):
             self.sources.set_git_params(info_js["version"], info_js["version_type"])
             self.target = info_js["target"]
@@ -62,11 +66,10 @@ class Target:
         if ("no_build" in info_js):
             self.no_build = True
         if ("artifacts" in info_js):
+            self.artifacts = []
             _artifacts = info_js["artifacts"]
             for art in _artifacts:
                 self.artifacts.append(art)
-            if (len(_artifacts) == 0):
-                self.artifacts = []
         if ("modules" in info_js):
             self.modules = info_js["modules"]
         if ("is_shared" in info_js):
@@ -76,9 +79,9 @@ class Target:
 
     def load_detail(self, board_name, detail_js):
         self.board_name = board_name
-        self.sources.init_source_path(board_name, self.is_shared)
         if (detail_js != None):
             self.__load_info(detail_js)
+        self.sources.init_source_path(board_name, self.is_shared)
         if (self.is_shared):
             arch = parse_variables("%{ARCH}%")
             self.config_name = f"{ROOT_DIR}/cfg/{arch}_{self.name}"
@@ -109,10 +112,10 @@ class Target:
                 if (sub_target == "defconfig"):
                     if (self.name == "kernel"):
                         # initialize without arch - required only for parsing
-                        cfg_scn = ConfigScan("")
+                        cfg_scn = ConfigScan(parse_variables("%{KERNEL_ARCH}%"))
                         cfg_scn.load()
                         cfg_scn.defconfig_start()
-                        if (self.defconfig_name is str):
+                        if (isinstance(self.defconfig_name, str)):
                             cfg_scn.defconfig_append(self.defconfig_name, self.config_set)
                         else:
                             for cfg_name in self.defconfig_name:

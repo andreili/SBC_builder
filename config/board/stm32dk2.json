@@ -14,15 +14,24 @@
     [
         {
             "parent": "kernel",
-            "config_def": "rk3566-bigtreetech-cb2-manta_defconfig",
+            "url": "https://github.com/STMicroelectronics/linux.git",
+            "version": "v6.6-stm32mp-r2",
+            "version_type": "tag",
+            "bare_dir": "linux_stm",
+            "patch_dir": [],
+            "config_def": "stm32mp157c-dk2",
             "config_set": "linux_min,system_live,no_snd",
             "is_shared": false,
-            "version": "@",
-            "version_type": "head",
-            "target": [ "modules_prepare", "zImage", "modules", "dtbs", "modules_install" ],
+            "target": [ "modules_prepare", "uImage", "modules", "dtbs", "modules_install" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1 LOADADDR=0xC2000040",
             "artifacts":
             [
-            ]
+                {
+                    "file": "arch/arm/boot/uImage",
+                    "store_type": "boot"
+                }
+            ],
+            "modules": []
         }
     ],
     "install":
@@ -80,7 +89,8 @@
             },
             {
                 "name": "rootfs",
-                "size": "4G"
+                "size": "4G",
+                "guid_part": "e91c4e10-16e6-4c0e-bd0e-77becf4a3582"
             },
             {
                 "name": "userfs",

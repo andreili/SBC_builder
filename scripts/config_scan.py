@@ -132,8 +132,14 @@ class KconfigScan:
             if (m_source):
                 # current line - include another config
                 inc_parsed = parse_variables(m_source[1])
+                n=0
                 while ("$" in inc_parsed):
                     inc_parsed = inc_parsed.replace("$SRCARCH", parse_variables("%{SRCARCH}%"))
+                    inc_parsed = inc_parsed.replace("$(SRCARCH)", parse_variables("%{SRCARCH}%"))
+                    n += 1
+                    if (n > 20):
+                        print(f"Error: too many iterations for variable parsing of '{inc_parsed}'!!!")
+                        exit(1)
                 self.scan(inc_parsed, if_opt)
             m_cfg = re.match(r'^(?:config|menuconfig)\s+(\S+)', line)
             if (m_cfg):
@@ -563,13 +569,13 @@ class ConfigScan:
     def save(self, path=""):
         if (path == ""):
             path = CONFIG_DIR
-        f = open(f"{path}/kernel_cfg.json", "w")
+        f = open(f"{path}/kernel_cfg_{self.arch}.json", "w")
         json.dump(self.serialize(), f, indent=1)
         f.close()
     def load(self, path=""):
         if (path == ""):
             path = CONFIG_DIR
-        with open(f"{path}/kernel_cfg.json") as json_data:
+        with open(f"{path}/kernel_cfg_{self.arch}.json") as json_data:
             js_data = json.load(json_data)
             self.deserialize(js_data)
             json_data.close()
@@ -674,6 +680,7 @@ class ConfigScan:
             else:
                 self.__add_set(s)
     def __apply_defconfig(self, cfg_name, config_set):
+        print(f"Apply defconfig '{cfg_name}' with set '{config_set}'")
         cfgs = self.defconfig[cfg_name]
         # add architecture option
         self.__cfg_recursive(f"{self.arch.upper()}=y")
