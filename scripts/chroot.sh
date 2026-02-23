@@ -21,8 +21,6 @@ KV=$(make -C "${KPATH}/" --silent kernelversion)
 mkdir -p ${DDIR}/etc/portage/patches
 cp -R ${ROOT_DIR}/patch/os_custom/* ${DDIR}/etc/portage/patches/
 
-mkdir -p ${DDIR}/usr/portage
-mount --bind ${ROOT_DIR}/files/portage ${DDIR}/usr/portage
 mkdir -p ${DDIR}/usr/src/linux-${KV}
 mount --bind ${KPATH} ${DDIR}/usr/src/linux-${KV}
 
@@ -48,8 +46,4 @@ umount ${DDIR}/sys
 umount ${DDIR}/dev/pts
 umount ${DDIR}/dev/shm
 umount ${DDIR}/dev
-if [ -n "$1" ]
-then
-    umount ${DDIR}/usr/portage
-fi
 exit ${ret}
