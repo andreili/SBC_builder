@@ -30,7 +30,7 @@
                     "USE=\"${USE} ${ARCH}",
                     "    -handbook -compiler-rt -sanitize -gtk-doc -gtk -jit",
                     "    -vulkan -cups -wayland -opengl -egl -eglfs -gles2 -kms",
-                    "    -vala -spell -tk -tcl -fortran",
+                    "    -vala -spell -tk -tcl -fortran -debuginfod",
                     "    -slang -gpg -doc -test lto -nls",
                     "    sqlite\"",
                     "FEATURES=\"${FEATURES} metadata-transfer nodoc noinfo noman -pid-sandbox\"",
