@@ -2,7 +2,7 @@ diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchi
 index 4bf84622db47..b1a8b52d33c9 100644
 --- a/arch/arm64/boot/dts/rockchip/Makefile
 +++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -128,10 +128,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
+@@ -128,10 +128,15 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lckfb-tspi.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lubancat-1.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-nanopi-r3s.dtb
@@ -10,6 +10,7 @@ index 4bf84622db47..b1a8b52d33c9 100644
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2.dtb
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-pcie.dtbo
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer.dtbo
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-back_srv.dtbo
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-dsi1.dtbo
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-sfc.dtbo
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-tinker-board-3.dtb
@@ -17,7 +18,7 @@ index 4bf84622db47..b1a8b52d33c9 100644
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-9tripod-x3568-v4.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-anbernic-rg-ds.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
-@@ -277,5 +281,21 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
+@@ -277,5 +281,25 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
  	rk3588-rock-5b-pcie-srns.dtbo
  
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-haikou-video-demo.dtb
@@ -39,6 +40,10 @@ index 4bf84622db47..b1a8b52d33c9 100644
 +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-printer_tst.dtb
 +rk3566-bigtreetech-pi2-printer_tst-dtbs := rk3566-bigtreetech-pi2.dtb \
 +	rk3566-bigtreetech-pi2-printer.dtbo
++
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-bigtreetech-pi2-back_srv_tst.dtb
++rk3566-bigtreetech-pi2-back_srv_tst-dtbs := rk3566-bigtreetech-pi2.dtb \
++	rk3566-bigtreetech-pi2-back_srv.dtbo
 diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pcie.dtso b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-pcie.dtso
 new file mode 100644
 index 000000000000..9cb6e8f03685
@@ -315,4 +320,54 @@ index 000000000000..410763276a6b
 +	pinctrl-0 = <&uart9m1_xfer>;
 +	pinctrl-names = "default";
 +	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-back_srv.dtso b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-back_srv.dtso
+new file mode 100644
+index 000000000000..9cb6e8f03685
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-back_srv.dtso
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
++#include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/power/rk3568-power.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/rk3568-cru.h>
++
++&usb_host0_xhci {
++	status = "disabled";
++};
++
++&usb_host1_xhci {
++	status = "disabled";
++};
++
++&sata1 {
++	status = "okay";
++};
++
++&sata2 {
++	status = "okay";
++};
++
++&sfc {
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <100000000>;
++		spi-rx-bus-width = <4>;
++		spi-tx-bus-width = <1>;
++	};
 +};
