@@ -63,6 +63,8 @@
     {
         "steps":
         [
+            { "chroot": "systemctl enable NetworkManager ntpdate sshd" },
+            { "sudo": "sed -i -E 's/^# (%wheel ALL)/\\1/' ./etc/sudoers" },
             { "sudo": "chmod u+s ./usr/bin/Xorg" },
             { "chroot": "groupadd -g %{USER_ID}% %{USER_LOGIN}%" },
             { "chroot": "useradd -m -G wheel,video,audio,disk,usb -g %{USER_ID}% -u %{USER_ID}% %{USER_LOGIN}% --password %{USER_LOGIN}%" },

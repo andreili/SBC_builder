@@ -129,7 +129,7 @@
             },
             {
                 "name": "rw",
-                "size": "2G"
+                "size": "1G"
             }
         ],
         "overlays":

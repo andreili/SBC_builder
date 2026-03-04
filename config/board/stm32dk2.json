@@ -1,17 +1,33 @@
 {
     "build":
     [
-        "uboot", "kernel"
+        "atf", "uboot", "kernel"
     ],
     "variables":
     [
         "CHOST:armv7a-unknown-linux-gnueabihf",
         "KERNEL_ARCH:arm",
         "CROSS_C:%{CHOST}%-",
-        "ARCH:armv7a_hf"
+        "ARCH:armv7a_hf",
+        "ATF_PLATFORM:stm32mp1"
     ],
     "targets":
     [
+        {
+            "parent": "atf",
+            "version": "lts-v2.10.13",
+            "version_type": "tag",
+            "patch_dir": "atf/stm32/mp1",
+            "target": [ "clean", "fip" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 AARCH32_SP=optee",
+             "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/fip.bin",
+                    "store_type": "temp"
+                }
+            ]
+        },
         {
             "parent": "kernel",
             "url": "https://github.com/STMicroelectronics/linux.git",

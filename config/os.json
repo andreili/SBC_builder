@@ -269,8 +269,7 @@
                 ],
                 "chmod": "+x"
             },
-            { "chroot": "systemctl enable NetworkManager ntpdate sshd prepare_shutdown sync" },
-            { "sudo": "sed -i -E 's/^# (%wheel ALL)/\\1/' ./etc/sudoers" },
+            { "chroot": "systemctl enable prepare_shutdown sync" },
             { "sudo": "sed -i -E 's/^#(\\S+MaxUse)=$/\\1=10M/' ./etc/systemd/journald.conf" },
             { "sudo": "sed -i -E 's/^#(\\S+MaxFileSize)=$/\\1=10M/' ./etc/systemd/journald.conf" },
             { "copy": [ "%{ROOT_DIR}%/files/firmware/usr", "."] },

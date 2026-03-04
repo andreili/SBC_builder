@@ -140,6 +140,7 @@
     {
         "steps":
         [
+            { "chroot": "systemctl enable NetworkManager ntpdate sshd" },
             { "soft_clean": "bdeps" }
         ]
     }

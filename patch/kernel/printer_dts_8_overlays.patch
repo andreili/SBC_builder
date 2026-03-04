@@ -326,7 +326,7 @@ new file mode 100644
 index 000000000000..9cb6e8f03685
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-back_srv.dtso
-@@ -0,0 +1,44 @@
+@ -0,0 +1,89 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -347,6 +347,51 @@ index 000000000000..9cb6e8f03685
 +&usb_host1_xhci {
 +	status = "disabled";
 +};
++
++/* Disable all GPU-related */
++&vop {
++	status = "disabled";
++};
++&vop_mmu {
++	status = "disabled";
++};
++&gpu {
++	status = "disabled";
++};
++&hdmi {
++	status = "disabled";
++};
++&hdmi_sound {
++	status = "disabled";
++};
++&i2c3 {
++	status = "disabled";
++};
++&i2s0_8ch {
++	status = "disabled";
++};
++&i2s1_8ch {
++	status = "disabled";
++};
++
++/* Disable BT */
++&uart1 {
++	status = "disabled";
++};
++
++/* Disable unused CAN controller */
++&spi1 {
++	status = "disabled";
++};
++
++&pcie2x1 {
++	status = "disabled";
++};
++
++/* TODO - disable WIFI */
++/*&sdmmc1 {
++	status = "disabled";
++};*/
 +
 +&sata1 {
 +	status = "okay";
