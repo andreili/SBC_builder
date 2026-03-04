@@ -369,6 +369,14 @@ class OS:
                 part_obj.first_sector = -1
             part_obj.size = self.__parse_size(part["size"])
             part_obj.size_blk = int(part_obj.size / self.block_size) - 1
+            if ("guid_type" in part):
+                part_obj.guid_type = part["guid_type"]
+            else:
+                part_obj.guid_type = ""
+            if ("guid_part" in part):
+                part_obj.guid_part = part["guid_part"]
+            else:
+                part_obj.guid_part = ""
             self.partitions.append(part_obj)
 
     def __create_img_file(self, path, size):
@@ -399,28 +407,31 @@ class OS:
 
     def __create_parts(self, img_or_dev, from_sudo):
         Logger.install("\tCreate partitions table...")
-        args = ""
-        part_type = "p\n"
-        if (self.board.installs["type"] == "mbr"):
-            args += "o\n"
-        elif (self.board.installs["type"] == "gpt"):
-            args += "g\n"
-            part_type = ""
         offset = 0
+        idx = 0
+        cmd = ["sgdisk", "-o", img_or_dev, "&&", "sgdisk", "--resize-table=128", "-a", "1"]
         for part in self.partitions:
-            args += f"n\n{part_type}\n"
             if part.first_sector > -1:
                 offset = part.first_sector
-            args += f"{offset}\n"
-            args += f"+{part.size_blk}\n"
+            cmd.append("-n")
+            cmd.append(f"{idx+1}:{offset}:{offset + part.size_blk}")
+            if (part.name != ""):
+                cmd.append("-c")
+                cmd.append(f"{idx}:{part.name}")
+            if (part.guid_type != ""):
+                cmd.append("-t")
+                cmd.append(f"{idx+1}:{part.guid_type}")
+            if (part.guid_part != ""):
+                cmd.append("-u")
+                cmd.append(f"{idx+1}:{part.guid_part}")
             offset += part.size_blk + 1
-        args += "w\nq\n"
-        cmd = []
-        if (os.geteuid() != 0) and (from_sudo):
-            cmd.append("sudo")
-        cmd.append("fdisk")
+            idx += 1
+        cmd.append("-p")
         cmd.append(img_or_dev)
-        self.__do_cmd(cmd, stdin=args, stdout=subprocess.DEVNULL)
+        if (os.geteuid() != 0) and (from_sudo):
+            cmd = ["sudo"] + cmd
+        print(f"\tCommand: {' '.join(cmd)}")
+        self.__do_cmd(cmd, stdout=subprocess.DEVNULL)
 
     def __prepare_img(self, out_dir):
         Logger.install("\tImage. Prepare and mount it...")
