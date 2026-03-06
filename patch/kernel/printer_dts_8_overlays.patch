@@ -326,7 +326,7 @@ new file mode 100644
 index 000000000000..9cb6e8f03685
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-back_srv.dtso
-@ -0,0 +1,89 @@
+@@ -0,0 +1,116 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -352,6 +352,24 @@ index 000000000000..9cb6e8f03685
 +&vop {
 +	status = "disabled";
 +};
++&vpu {
++	status = "disabled";
++};
++&vdpu_mmu {
++	status = "disabled";
++};
++&vepu {
++	status = "disabled";
++};
++&vepu_mmu {
++	status = "disabled";
++};
++&vdec {
++	status = "disabled";
++};
++&rga {
++	status = "disabled";
++};
 +&vop_mmu {
 +	status = "disabled";
 +};
@@ -371,6 +389,15 @@ index 000000000000..9cb6e8f03685
 +	status = "disabled";
 +};
 +&i2s1_8ch {
++	status = "disabled";
++};
++&rk_sound {
++	status = "disabled";
++};
++&hdmi_con {
++	status = "disabled";
++};
++&display_subsystem {
 +	status = "disabled";
 +};
 +
