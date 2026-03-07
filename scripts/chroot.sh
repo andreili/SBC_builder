@@ -19,7 +19,10 @@ KV=$(make -C "${KPATH}/" --silent kernelversion)
 
 # copy custom patches
 mkdir -p ${DDIR}/etc/portage/patches
-cp -R ${ROOT_DIR}/patch/os_custom/* ${DDIR}/etc/portage/patches/
+if [ -d "${ROOT_DIR}/patch/os_custom" ]
+then
+    cp -R ${ROOT_DIR}/patch/os_custom/* ${DDIR}/etc/portage/patches/
+fi
 
 mkdir -p ${DDIR}/usr/src/linux-${KV}
 mount --bind ${KPATH} ${DDIR}/usr/src/linux-${KV}
