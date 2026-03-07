@@ -116,7 +116,8 @@
                     "net-misc/networkmanager tools",
                     "sys-apps/util-linux static-libs",
                     "app-crypt/gnupg nls",
-                    "app-alternatives/gpg nls"
+                    "app-alternatives/gpg nls",
+                    "net-wireless/wpa_supplicant dbus"
                 ]
             },
             {
@@ -165,7 +166,8 @@
                     "app-portage/gentoolkit",
                     "sys-process/htop",
                     "sec-keys/openpgp-keys-gentoo-developers",
-                    "app-eselect/eselect-repository"
+                    "app-eselect/eselect-repository",
+                    "net-misc/networkmanager"
                 ],
                 "oneshot": false
             },
