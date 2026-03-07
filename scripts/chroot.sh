@@ -5,22 +5,19 @@ DDIR=$(realpath "$1")
 ROOT_DIR="$2"
 KPATH="$3"
 
-if [ -z "${DDIR}" ]
-then
+if [ -z "${DDIR}" ]; then
     echo "No root directory specified!"
     exit 1
 fi
-if [ -z "${ROOT_DIR}" ]
-then
+if [ -z "${ROOT_DIR}" ]; then
     echo "No main directory specified!"
     exit 1
 fi
 KV=$(make -C "${KPATH}/" --silent kernelversion)
 
-# copy custom patches
+# copy custom patches to the chroot environment
 mkdir -p ${DDIR}/etc/portage/patches
-if [ -d "${ROOT_DIR}/patch/os_custom" ]
-then
+if [ -d "${ROOT_DIR}/patch/os_custom" ] && [ -n "$(ls -A "${ROOT_DIR}/patch/os_custom/")" ]; then
     cp -R ${ROOT_DIR}/patch/os_custom/* ${DDIR}/etc/portage/patches/
 fi
 
@@ -33,8 +30,7 @@ mount --bind /dev/pts ${DDIR}/dev/pts
 mount --bind /sys ${DDIR}/sys
 mount --bind /proc ${DDIR}/proc
 mount -t tmpfs tmpfs ${DDIR}/var/tmp/
-if [ -z "$4" ]
-then
+if [ -z "$4" ]; then
     chroot ${DDIR}/ /bin/bash
     ret=$?
 else

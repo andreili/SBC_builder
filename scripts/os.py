@@ -31,7 +31,21 @@ class OS:
             [ "reinstall", self.rebuild_all   ],
             [ "pack",      self.pack          ],
             [ "sqh",       self.sqh           ],
-            [ "sqh_kmod",  self.make_sqh_kmod ]
+            [ "sqh_kmod",  self.make_sqh_kmod ],
+            [ "cleanup",   self.cleanup       ]
+        ]
+        self.st3_actions1 = [
+            [ "file",      self.__st3_file    ],
+            [ "copy",      self.__st3_copy    ]
+        ]
+        self.st3_actions2 = [
+            [ "chroot",    self.__st3_chroot    ],
+            [ "copy",      self.__st3_copy      ],
+            [ "update",    self.__st3_update    ],
+            [ "soft_inst", self.__st3_soft_inst ],
+            [ "soft_clean",self.__st3_soft_clean],
+            [ "sudo",      self.__st3_sudo      ],
+            [ "cleanup",   self.__st3_cleanup   ]
         ]
 
     def __relaunch_as_sudo(self):
@@ -43,7 +57,7 @@ class OS:
         Logger.ok_exit("Finished running from 'sudo'")
 
     def load_info(self):
-        with open(f"{CONFIG_DIR}/os_{self.arch}.json") as json_data:
+        with open(f"{CONFIG_DIR}/os_base_{self.arch}.json") as json_data:
             js_data = json.load(json_data)
             json_data.close()
             self.st3_info = js_data["stage3_info"]
@@ -107,6 +121,64 @@ class OS:
         self.__extract_tar(arch_fn, self.root_dir)
         self.__tmp_clean(temp_dir)
 
+    def __st3_file(self, dir, step):
+        is_append = "-a" if step["append"] else ""
+        lines = "\n".join(step["lines"])
+        lines = parse_variables(lines)
+        path = step["file"]
+        directory = Path(path).parent
+        cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
+        cmd += f" | sudo tee {is_append} {dir}{path} > /dev/null"
+        Logger.os(f"\tCreate file {path}...")
+        self.__sudo(cmd, shell=True, cwd=dir)
+        if ("chmod" in step):
+            mode = step["chmod"]
+            self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
+
+    def __st3_copy(self, dir, step):
+        path_from = parse_variables(step["copy"][0])
+        path_to = parse_variables(step["copy"][1])
+        if (Path(path_from).is_dir()):
+            self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
+        else:
+            self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
+
+    def __st3_chroot(self, dir, step):
+        cmd = parse_variables(step["chroot"])
+        self.__chroot(cmd, dir=dir)
+
+    def __st3_update(self, dir, step):
+        self.update_all
+
+    def __st3_soft_inst(self, dir, step):
+        sw_list = " ".join(step["soft_inst"])
+        oneshot = "1" if step["oneshot"] else ""
+        self.__chroot(f"emerge -avb{oneshot} {sw_list} -j2", dir=dir)
+
+    def __st3_soft_clean(self, dir, step):
+        clean_type = step["soft_clean"]
+        if (clean_type == "default"):
+            self.__chroot(f"emerge -ac", dir=dir)
+        elif (clean_type == "bdeps"):
+            self.__chroot(f"emerge --depclean --with-bdeps=n && ldconfig", dir=dir)
+        elif (clean_type == "bdeps_light"):
+            ex_lst = ""
+            ex_lst += " --exclude sys-devel/gcc"
+            ex_lst += " --exclude dev-build/cmake"
+            ex_lst += " --exclude dev-perl/*"
+            ex_lst += " --exclude dev-build/autoconf"
+            ex_lst += " --exclude dev-build/automake"
+            self.__chroot(f"emerge --depclean --with-bdeps=n {ex_lst} && ldconfig", dir=dir)
+
+    def __st3_sudo(self, dir, step):
+        cmd = parse_variables(step["sudo"])
+        Logger.os(f"\tSudo command {cmd}...")
+        self.__sudo(cmd, cwd=dir, shell=True)
+
+    def __st3_cleanup(self, dir, step):
+        excl_list = step["cleanup"]
+        self.cleanup(dir, excl_list)
+
     def __stage3_steps(self, info, text, dir=""):
         if (dir == ""):
             dir = self.root_dir
@@ -114,59 +186,14 @@ class OS:
         self.__sudo(["cp", "/etc/resolv.conf", f"{dir}/etc/resolv.conf"])
         # first - apply all config files from all sources
         for step in info["steps"]:
-            if ("file" in step):
-                is_append = "-a" if step["append"] else ""
-                lines = "\n".join(step["lines"])
-                lines = parse_variables(lines)
-                path = step["file"]
-                directory = Path(path).parent
-                cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
-                cmd += f" | sudo tee {is_append} {dir}{path} > /dev/null"
-                Logger.os(f"\tCreate file {path}...")
-                self.__sudo(cmd, shell=True, cwd=dir)
-                if ("chmod" in step):
-                    mode = step["chmod"]
-                    self.__sudo(f"chmod {mode} {dir}{path}", shell=True, cwd=dir)
-            if ("copy" in step):
-                path_from = parse_variables(step["copy"][0])
-                path_to = parse_variables(step["copy"][1])
-                if (Path(path_from).is_dir()):
-                    self.__sudo(f"cp -r {path_from} {path_to}", cwd=dir, shell=True)
-                else:
-                    self.__sudo(f"cp {path_from} {path_to}", cwd=dir, shell=True)
+            for act in self.st3_actions1:
+                if (act[0] in step):
+                    act[1](dir, step)
         # next - run actions with a fully configured step
         for step in info["steps"]:
-            if ("chroot" in step):
-                cmd = parse_variables(step["chroot"])
-                self.__chroot(cmd, dir=dir)
-            if ("action" in step):
-                action = step["action"]
-                for act in self.actions:
-                    if (act[0] == action):
-                        act[1]()
-                        break
-            if ("soft_inst" in step):
-                sw_list = " ".join(step["soft_inst"])
-                oneshot = "1" if step["oneshot"] else ""
-                self.__chroot(f"emerge -avb{oneshot} {sw_list} -j2", dir=dir)
-            if ("soft_clean" in step):
-                clean_type = step["soft_clean"]
-                if (clean_type == "default"):
-                    self.__chroot(f"emerge -ac", dir=dir)
-                elif (clean_type == "bdeps"):
-                    self.__chroot(f"emerge --depclean --with-bdeps=n && ldconfig", dir=dir)
-                elif (clean_type == "bdeps_light"):
-                    ex_lst = ""
-                    ex_lst += " --exclude sys-devel/gcc"
-                    ex_lst += " --exclude dev-build/cmake"
-                    ex_lst += " --exclude dev-perl/*"
-                    ex_lst += " --exclude dev-build/autoconf"
-                    ex_lst += " --exclude dev-build/automake"
-                    self.__chroot(f"emerge --depclean --with-bdeps=n {ex_lst} && ldconfig", dir=dir)
-            if ("sudo" in step):
-                cmd = parse_variables(step["sudo"])
-                Logger.os(f"\tSudo command {cmd}...")
-                self.__sudo(cmd, cwd=dir, shell=True)
+            for act in self.st3_actions2:
+                if (act[0] in step):
+                    act[1](dir, step)
 
     def check_rootfs(self):
         if marker_check(MARKER_ROOTFS_READY, self.board):
@@ -227,10 +254,10 @@ class OS:
         self.__prepare()
         if (dir == ""):
             dir = self.root_dir
-        Logger.os(f"Start chroot'ed command '{command}' into '{dir}'")
         k_target = self.board.get_kernel()
         if (k_target == None):
             Logger.error("Can't find kernel target for chroot!")
+        Logger.os(f"Start chroot'ed command '{command}' into '{dir}', with kernel at '{k_target.sources.work_dir}'...")
         self.__sudo(["bash", f"{ROOT_DIR}/scripts/chroot.sh", dir, ROOT_DIR,
             k_target.sources.work_dir, command], stdout=stdout)
 
@@ -270,9 +297,11 @@ class OS:
         my_env["XZ_OPT"] = "-9 --extreme --threads=0"
         date = datetime.datetime.today().strftime('%Y_%m_%d')
         arch_path = parse_variables("%{out_sh}%/" + f"back_{self.os_target}_{self.arch}_{name}_{date}.tar.xz")
-        self.__sudo(["tar", "-cJpf", arch_path,
-            f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst", "."],
-            cwd=dir, env=my_env)
+        if (excl_list != ""):
+            excl = f"--exclude-from={ROOT_DIR}/files/backups/{excl_list}.lst"
+        else:
+            excl = ""
+        self.__sudo(f"tar -cJpf {arch_path} {excl} .", cwd=dir, env=my_env)
         return arch_path
 
     def pack(self):
@@ -326,20 +355,30 @@ class OS:
         self.__extract_tar(arch_full_path, temp_dir)
         # prepare system, remove unnecessary packages
         self.__finalize(temp_dir)
-        self.__do_archive("excl_min", "FULL_min_bdeps", temp_dir)
-        # pack a minimal archive
-        arch_path = self.__do_archive("excl", "OS", temp_dir)
-        # remove temp directory
-        self.__tmp_clean(temp_dir)
-        self.__extract_tar(arch_path, temp_dir)
         qemu_fn = qemu_arch_name(self.arch)
         self.__sudo(f"rm -f {temp_dir}/usr/bin/qemu-{qemu_fn}")
+        # pack system to archive
+        arch_path = self.__do_archive("", "OS", temp_dir)
+        # make sqh and link it to the output directory
         sqh_fn = parse_variables(f"root_{self.os_target}_" + "%{ARCH}%_%{DATE}%.sqh")
         sqh_fn_short = parse_variables(f"root_{self.os_target}_" + "%{ARCH}%.sqh")
         self.__make_sqh(temp_dir, f"{out_dir}/{sqh_fn}")
         os.symlink(sqh_fn, f"{out_dir}/{sqh_fn_short}.tmp")
         os.rename(f"{out_dir}/{sqh_fn_short}.tmp", f"{out_dir}/{sqh_fn_short}")
         self.__tmp_clean(temp_dir)
+
+    def cleanup(self, dir, excl_list):
+        Logger.os(f"Clean up system based on list '{excl_list}'...")
+        list_name = f"{ROOT_DIR}/files/backups/{excl_list}.lst"
+        if (dir == ""):
+            print ("Invalid directory for cleanup!")
+            exit(1)
+        with open(list_name) as f:
+            for line in f:
+                path = line.strip()
+                if (path != "") and (not path.startswith("#")):
+                    print(f"\tRemove '{dir}/{path}'...")
+                    self.__sudo(f"rm -rf {dir}/{path}", stdout=subprocess.DEVNULL)
 
     def action(self, action):
         for act in self.actions:
