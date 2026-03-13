@@ -8,6 +8,14 @@
         }
     },
     {
+        "fip":
+        {
+            "url": "https://github.com/ARM-software/arm-trusted-firmware.git",
+            "config": false,
+            "is_shared": false
+        }
+    },
+    {
         "uboot":
         {
             "url": "https://github.com/u-boot/u-boot.git",

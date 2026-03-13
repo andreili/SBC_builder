@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "atf", "uboot", "kernel"
+        "atf", "uboot", "fip", "kernel"
     ],
     "variables":
     [
@@ -9,7 +9,13 @@
         "KERNEL_ARCH:arm",
         "CROSS_C:%{CHOST}%-",
         "ARCH:armv7a_hf",
-        "ATF_PLATFORM:stm32mp1"
+        "ATF_PLATFORM:stm32mp1",
+        "CHIP:stm32mp157c",
+        "CHIP_FAMILY:stm32mp15",
+        "BOARD:dk2",
+        "ATF_LOG:LOG_LEVEL_INFO",
+        "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb",
+        "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32"
     ],
     "targets":
     [
@@ -18,12 +24,12 @@
             "version": "lts-v2.10.13",
             "version_type": "tag",
             "patch_dir": "atf/stm32/mp1",
-            "target": [ "clean", "fip" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 AARCH32_SP=optee",
+            "target": [ "clean", "all" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% LOG_LEVEL=%{ATF_LOG}%",
              "artifacts":
             [
                 {
-                    "file": "build/%{ATF_PLATFORM}%/release/fip.bin",
+                    "file": "build/%{ATF_PLATFORM}%/release/%{ATF_BIN}%",
                     "store_type": "temp"
                 }
             ]
@@ -48,6 +54,21 @@
                 }
             ],
             "modules": []
+        },
+        {
+            "parent": "fip",
+            "version": "lts-v2.10.13",
+            "version_type": "tag",
+            "patch_dir": "atf/stm32/mp1",
+            "target": [ "clean", "fip" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% AARCH32_SP=optee BL32=/mnt/work/SBC/universal/out/stm32dk2/bin/tee-header_v2-stm32mp157c-dk2-opteemin.bin BL32_EXTRA1=/mnt/work/SBC/universal/out/stm32dk2/bin/tee-pager_v2-stm32mp157c-dk2-opteemin.bin BL32_EXTRA2=/mnt/work/SBC/universal/out/stm32dk2/bin/tee-pageable_v2-stm32mp157c-dk2-opteemin.bin BL33=/mnt/work/SBC/universal/out/stm32dk2/bin/u-boot-nodtb-%{CHIP_FAMILY}%-fastboot-sdcard.bin BL33_CFG=/mnt/work/SBC/universal/out/stm32dk2/bin/u-boot-%{CHIP}%-%{BOARD}%-fastboot-sdcard.dtb",
+             "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/fip.bin",
+                    "store_type": "temp"
+                }
+            ]
         }
     ],
     "install":
