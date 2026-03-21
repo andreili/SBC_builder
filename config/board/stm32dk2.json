@@ -14,11 +14,11 @@
         "CHIP_FAMILY:stm32mp15",
         "BOARD:dk2",
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_WARNING",
-        "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
+        "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
         "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=1",
         "TEE_DBG:CFG_TEE_CORE_TA_TRACE=n CFG_ENABLE_EMBEDDED_TESTS=n CFG_DEBUG_INFO=n",
-        "TEE_MIN:CFG_WITH_PAGER=n CFG_STM32_RTC=n CFG_STM32_TAMP=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_STM32MP15_HUK=n CFG_WITH_USER_TA=n",
+        "TEE_MIN:CFG_WITH_PAGER=y CFG_STM32_RTC=n CFG_STM32_TAMP=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_STM32MP15_HUK=n CFG_WITH_USER_TA=n",
         "TEE_OPTS:CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
         "BL32_FN:tee-header_v2.bin",
         "BL32E1_FN:tee-pager_v2.bin",
@@ -30,9 +30,8 @@
     [
         {
             "parent": "atf",
-            "version": "lts-v2.10.13",
-            "version_type": "tag",
-            "patch_dir": "atf/stm32/mp1",
+            "version": "@",
+            "version_type": "head",
             "target": [ "clean", "all" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}%",
              "artifacts":
@@ -87,12 +86,11 @@
         },
         {
             "parent": "fip",
-            "version": "lts-v2.10.13",
-            "version_type": "tag",
-            "patch_dir": "atf/stm32/mp1",
+            "version": "@",
+            "version_type": "head",
             "deps": [ "atf", "op_tee", "uboot" ],
             "target": [ "clean", "fip" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% AARCH32_SP=optee BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
              "artifacts":
             [
                 {
