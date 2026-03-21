@@ -8,6 +8,14 @@
         }
     },
     {
+        "op_tee":
+        {
+            "url": "https://github.com/OP-TEE/optee_os.git",
+            "config": false,
+            "is_shared": false
+        }
+    },
+    {
         "fip":
         {
             "url": "https://github.com/ARM-software/arm-trusted-firmware.git",
