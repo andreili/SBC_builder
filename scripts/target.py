@@ -60,7 +60,7 @@ class Target:
         if ("makeopts" in info_js):
             self.makeopts = info_js["makeopts"]
         if ("config_def" in info_js):
-            self.defconfig_name = info_js["config_def"]
+            self.defconfig_name = parse_variables(info_js["config_def"])
         if ("config_set" in info_js):
             self.config_set = info_js["config_set"]
         if ("no_build" in info_js):

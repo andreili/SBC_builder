@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "atf", "uboot", "fip", "kernel"
+        "atf", "op_tee", "uboot", "fip", "kernel"
     ],
     "variables":
     [
@@ -13,18 +13,18 @@
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
         "BOARD:dk2",
-        "ATF_LOG:LOG_LEVEL=LOG_LEVEL_INFO",
+        "ATF_LOG:LOG_LEVEL=LOG_LEVEL_WARNING",
         "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
         "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=1",
         "TEE_DBG:CFG_TEE_CORE_TA_TRACE=n CFG_ENABLE_EMBEDDED_TESTS=n CFG_DEBUG_INFO=n",
-        "TEE_MIN:CFG_WITH_PAGER=n CFG_STM32_RTC=n CFG_RTC_PTA=n CFG_HWRNG_PTA=n CFG_STM32_TAMP=n CFG_CRYPTO=n CFG_STM32MP15_HUK=n CFG_WITH_USER_TA=n CFG_SECSTOR_TA_MGMT_PTA=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_SYSTEM_PTA=n",
+        "TEE_MIN:CFG_WITH_PAGER=n CFG_STM32_RTC=n CFG_STM32_TAMP=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_STM32MP15_HUK=n CFG_WITH_USER_TA=n",
         "TEE_OPTS:CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
         "BL32_FN:tee-header_v2.bin",
         "BL32E1_FN:tee-pager_v2.bin",
         "BL32E2_FN:tee-pageable_v2.bin",
-        "BL33_FN:bin/u-boot-nodtb-%{CHIP_FAMILY}%-fastboot-sdcard.bin",
-        "BL33_CFG:bin/u-boot-%{CHIP}%-%{BOARD}%-fastboot-sdcard.dtb"
+        "BL33_FN:u-boot-nodtb.bin",
+        "BL33_CFG:u-boot.dtb"
     ],
     "targets":
     [
@@ -47,6 +47,7 @@
             "parent": "op_tee",
             "version": "@",
             "version_type": "head",
+            "deps": [ "atf" ],
             "target": [ "clean", "all" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLATFORM=%{ATF_PLATFORM}% %{TEE_OPTS}% O=build",
              "artifacts":
@@ -61,6 +62,41 @@
                 },
                 {
                     "file": "build/core/%{BL32E2_FN}%",
+                    "store_type": "temp"
+                }
+            ]
+        },
+        {
+            "parent": "uboot",
+            "version": "@",
+            "version_type": "head",
+            "artifacts":
+            [
+                {
+                    "file": "%{BL33_FN}%",
+                    "store_type": "temp"
+                },
+                {
+                    "file": "%{BL33_CFG}%",
+                    "store_type": "temp"
+                }
+            ],
+            "target": [ "clean", "all" ],
+            "config_def": "%{CHIP_FAMILY}%_defconfig",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=st/%{CHIP}%-%{BOARD}%"
+        },
+        {
+            "parent": "fip",
+            "version": "lts-v2.10.13",
+            "version_type": "tag",
+            "patch_dir": "atf/stm32/mp1",
+            "deps": [ "atf", "op_tee", "uboot" ],
+            "target": [ "clean", "fip" ],
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% AARCH32_SP=optee BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
+             "artifacts":
+            [
+                {
+                    "file": "build/%{ATF_PLATFORM}%/release/fip.bin",
                     "store_type": "temp"
                 }
             ]
@@ -85,21 +121,6 @@
                 }
             ],
             "modules": []
-        },
-        {
-            "parent": "fip",
-            "version": "lts-v2.10.13",
-            "version_type": "tag",
-            "patch_dir": "atf/stm32/mp1",
-            "target": [ "clean", "fip" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% AARCH32_SP=optee BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
-             "artifacts":
-            [
-                {
-                    "file": "build/%{ATF_PLATFORM}%/release/fip.bin",
-                    "store_type": "temp"
-                }
-            ]
         }
     ],
     "install":
