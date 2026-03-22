@@ -813,8 +813,8 @@
 +	};
 +};
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp157c-quark.dts	2026-03-22 12:34:16.882363668 +0100
-@@ -0,0 +1,194 @@
++++ a/fdts/stm32mp157c-quark.dts	2026-03-22 12:39:55.737792786 +0100
+@@ -0,0 +1,197 @@
 +/dts-v1/;
 +#include "stm32mp157c-cube-mx.dtsi"
 +#include "stm32mp15-pinctrl.dtsi"
@@ -833,6 +833,9 @@
 +
 +	aliases {
 +		serial0 = &uart4;
++		serial1 = &usart3;
++		serial2 = &uart7;
++		serial3 = &usart2;
 +	};
 +
 +	chosen {
