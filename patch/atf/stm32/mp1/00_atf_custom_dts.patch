@@ -1,5 +1,20 @@
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp15-mx.dtsi	2026-03-21 23:49:33.441774713 +0100
++++ a/fdts/stm32mp157c-quark-fw-config.dts	2026-03-22 10:42:03.043661182 +0100
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
++/*
++ * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
++ * Author: STM32CubeMX code generation for STMicroelectronics.
++ */
++
++/* For more information on Device Tree configuration, please refer to
++ * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
++ */
++
++#define DDR_SIZE	0x20000000 /* 512MB */
++#include "stm32mp15-fw-config.dtsi"
+--- /dev/null	2026-03-18 08:33:46.078869386 +0100
++++ a/fdts/stm32mp15-mx.dtsi	2026-03-22 12:10:12.025195884 +0100
 @@ -0,0 +1,107 @@
 +/*
 + * Copyright (C) 2015-2018, STMicroelectronics - All Rights Reserved
@@ -17,7 +32,7 @@
 + * Relaxed Timing Mode: false
 + * Address mapping type: RBC
 + *
-+ * Save Date: 2026.03.21, save Time: 23:49:33
++ * Save Date: 2026.03.22, save Time: 12:10:12
 + */
 +
 +#define DDR_MEM_NAME "DDR3-DDR3L 16bits 533000kHz"
@@ -109,8 +124,8 @@
 +#define DDR_DX2GCR 0x0000CE80
 +#define DDR_DX3GCR 0x0000CE80
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp157c-cube-mx.dts	2026-03-22 00:03:15.859629871 +0100
-@@ -0,0 +1,371 @@
++++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-03-22 12:07:49.500463741 +0100
+@@ -0,0 +1,236 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -124,12 +139,11 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/pinctrl/stm32-pinfunc.h>
-+#include <dt-bindings/clock/stm32mp15-clksrc.h>
++#include <dt-bindings/clock/stm32mp1-clksrc.h>
 +#include "stm32mp15-mx.dtsi"
 +
 +#include "stm32mp157.dtsi"
 +#include "stm32mp15xc.dtsi"
-+#include "stm32mp15-pinctrl.dtsi"
 +#include "stm32mp15xxac-pinctrl.dtsi"
 +#include "stm32mp15-ddr.dtsi"
 +
@@ -137,7 +151,7 @@
 +/* USER CODE END includes */
 +
 +/ {
-+	model = "Quark View";
++	model = "STMicroelectronics custom STM32CubeMX board - openstlinux-6.6-yocto-scarthgap-mpu-v25.06.11";
 +	compatible = "st,stm32mp157c-cube-mx", "st,stm32mp157";
 +
 +	memory@c0000000 {
@@ -149,21 +163,6 @@
 +	};
 +
 +	/* USER CODE BEGIN root */
-+	vin: vin {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vin";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	aliases {
-+		serial0 = &uart4;
-+	};
-+
-+	chosen {
-+        stdout-path = "serial0:115200n8";
-+	};
 +	/* USER CODE END root */
 +
 +	clocks {
@@ -196,24 +195,656 @@
 +}; /*root*/
 +
 +&pinctrl {
++	sdmmc1_pins_mx: sdmmc1_mx-0 {
++		pins1 {
++			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
++					 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
++					 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
++					 <STM32_PINMUX('D', 2, AF12)>, /* SDMMC1_CMD */
++					 <STM32_PINMUX('E', 6, AF8)>; /* SDMMC1_D2 */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <1>;
++		};
++		pins2 {
++			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <3>;
++		};
++	};
++
++	uart4_pins_mx: uart4_mx-0 {
++		pins1 {
++			pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
++			bias-disable;
++		};
++		pins2 {
++			pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <0>;
++		};
++	};
++
 +	/* USER CODE BEGIN pinctrl */
 +	/* USER CODE END pinctrl */
 +};
 +
 +&pinctrl_z {
++	i2c4_pins_z_mx: i2c4_mx-0 {
++		pins {
++			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
++					 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
++			bias-disable;
++			drive-open-drain;
++			slew-rate = <0>;
++		};
++	};
++
 +	/* USER CODE BEGIN pinctrl_z */
 +	/* USER CODE END pinctrl_z */
 +};
 +
 +&i2c4 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_pins_a>;
++	pinctrl-0 = <&i2c4_pins_z_mx>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN i2c4 */
++	/* USER CODE END i2c4 */
++};
++
++&iwdg1 {
++	status = "okay";
++
++	/* USER CODE BEGIN iwdg1 */
++	timeout-sec = <32>;
++	/* USER CODE END iwdg1 */
++};
++
++&rcc {
++	status = "okay";
++	/* USER CODE BEGIN rcc */
++	/* USER CODE END rcc */
++	st,clksrc = <
++		CLK_CKPER_DISABLED
++		CLK_SDMMC12_PLL3R
++		CLK_STGEN_HSE
++		CLK_I2C46_HSI
++		CLK_UART24_HSI
++		CLK_MPU_PLL1P
++		CLK_AXI_PLL2P
++		CLK_MCU_PLL3P
++	>;
++	st,clkdiv = <
++		DIV(DIV_MPU, 1)
++		DIV(DIV_AXI, 0)
++		DIV(DIV_MCU, 0)
++		DIV(DIV_APB1, 1)
++		DIV(DIV_APB2, 1)
++		DIV(DIV_APB3, 1)
++		DIV(DIV_APB4, 1)
++		DIV(DIV_APB5, 2)
++		DIV(DIV_RTC, 23)
++		DIV(DIV_MCO1, 0)
++		DIV(DIV_MCO2, 5)
++	>;
++	st,pll_vco {
++		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
++			src = < CLK_PLL12_HSE >;
++			divmn = < 2 65 >;
++			frac = < 0x1400 >;
++		};
++		pll3_vco_417Mhz: pll3-vco-417Mhz {
++			src = < CLK_PLL3_HSE >;
++			divmn = < 1 33 >;
++			frac = < 0x1a04 >;
++		};
++		/* USER CODE BEGIN rcc_st-pll_vco */
++		/* USER CODE END rcc_st-pll_vco */
++	};
++
++	pll2:st,pll@1 {
++		compatible = "st,stm32mp1-pll";
++		reg = <1>;
++
++		st,pll = < &pll2_cfg1 >;
++
++		pll2_cfg1: pll2_cfg1 {
++			st,pll_vco = < &pll2_vco_1066Mhz >;
++			st,pll_div_pqr = < 1 1 0 >;
++		};
++		/* USER CODE BEGIN pll2 */
++		/* USER CODE END pll2 */
++	};
++
++	pll3:st,pll@2 {
++		compatible = "st,stm32mp1-pll";
++		reg = <2>;
++
++		st,pll = < &pll3_cfg1 >;
++
++		pll3_cfg1: pll3_cfg1 {
++			st,pll_vco = < &pll3_vco_417Mhz >;
++			st,pll_div_pqr = < 1 16 36 >;
++		};
++		/* USER CODE BEGIN pll3 */
++		/* USER CODE END pll3 */
++	};
++
++	st,rcc{
++		status = "okay";
++
++		/* USER CODE BEGIN rcc_st-rcc */
++		/* USER CODE END rcc_st-rcc */
++	};
++};
++
++&sdmmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc1_pins_mx>;
++	status = "okay";
++
++	/* USER CODE BEGIN sdmmc1 */
++	/* USER CODE END sdmmc1 */
++};
++
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_pins_mx>;
++	status = "okay";
++
++	/* USER CODE BEGIN uart4 */
++	/* USER CODE END uart4 */
++};
++
++/* USER CODE BEGIN addons */
++/* USER CODE END addons */
++
+--- /dev/null	2026-03-18 08:33:46.078869386 +0100
++++ a/fdts/stm32mp15-m4-srm.dtsi	2026-03-22 10:49:56.532077463 +0100
+@@ -0,0 +1,447 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Copyright (C) STMicroelectronics 2019 - All Rights Reserved
++ * Author: Fabien Dessenne <fabien.dessenne@st.com> for STMicroelectronics.
++ */
++
++&m4_rproc {
++	m4_system_resources {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		m4_timers2: timer@40000000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40000000 0x400>;
++			clocks = <&rcc TIM2_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers3: timer@40001000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40001000 0x400>;
++			clocks = <&rcc TIM3_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers4: timer@40002000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40002000 0x400>;
++			clocks = <&rcc TIM4_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers5: timer@40003000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40003000 0x400>;
++			clocks = <&rcc TIM5_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers6: timer@40004000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40004000 0x400>;
++			clocks = <&rcc TIM6_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers7: timer@40005000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40005000 0x400>;
++			clocks = <&rcc TIM7_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers12: timer@40006000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40006000 0x400>;
++			clocks = <&rcc TIM12_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers13: timer@40007000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40007000 0x400>;
++			clocks = <&rcc TIM13_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers14: timer@40008000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40008000 0x400>;
++			clocks = <&rcc TIM14_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_lptimer1: timer@40009000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40009000 0x400>;
++			clocks = <&rcc LPTIM1_K>;
++			clock-names = "mux";
++			status = "disabled";
++		};
++		m4_spi2: spi@4000b000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000b000 0x400>;
++			clocks = <&rcc SPI2_K>;
++			status = "disabled";
++		};
++		m4_i2s2: audio-controller@4000b000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000b000 0x400>;
++			status = "disabled";
++		};
++		m4_spi3: spi@4000c000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000c000 0x400>;
++			clocks = <&rcc SPI3_K>;
++			status = "disabled";
++		};
++		m4_i2s3: audio-controller@4000c000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000c000 0x400>;
++			status = "disabled";
++		};
++		m4_spdifrx: audio-controller@4000d000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000d000 0x400>;
++			clocks = <&rcc SPDIF_K>;
++			clock-names = "kclk";
++			status = "disabled";
++		};
++		m4_usart2: serial@4000e000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000e000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <27 1>;
++			clocks = <&rcc USART2_K>;
++			status = "disabled";
++		};
++		m4_usart3: serial@4000f000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4000f000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <28 1>;
++			clocks = <&rcc USART3_K>;
++			status = "disabled";
++		};
++		m4_uart4: serial@40010000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40010000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <30 1>;
++			clocks = <&rcc UART4_K>;
++			status = "disabled";
++		};
++		m4_uart5: serial@40011000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40011000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <31 1>;
++			clocks = <&rcc UART5_K>;
++			status = "disabled";
++		};
++		m4_i2c1: i2c@40012000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40012000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <21 1>;
++			clocks = <&rcc I2C1_K>;
++			status = "disabled";
++		};
++		m4_i2c2: i2c@40013000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40013000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <22 1>;
++			clocks = <&rcc I2C2_K>;
++			status = "disabled";
++		};
++		m4_i2c3: i2c@40014000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40014000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <23 1>;
++			clocks = <&rcc I2C3_K>;
++			status = "disabled";
++		};
++		m4_i2c5: i2c@40015000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40015000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <25 1>;
++			clocks = <&rcc I2C5_K>;
++			status = "disabled";
++		};
++		m4_cec: cec@40016000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40016000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <69 1>;
++			clocks = <&rcc CEC_K>, <&rcc CEC>;
++			clock-names = "cec", "hdmi-cec";
++			status = "disabled";
++		};
++		m4_dac: dac@40017000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40017000 0x400>;
++			clocks = <&rcc DAC12>;
++			clock-names = "pclk";
++			status = "disabled";
++		};
++		m4_uart7: serial@40018000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40018000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <32 1>;
++			clocks = <&rcc UART7_K>;
++			status = "disabled";
++		};
++		m4_uart8: serial@40019000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x40019000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <33 1>;
++			clocks = <&rcc UART8_K>;
++			status = "disabled";
++		};
++		m4_timers1: timer@44000000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44000000 0x400>;
++			clocks = <&rcc TIM1_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers8: timer@44001000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44001000 0x400>;
++			clocks = <&rcc TIM8_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_usart6: serial@44003000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44003000 0x400>;
++			interrupt-parent = <&exti>;
++			interrupts = <29 1>;
++			clocks = <&rcc USART6_K>;
++			status = "disabled";
++		};
++		m4_spi1: spi@44004000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44004000 0x400>;
++			clocks = <&rcc SPI1_K>;
++			status = "disabled";
++		};
++		m4_i2s1: audio-controller@44004000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44004000 0x400>;
++			status = "disabled";
++		};
++		m4_spi4: spi@44005000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44005000 0x400>;
++			clocks = <&rcc SPI4_K>;
++			status = "disabled";
++		};
++		m4_timers15: timer@44006000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44006000 0x400>;
++			clocks = <&rcc TIM15_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers16: timer@44007000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44007000 0x400>;
++			clocks = <&rcc TIM16_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_timers17: timer@44008000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44008000 0x400>;
++			clocks = <&rcc TIM17_K>;
++			clock-names = "int";
++			status = "disabled";
++		};
++		m4_spi5: spi@44009000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x44009000 0x400>;
++			clocks = <&rcc SPI5_K>;
++			status = "disabled";
++		};
++		m4_sai1: sai@4400a000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400a000 0x4>;
++			clocks = <&rcc SAI1_K>;
++			clock-names = "sai_ck";
++			status = "disabled";
++		};
++		m4_sai2: sai@4400b000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400b000 0x4>;
++			clocks = <&rcc SAI2_K>;
++			clock-names = "sai_ck";
++			status = "disabled";
++		};
++		m4_sai3: sai@4400c000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400c000 0x4>;
++			clocks = <&rcc SAI3_K>;
++			clock-names = "sai_ck";
++			status = "disabled";
++		};
++		m4_dfsdm: dfsdm@4400d000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400d000 0x800>;
++			clocks = <&rcc DFSDM_K>, <&rcc ADFSDM_K>;
++			clock-names = "dfsdm", "audio";
++			status = "disabled";
++		};
++		m4_m_can1: can@4400e000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400e000 0x400>, <0x44011000 0x2800>;
++			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
++			clock-names = "hclk", "cclk";
++			status = "disabled";
++		};
++		m4_m_can2: can@4400f000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4400f000 0x400>, <0x44011000 0x2800>;
++			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
++			clock-names = "hclk", "cclk";
++			status = "disabled";
++		};
++		m4_dma1: dma@48000000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x48000000 0x400>;
++			clocks = <&rcc DMA1>;
++			status = "disabled";
++		};
++		m4_dma2: dma@48001000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x48001000 0x400>;
++			clocks = <&rcc DMA2>;
++			status = "disabled";
++		};
++		m4_dmamux1: dma-router@48002000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x48002000 0x1c>;
++			clocks = <&rcc DMAMUX>;
++			status = "disabled";
++		};
++		m4_adc: adc@48003000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x48003000 0x400>;
++			clocks = <&rcc ADC12>, <&rcc ADC12_K>;
++			clock-names = "bus", "adc";
++			status = "disabled";
++		};
++		m4_sdmmc3: sdmmc@48004000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x48004000 0x400>, <0x48005000 0x400>;
++			clocks = <&rcc SDMMC3_K>;
++			status = "disabled";
++		};
++		m4_usbotg_hs: usb-otg@49000000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x49000000 0x10000>;
++			clocks = <&rcc USBO_K>;
++			clock-names = "otg";
++			status = "disabled";
++		};
++		m4_hash2: hash@4c002000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4c002000 0x400>;
++			clocks = <&rcc HASH2>;
++			status = "disabled";
++		};
++		m4_rng2: rng@4c003000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4c003000 0x400>;
++			clocks = <&rcc RNG2_K>;
++			status = "disabled";
++		};
++		m4_crc2: crc@4c004000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4c004000 0x400>;
++			clocks = <&rcc CRC2>;
++			status = "disabled";
++		};
++		m4_cryp2: cryp@4c005000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4c005000 0x400>;
++			clocks = <&rcc CRYP2>;
++			status = "disabled";
++		};
++		m4_dcmi: dcmi@4c006000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x4c006000 0x400>;
++			clocks = <&rcc DCMI>;
++			clock-names = "mclk";
++			status = "disabled";
++		};
++		m4_lptimer2: timer@50021000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x50021000 0x400>;
++			clocks = <&rcc LPTIM2_K>;
++			clock-names = "mux";
++			status = "disabled";
++		};
++		m4_lptimer3: timer@50022000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x50022000 0x400>;
++			clocks = <&rcc LPTIM3_K>;
++			clock-names = "mux";
++			status = "disabled";
++		};
++		m4_lptimer4: timer@50023000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x50023000 0x400>;
++			clocks = <&rcc LPTIM4_K>;
++			clock-names = "mux";
++			status = "disabled";
++		};
++		m4_lptimer5: timer@50024000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x50024000 0x400>;
++			clocks = <&rcc LPTIM5_K>;
++			clock-names = "mux";
++			status = "disabled";
++		};
++		m4_sai4: sai@50027000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x50027000 0x4>;
++			clocks = <&rcc SAI4_K>;
++			clock-names = "sai_ck";
++			status = "disabled";
++			};
++		m4_fmc: memory-controller@58002000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x5800200 0x1000>;
++			clocks = <&rcc FMC_K>;
++			status = "disabled";
++		};
++		m4_qspi: qspi@58003000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x58003000 0x1000>, <0x70000000 0x10000000>;
++			clocks = <&rcc QSPI_K>;
++			status = "disabled";
++		};
++		m4_ethernet0: ethernet@5800a000 {
++			compatible = "rproc-srm-dev";
++			reg = <0x5800a000 0x2000>;
++			clock-names = "stmmaceth",
++				      "mac-clk-tx",
++				      "mac-clk-rx",
++				      "ethstp",
++				      "syscfg-clk";
++			clocks = <&rcc ETHMAC>,
++				 <&rcc ETHTX>,
++				 <&rcc ETHRX>,
++				 <&rcc ETHSTP>,
++				 <&rcc SYSCFG>;
++			status = "disabled";
++		};
++	};
++};
+--- /dev/null	2026-03-18 08:33:46.078869386 +0100
++++ a/fdts/stm32mp157c-quark.dts	2026-03-22 12:34:16.882363668 +0100
+@@ -0,0 +1,194 @@
++/dts-v1/;
++#include "stm32mp157c-cube-mx.dtsi"
++#include "stm32mp15-pinctrl.dtsi"
++
++/ {
++	model = "Quark View";
++	compatible = "st,stm32mp157c-quark", "st,stm32mp157";
++
++	vin: vin {
++		compatible = "regulator-fixed";
++		regulator-name = "vin";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	aliases {
++		serial0 = &uart4;
++	};
++
++	chosen {
++        stdout-path = "serial0:115200n8";
++	};
++};
++
++&i2c4 {
 +	i2c-scl-rising-time-ns = <185>;
 +	i2c-scl-falling-time-ns = <20>;
 +	clock-frequency = <400000>;
++	pinctrl-0 = <&i2c4_pins_a>;
 +
 +	pmic: stpmic@33 {
 +		compatible = "st,stpmic1";
@@ -337,118 +968,16 @@
 +			};
 +		};
 +	};
-+	/* USER CODE END i2c4 */
-+};
-+
-+&iwdg1 {
-+	status = "okay";
-+
-+	/* USER CODE BEGIN iwdg1 */
-+	timeout-sec = <32>;
-+	/* USER CODE END iwdg1 */
-+};
-+
-+&rcc {
-+	status = "okay";
-+	/* USER CODE BEGIN rcc */
-+	/* USER CODE END rcc */
-+	st,clksrc = <
-+		CLK_CKPER_DISABLED
-+		CLK_SDMMC12_PLL3R
-+		CLK_STGEN_HSE
-+		CLK_I2C46_HSI
-+		CLK_UART24_HSI
-+		CLK_MPU_PLL1P
-+		CLK_AXI_PLL2P
-+		CLK_MCU_PLL3P
-+	>;
-+	st,clkdiv = <
-+		DIV(DIV_MPU, 1)
-+		DIV(DIV_AXI, 0)
-+		DIV(DIV_MCU, 0)
-+		DIV(DIV_APB1, 1)
-+		DIV(DIV_APB2, 1)
-+		DIV(DIV_APB3, 1)
-+		DIV(DIV_APB4, 1)
-+		DIV(DIV_APB5, 2)
-+		DIV(DIV_RTC, 23)
-+		DIV(DIV_MCO1, 0)
-+		DIV(DIV_MCO2, 3)
-+	>;
-+	st,pll_vco {
-+		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
-+			src = < CLK_PLL12_HSE >;
-+			divmn = < 2 65 >;
-+			frac = < 0x1400 >;
-+		};
-+		pll3_vco_417Mhz: pll3-vco-417Mhz {
-+			src = < CLK_PLL3_HSE >;
-+			divmn = < 1 33 >;
-+			frac = < 0x1a04 >;
-+		};
-+		/* USER CODE BEGIN rcc_st-pll_vco */
-+		/* USER CODE END rcc_st-pll_vco */
-+	};
-+
-+	pll2:st,pll@1 {
-+		compatible = "st,stm32mp1-pll";
-+		reg = <1>;
-+
-+		st,pll = < &pll2_cfg1 >;
-+
-+		pll2_cfg1: pll2_cfg1 {
-+			st,pll_vco = < &pll2_vco_1066Mhz >;
-+			st,pll_div_pqr = < 1 1 0 >;
-+		};
-+		/* USER CODE BEGIN pll2 */
-+		/* USER CODE END pll2 */
-+	};
-+
-+	pll3:st,pll@2 {
-+		compatible = "st,stm32mp1-pll";
-+		reg = <2>;
-+
-+		st,pll = < &pll3_cfg1 >;
-+
-+		pll3_cfg1: pll3_cfg1 {
-+			st,pll_vco = < &pll3_vco_417Mhz >;
-+			st,pll_div_pqr = < 1 16 36 >;
-+		};
-+		/* USER CODE BEGIN pll3 */
-+		/* USER CODE END pll3 */
-+	};
-+
-+	st,rcc{
-+		status = "okay";
-+
-+		/* USER CODE BEGIN rcc_st-rcc */
-+		/* USER CODE END rcc_st-rcc */
-+	};
 +};
 +
 +&sdmmc1 {
-+	pinctrl-names = "default";
 +	pinctrl-0 = <&sdmmc1_b4_pins_a>;
-+	status = "okay";
-+
-+	/* USER CODE BEGIN sdmmc1 */
 +	disable-wp;
 +	st,neg-edge;
 +	bus-width = <4>;
 +	vmmc-supply = <&v3v3>;
-+	/* USER CODE END sdmmc1 */
 +};
 +
-+&uart4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart4_pins_a>;
-+	status = "okay";
-+
-+	/* USER CODE BEGIN uart4 */
-+	/* USER CODE END uart4 */
-+};
-+
-+/* USER CODE BEGIN addons */
 +&rng1 {
 +	status = "okay";
 +};
@@ -480,8 +1009,6 @@
 +		st,non-secure-otp;
 +	};
 +};
-+/* USER CODE END addons */
-+
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
 +++ a/fdts/stm32mp157c-cube-mx-fw-config.dts	2026-03-21 21:23:17.804000000 +0100
 @@ -0,0 +1,12 @@

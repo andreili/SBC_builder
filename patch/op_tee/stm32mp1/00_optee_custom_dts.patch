@@ -1,6 +1,6 @@
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dts	2026-03-21 23:56:23.332019967 +0100
-@@ -0,0 +1,494 @@
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 12:26:37.493496197 +0100
+@@ -0,0 +1,284 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -14,19 +14,17 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/pinctrl/stm32-pinfunc.h>
-+#include <dt-bindings/clock/stm32mp15-clksrc.h>
++#include <dt-bindings/clock/stm32mp1-clksrc.h>
 +#include <dt-bindings/firewall/stm32mp15-etzpc.h>
 +#include "stm32mp157.dtsi"
 +#include "stm32mp15xc.dtsi"
 +#include "stm32mp15xxac-pinctrl.dtsi"
 +
 +/* USER CODE BEGIN includes */
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/mfd/st,stpmic1.h>
 +/* USER CODE END includes */
 +
 +/ {
-+	model = "Quark View";
++	model = "STMicroelectronics custom STM32CubeMX board - openstlinux-6.6-yocto-scarthgap-mpu-v25.06.11";
 +	compatible = "st,stm32mp157c-cube-mx", "st,stm32mp157";
 +
 +	memory@c0000000 {
@@ -43,67 +41,10 @@
 +		ranges;
 +
 +		/* USER CODE BEGIN reserved-memory */
-+		mcuram2: mcuram2@10000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10000000 0x40000>;
-+			no-map;
-+		};
-+
-+		ipc_shmem: ipc-shmem@1004f000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10048000 0x8000>;
-+			no-map;
-+		};
-+
-+		mcuram: mcuram@30000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x30000000 0x40000>;
-+			no-map;
-+		};
-+
-+		retram: retram@38000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x38000000 0x10000>;
-+			no-map;
-+		};
-+
-+		gpu_reserved: gpu@d4000000 {
-+			reg = <0xd4000000 0x4000000>;
-+			no-map;
-+		};
 +		/* USER CODE END reserved-memory */
 +	};
 +
 +	/* USER CODE BEGIN root */
-+	aliases {
-+		serial0 = &uart4;
-+		serial1 = &usart3;
-+		serial2 = &uart7;
-+		serial3 = &usart2;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	vin: vin {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vin";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	led {
-+		compatible = "gpio-leds";
-+		led-blue {
-+			label = "heartbeat";
-+			gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "off";
-+			status = "disabled";
-+		};
-+	};
 +	/* USER CODE END root */
 +
 +	clocks {
@@ -137,16 +78,6 @@
 +
 +/*Warning: the configuration of the secured GPIOs should be added in (addons) User Section*/
 +&pinctrl {
-+	i2c4_pins_mx: i2c4_mx-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
-+					 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
-+
 +	rcc_pins_mx: rcc_mx-0 {
 +		pins {
 +			pinmux = <STM32_PINMUX('A', 14, AF2)>; /* RCC_MCO_2 */
@@ -161,6 +92,16 @@
 +};
 +
 +&pinctrl_z {
++	i2c4_pins_z_mx: i2c4_mx-0 {
++		pins {
++			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
++					 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
++			bias-disable;
++			drive-open-drain;
++			slew-rate = <0>;
++		};
++	};
++
 +	/* USER CODE BEGIN pinctrl_z */
 +	/* USER CODE END pinctrl_z */
 +};
@@ -205,10 +146,227 @@
 +
 +&i2c4 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_pins_mx>;
++	pinctrl-0 = <&i2c4_pins_z_mx>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN i2c4 */
++	/* USER CODE END i2c4 */
++};
++
++&iwdg1 {
++	status = "okay";
++
++	/* USER CODE BEGIN iwdg1 */
++	timeout-sec = <32>;
++	/* USER CODE END iwdg1 */
++};
++
++&rcc {
++	status = "okay";
++	/* USER CODE BEGIN rcc */
++	/* USER CODE END rcc */
++	st,clksrc = <
++		CLK_CKPER_DISABLED
++		CLK_SDMMC12_PLL3R
++		CLK_STGEN_HSE
++		CLK_I2C46_HSI
++		CLK_UART24_HSI
++		CLK_RNG1_CSI
++		CLK_MPU_HSI
++		CLK_AXI_PLL2P
++		CLK_MCU_PLL3P
++		CLK_RTC_LSE
++		CLK_MCO1_DISABLED
++		CLK_MCO2_PLL4
++	>;
++	st,clkdiv = <
++		DIV(DIV_MPU, 1)
++		DIV(DIV_AXI, 0)
++		DIV(DIV_MCU, 0)
++		DIV(DIV_APB1, 1)
++		DIV(DIV_APB2, 1)
++		DIV(DIV_APB3, 1)
++		DIV(DIV_APB4, 1)
++		DIV(DIV_APB5, 2)
++		DIV(DIV_RTC, 23)
++		DIV(DIV_MCO1, 0)
++		DIV(DIV_MCO2, 5)
++	>;
++	st,pll_vco {
++		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
++			src = < CLK_PLL12_HSE >;
++			divmn = < 2 65 >;
++			frac = < 0x1400 >;
++		};
++		pll3_vco_417Mhz: pll3-vco-417Mhz {
++			src = < CLK_PLL3_HSE >;
++			divmn = < 1 33 >;
++			frac = < 0x1a04 >;
++		};
++		pll4_vco_600Mhz: pll4-vco-600Mhz {
++			src = < CLK_PLL4_HSE >;
++			divmn = < 3 99 >;
++		};
++		/* USER CODE BEGIN rcc_st-pll_vco */
++		/* USER CODE END rcc_st-pll_vco */
++	};
++
++	pll2:st,pll@1 {
++		compatible = "st,stm32mp1-pll";
++		reg = <1>;
++
++		st,pll = < &pll2_cfg1 >;
++
++		pll2_cfg1: pll2_cfg1 {
++			st,pll_vco = < &pll2_vco_1066Mhz >;
++			st,pll_div_pqr = < 1 1 0 >;
++		};
++		/* USER CODE BEGIN pll2 */
++		/* USER CODE END pll2 */
++	};
++
++	pll3:st,pll@2 {
++		compatible = "st,stm32mp1-pll";
++		reg = <2>;
++
++		st,pll = < &pll3_cfg1 >;
++
++		pll3_cfg1: pll3_cfg1 {
++			st,pll_vco = < &pll3_vco_417Mhz >;
++			st,pll_div_pqr = < 1 16 36 >;
++		};
++		/* USER CODE BEGIN pll3 */
++		/* USER CODE END pll3 */
++	};
++
++	pll4:st,pll@3 {
++		compatible = "st,stm32mp1-pll";
++		reg = <3>;
++
++		st,pll = < &pll4_cfg1 >;
++
++		pll4_cfg1: pll4_cfg1 {
++			st,pll_vco = < &pll4_vco_600Mhz >;
++			st,pll_div_pqr = < 1 6 1 >;
++		};
++		/* USER CODE BEGIN pll4 */
++		/* USER CODE END pll4 */
++	};
++
++	st,rcc{
++		pinctrl-names = "default";
++		pinctrl-0 = <&rcc_pins_mx>;
++		status = "okay";
++
++	};
++};
++
++&rng1 {
++	status = "okay";
++
++	/* USER CODE BEGIN rng1 */
++	/* USER CODE END rng1 */
++};
++
++&rtc {
++	status = "okay";
++
++	/* USER CODE BEGIN rtc */
++	/* USER CODE END rtc */
++};
++
++&tamp {
++	status = "okay";
++
++	/* USER CODE BEGIN tamp */
++	/* USER CODE END tamp */
++};
++
++/* USER CODE BEGIN addons */
++/* USER CODE END addons */
++
+--- /dev/null	2026-03-18 08:33:46.078869386 +0100
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 11:08:48.721516156 +0100
+@@ -0,0 +1,255 @@
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/mfd/st,stpmic1.h>
++#include "stm32mp157c-cube-mx.dtsi"
++
++/ {
++	model = "Quark View";
++	compatible = "st,stm32mp157c-quark", "st,stm32mp157";
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* USER CODE BEGIN reserved-memory */
++		mcuram2: mcuram2@10000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10000000 0x40000>;
++			no-map;
++		};
++
++		ipc_shmem: ipc-shmem@1004f000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10048000 0x8000>;
++			no-map;
++		};
++
++		mcuram: mcuram@30000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x30000000 0x40000>;
++			no-map;
++		};
++
++		retram: retram@38000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x38000000 0x10000>;
++			no-map;
++		};
++
++		gpu_reserved: gpu@d4000000 {
++			reg = <0xd4000000 0x4000000>;
++			no-map;
++		};
++		/* USER CODE END reserved-memory */
++	};
++
++	aliases {
++		serial0 = &uart4;
++		serial1 = &usart3;
++		serial2 = &uart7;
++		serial3 = &usart2;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	vin: vin {
++		compatible = "regulator-fixed";
++		regulator-name = "vin";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	led {
++		compatible = "gpio-leds";
++		led-blue {
++			label = "heartbeat";
++			gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++			default-state = "off";
++			status = "disabled";
++		};
++	};
++};
++
++&i2c4 {
 +	i2c-scl-rising-time-ns = <185>;
 +	i2c-scl-falling-time-ns = <20>;
 +	clock-frequency = <400000>;
@@ -356,121 +514,13 @@
 +			status = "disabled";
 +		};
 +	};
-+	/* USER CODE END i2c4 */
 +};
 +
 +&iwdg1 {
 +	status = "okay";
-+
-+	/* USER CODE BEGIN iwdg1 */
 +	timeout-sec = <32>;
-+	/* USER CODE END iwdg1 */
 +};
 +
-+&rcc {
-+	status = "okay";
-+	/* USER CODE BEGIN rcc */
-+	/* USER CODE END rcc */
-+	st,clksrc = <
-+		CLK_CKPER_DISABLED
-+		CLK_SDMMC12_PLL3R
-+		CLK_STGEN_HSE
-+		CLK_I2C46_HSI
-+		CLK_UART24_HSI
-+		CLK_RNG1_CSI
-+		CLK_MPU_HSI
-+		CLK_AXI_PLL2P
-+		CLK_MCU_PLL3P
-+		CLK_RTC_LSE
-+		CLK_MCO1_DISABLED
-+		CLK_MCO2_PLL4
-+	>;
-+	st,clkdiv = <
-+		DIV(DIV_MPU, 1)
-+		DIV(DIV_AXI, 0)
-+		DIV(DIV_MCU, 0)
-+		DIV(DIV_APB1, 1)
-+		DIV(DIV_APB2, 1)
-+		DIV(DIV_APB3, 1)
-+		DIV(DIV_APB4, 1)
-+		DIV(DIV_APB5, 2)
-+		DIV(DIV_RTC, 23)
-+		DIV(DIV_MCO1, 0)
-+		DIV(DIV_MCO2, 3)
-+	>;
-+	st,pll_vco {
-+		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
-+			src = < CLK_PLL12_HSE >;
-+			divmn = < 2 65 >;
-+			frac = < 0x1400 >;
-+		};
-+		pll3_vco_417Mhz: pll3-vco-417Mhz {
-+			src = < CLK_PLL3_HSE >;
-+			divmn = < 1 33 >;
-+			frac = < 0x1a04 >;
-+		};
-+		/* USER CODE BEGIN rcc_st-pll_vco */
-+		/* USER CODE END rcc_st-pll_vco */
-+	};
-+
-+	pll2:st,pll@1 {
-+		compatible = "st,stm32mp1-pll";
-+		reg = <1>;
-+
-+		st,pll = < &pll2_cfg1 >;
-+
-+		pll2_cfg1: pll2_cfg1 {
-+			st,pll_vco = < &pll2_vco_1066Mhz >;
-+			st,pll_div_pqr = < 1 1 0 >;
-+		};
-+		/* USER CODE BEGIN pll2 */
-+		/* USER CODE END pll2 */
-+	};
-+
-+	pll3:st,pll@2 {
-+		compatible = "st,stm32mp1-pll";
-+		reg = <2>;
-+
-+		st,pll = < &pll3_cfg1 >;
-+
-+		pll3_cfg1: pll3_cfg1 {
-+			st,pll_vco = < &pll3_vco_417Mhz >;
-+			st,pll_div_pqr = < 1 16 36 >;
-+		};
-+		/* USER CODE BEGIN pll3 */
-+		/* USER CODE END pll3 */
-+	};
-+
-+	st,rcc{
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rcc_pins_mx>;
-+		status = "okay";
-+
-+	};
-+};
-+
-+&rng1 {
-+	status = "okay";
-+
-+	/* USER CODE BEGIN rng1 */
-+	/* USER CODE END rng1 */
-+};
-+
-+&rtc {
-+	status = "okay";
-+
-+	/* USER CODE BEGIN rtc */
-+	/* USER CODE END rtc */
-+};
-+
-+&tamp {
-+	status = "okay";
-+
-+	/* USER CODE BEGIN tamp */
-+	/* USER CODE END tamp */
-+};
-+
-+/* USER CODE BEGIN addons */
 +&m4_rproc {
 +	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&ipc_shmem>;
 +	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>, <&ipcc 3>;
@@ -493,5 +543,3 @@
 +&uart4 {
 +	status = "okay";
 +};
-+/* USER CODE END addons */
-+

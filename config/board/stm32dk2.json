@@ -12,8 +12,8 @@
         "ATF_PLATFORM:stm32mp1",
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
-        "BOARD:cube-mx",
-        "ATF_LOG:LOG_LEVEL=LOG_LEVEL_INFO",
+        "BOARD:quark",
+        "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
         "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
         "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=2",
@@ -24,7 +24,9 @@
         "BL32E1_FN:tee-pager_v2.bin",
         "BL32E2_FN:tee-pageable_v2.bin",
         "BL33_FN:u-boot-nodtb.bin",
-        "BL33_CFG:u-boot.dtb"
+        "BL33_CFG:u-boot.dtb",
+        "FSBL_FN:u-boot-spl.stm32",
+        "SSBL_FN:u-boot.img"
     ],
     "targets":
     [
@@ -84,7 +86,7 @@
                 }
             ],
             "target": [ "clean", "all" ],
-            "config_def": "%{CHIP_FAMILY}%_defconfig",
+            "config_def": "%{CHIP_FAMILY}%_basic_defconfig",
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=st/%{CHIP}%-%{BOARD}%"
         },
         {
