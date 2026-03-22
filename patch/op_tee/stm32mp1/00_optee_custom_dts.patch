@@ -1,5 +1,5 @@
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 17:17:27.335084882 +0100
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 20:21:34.075012060 +0100
 @@ -0,0 +1,277 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -279,8 +279,8 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 17:19:50.138809578 +0100
-@@ -0,0 +1,357 @@
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 17:50:43.699750211 +0100
+@@ -0,0 +1,346 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/gpio/gpio.h>
@@ -373,17 +373,6 @@
 +		regulator-min-microvolt = <5000000>;
 +		regulator-max-microvolt = <5000000>;
 +		regulator-always-on;
-+	};
-+
-+	led {
-+		compatible = "gpio-leds";
-+		led-blue {
-+			label = "heartbeat";
-+			gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "off";
-+			status = "disabled";
-+		};
 +	};
 +};
 +
