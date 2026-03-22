@@ -25,7 +25,7 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-03-22 12:30:13.962657242 +0100
++++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-03-22 17:11:07.535107924 +0100
 @@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*

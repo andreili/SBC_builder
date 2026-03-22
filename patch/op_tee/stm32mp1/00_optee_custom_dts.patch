@@ -1,6 +1,6 @@
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 12:26:37.493496197 +0100
-@@ -0,0 +1,284 @@
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 17:17:27.335084882 +0100
+@@ -0,0 +1,277 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -11,14 +11,7 @@
 + * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
 + */
 +
-+/dts-v1/;
 +
-+#include <dt-bindings/pinctrl/stm32-pinfunc.h>
-+#include <dt-bindings/clock/stm32mp1-clksrc.h>
-+#include <dt-bindings/firewall/stm32mp15-etzpc.h>
-+#include "stm32mp157.dtsi"
-+#include "stm32mp15xc.dtsi"
-+#include "stm32mp15xxac-pinctrl.dtsi"
 +
 +/* USER CODE BEGIN includes */
 +/* USER CODE END includes */
@@ -286,18 +279,29 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 12:47:00.181915860 +0100
-@@ -0,0 +1,309 @@
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 17:19:50.138809578 +0100
+@@ -0,0 +1,357 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/mfd/st,stpmic1.h>
-+#include "stm32mp157c-cube-mx.dtsi"
++#include <dt-bindings/pinctrl/stm32-pinfunc.h>
++#include <dt-bindings/clock/stm32mp1-clksrc.h>
++#include <dt-bindings/firewall/stm32mp15-etzpc.h>
++#include "stm32mp157.dtsi"
++#include "stm32mp15xc.dtsi"
++#include "stm32mp15xxac-pinctrl.dtsi"
 +#include "stm32mp15-pinctrl.dtsi"
++#include "stm32mp157c-cube-mx.dtsi"
 +
 +/ {
 +	model = "Quark View";
 +	compatible = "st,stm32mp157c-quark", "st,stm32mp157";
++
++	memory@c0000000 {
++		device_type = "memory";
++		reg = <0xc0000000 0x20000000>;
++	};
 +
 +	reserved-memory {
 +		#address-cells = <1>;
@@ -307,6 +311,24 @@
 +		mcuram2: mcuram2@10000000 {
 +			compatible = "shared-dma-pool";
 +			reg = <0x10000000 0x40000>;
++			no-map;
++		};
++
++		vdev0vring0: vdev0vring0@10040000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10040000 0x1000>;
++			no-map;
++		};
++
++		vdev0vring1: vdev0vring1@10041000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10041000 0x1000>;
++			no-map;
++		};
++
++		vdev0buffer: vdev0buffer@10042000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10042000 0x4000>;
 +			no-map;
 +		};
 +
@@ -365,13 +387,31 @@
 +	};
 +};
 +
++&crc1 {
++	status = "disabled";
++};
++
++&dts {
++	status = "disabled";
++};
++
++&gpu {
++	contiguous-area = <&gpu_reserved>;
++};
++
++&hash1 {
++	status = "disabled";
++};
++
 +&i2c4 {
-+	i2c-scl-rising-time-ns = <185>;
-+	i2c-scl-falling-time-ns = <20>;
-+	clock-frequency = <400000>;
++	compatible = "st,stm32mp15-i2c-non-secure";
 +	pinctrl-names = "default", "sleep";
 +	pinctrl-0 = <&i2c4_pins_a>;
 +	pinctrl-1 = <&i2c4_sleep_pins_a>;
++	i2c-scl-rising-time-ns = <185>;
++	i2c-scl-falling-time-ns = <20>;
++	clock-frequency = <400000>;
++	/* spare dmas for other usage */
 +	/delete-property/dmas;
 +	/delete-property/dma-names;
 +
@@ -526,7 +566,8 @@
 +};
 +
 +&m4_rproc {
-+	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&ipc_shmem>;
++	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
++			<&vdev0vring1>, <&vdev0buffer>, <&ipc_shmem>;
 +	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>, <&ipcc 3>;
 +	mbox-names = "vq0", "vq1", "shutdown", "detach";
 +	interrupt-parent = <&exti>;
