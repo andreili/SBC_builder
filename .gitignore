@@ -1,7 +1,7 @@
 bare_git/*
 tmp/*
 out/*
-build
+build/*
 *.pyc
 *.bak
 root*
