@@ -1,4 +1,4 @@
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx-u-boot.dtsi	2026-03-22 11:05:51.362526810 +0100
 @@ -0,0 +1,23 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -24,8 +24,8 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-03-22 20:24:12.828625374 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
++++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:19.113292938 +0200
 @@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -340,7 +340,7 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ b/dts/upstream/src/arm/st/stm32mp15-m4-srm.dtsi	2026-03-22 11:01:36.995606157 +0100
 @@ -0,0 +1,447 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
@@ -790,7 +790,7 @@
 +		};
 +	};
 +};
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ b/dts/upstream/src/arm/st/stm32mp157c-quark.dts	2026-03-22 17:50:40.386421933 +0100
 @@ -0,0 +1,256 @@
 +/dts-v1/;

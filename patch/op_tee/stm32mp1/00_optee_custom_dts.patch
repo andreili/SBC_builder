@@ -1,5 +1,5 @@
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-03-22 20:21:34.075012060 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:06.613432699 +0200
 @@ -0,0 +1,277 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -73,7 +73,7 @@
 +&pinctrl {
 +	rcc_pins_mx: rcc_mx-0 {
 +		pins {
-+			pinmux = <STM32_PINMUX('A', 14, AF2)>; /* RCC_MCO_2 */
++			pinmux = <STM32_PINMUX('G', 2, AF1)>; /* RCC_MCO_2 */
 +			bias-disable;
 +			drive-push-pull;
 +			slew-rate = <0>;
@@ -183,7 +183,7 @@
 +		DIV(DIV_APB5, 2)
 +		DIV(DIV_RTC, 23)
 +		DIV(DIV_MCO1, 0)
-+		DIV(DIV_MCO2, 5)
++		DIV(DIV_MCO2, 1)
 +	>;
 +	st,pll_vco {
 +		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
@@ -240,7 +240,7 @@
 +
 +		pll4_cfg1: pll4_cfg1 {
 +			st,pll_vco = < &pll4_vco_600Mhz >;
-+			st,pll_div_pqr = < 1 6 1 >;
++			st,pll_div_pqr = < 5 6 1 >;
 +		};
 +		/* USER CODE BEGIN pll4 */
 +		/* USER CODE END pll4 */
@@ -278,7 +278,7 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 17:50:43.699750211 +0100
 @@ -0,0 +1,346 @@
 +/dts-v1/;

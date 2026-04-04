@@ -1,4 +1,4 @@
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ a/fdts/stm32mp157c-quark-fw-config.dts	2026-03-22 10:42:03.043661182 +0100
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -13,8 +13,8 @@
 +
 +#define DDR_SIZE	0x20000000 /* 512MB */
 +#include "stm32mp15-fw-config.dtsi"
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp15-mx.dtsi	2026-03-22 20:20:39.466146610 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
++++ a/fdts/stm32mp15-mx.dtsi	2026-04-04 21:45:10.080060610 +0200
 @@ -0,0 +1,107 @@
 +/*
 + * Copyright (C) 2015-2018, STMicroelectronics - All Rights Reserved
@@ -32,7 +32,7 @@
 + * Relaxed Timing Mode: false
 + * Address mapping type: RBC
 + *
-+ * Save Date: 2026.03.22, save Time: 20:20:39
++ * Save Date: 2026.04.04, save Time: 21:05:58
 + */
 +
 +#define DDR_MEM_NAME "DDR3-DDR3L 16bits 533000kHz"
@@ -123,9 +123,9 @@
 +#define DDR_DX1GCR 0x0000CE81
 +#define DDR_DX2GCR 0x0000CE80
 +#define DDR_DX3GCR 0x0000CE80
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-03-22 20:20:39.622000000 +0100
-@@ -0,0 +1,236 @@
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
++++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:15.626665261 +0200
+@@ -0,0 +1,267 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -228,6 +228,14 @@
 +	};
 +
 +	/* USER CODE BEGIN pinctrl */
++	rcc_pins_mx: rcc_mx-0 {
++		pins {
++			pinmux = <STM32_PINMUX('G', 2, AF1)>; /* RCC_MCO_2 */
++			bias-disable;
++			drive-push-pull;
++			slew-rate = <0>;
++		};
++	};
 +	/* USER CODE END pinctrl */
 +};
 +
@@ -276,6 +284,9 @@
 +		CLK_MPU_PLL1P
 +		CLK_AXI_PLL2P
 +		CLK_MCU_PLL3P
++		CLK_RTC_LSE
++		CLK_MCO1_DISABLED
++		CLK_MCO2_PLL4
 +	>;
 +	st,clkdiv = <
 +		DIV(DIV_MPU, 1)
@@ -288,7 +299,7 @@
 +		DIV(DIV_APB5, 2)
 +		DIV(DIV_RTC, 23)
 +		DIV(DIV_MCO1, 0)
-+		DIV(DIV_MCO2, 5)
++		DIV(DIV_MCO2, 1)
 +	>;
 +	st,pll_vco {
 +		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
@@ -300,6 +311,10 @@
 +			src = < CLK_PLL3_HSE >;
 +			divmn = < 1 33 >;
 +			frac = < 0x1a04 >;
++		};
++		pll4_vco_600Mhz: pll4-vco-600Mhz {
++			src = < CLK_PLL4_HSE >;
++			divmn = < 3 99 >;
 +		};
 +		/* USER CODE BEGIN rcc_st-pll_vco */
 +		/* USER CODE END rcc_st-pll_vco */
@@ -333,10 +348,26 @@
 +		/* USER CODE END pll3 */
 +	};
 +
++	pll4:st,pll@3 {
++		compatible = "st,stm32mp1-pll";
++		reg = <3>;
++
++		st,pll = < &pll4_cfg1 >;
++
++		pll4_cfg1: pll4_cfg1 {
++			st,pll_vco = < &pll4_vco_600Mhz >;
++			st,pll_div_pqr = < 5 6 1 >;
++		};
++		/* USER CODE BEGIN pll4 */
++		/* USER CODE END pll4 */
++	};
++
 +	st,rcc{
 +		status = "okay";
 +
 +		/* USER CODE BEGIN rcc_st-rcc */
++		pinctrl-names = "default";
++		pinctrl-0 = <&rcc_pins_mx>;
 +		/* USER CODE END rcc_st-rcc */
 +	};
 +};
@@ -362,7 +393,7 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ a/fdts/stm32mp15-m4-srm.dtsi	2026-03-22 10:49:56.532077463 +0100
 @@ -0,0 +1,447 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
@@ -812,8 +843,8 @@
 +		};
 +	};
 +};
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
-+++ a/fdts/stm32mp157c-quark.dts	2026-03-22 20:10:31.550778827 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
++++ a/fdts/stm32mp157c-quark.dts	2026-04-04 22:04:24.948307488 +0200
 @@ -0,0 +1,197 @@
 +/dts-v1/;
 +#include "stm32mp157c-cube-mx.dtsi"
@@ -974,7 +1005,7 @@
 +};
 +
 +&sdmmc1 {
-+	pinctrl-0 = <&sdmmc1_b4_pins_a>;
++	pinctrl-0 = <&sdmmc1_b4_pins_a &rcc_pins_mx>;
 +	disable-wp;
 +	st,neg-edge;
 +	bus-width = <4>;
@@ -1012,7 +1043,7 @@
 +		st,non-secure-otp;
 +	};
 +};
---- /dev/null	2026-03-18 08:33:46.078869386 +0100
+--- /dev/null	2026-04-04 12:40:01.204897313 +0200
 +++ a/fdts/stm32mp157c-cube-mx-fw-config.dts	2026-03-21 21:23:17.804000000 +0100
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
