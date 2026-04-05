@@ -86,7 +86,7 @@
                 }
             ],
             "target": [ "clean", "all" ],
-            "config_def": "%{CHIP_FAMILY}%_basic_defconfig",
+            "config_def": "%{CHIP_FAMILY}%_defconfig",
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=st/%{CHIP}%-%{BOARD}%"
         },
         {

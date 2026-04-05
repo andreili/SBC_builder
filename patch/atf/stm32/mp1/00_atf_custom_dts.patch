@@ -14,7 +14,7 @@
 +#define DDR_SIZE	0x20000000 /* 512MB */
 +#include "stm32mp15-fw-config.dtsi"
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp15-mx.dtsi	2026-04-04 21:45:10.080060610 +0200
++++ a/fdts/stm32mp15-mx.dtsi	2026-04-05 13:01:22.592887770 +0200
 @@ -0,0 +1,107 @@
 +/*
 + * Copyright (C) 2015-2018, STMicroelectronics - All Rights Reserved
@@ -124,7 +124,7 @@
 +#define DDR_DX2GCR 0x0000CE80
 +#define DDR_DX3GCR 0x0000CE80
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:15.626665261 +0200
++++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-05 13:01:19.695583344 +0200
 @@ -0,0 +1,267 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -844,7 +844,7 @@
 +	};
 +};
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-quark.dts	2026-04-04 22:04:24.948307488 +0200
++++ a/fdts/stm32mp157c-quark.dts	2026-04-05 13:02:09.051031695 +0200
 @@ -0,0 +1,197 @@
 +/dts-v1/;
 +#include "stm32mp157c-cube-mx.dtsi"

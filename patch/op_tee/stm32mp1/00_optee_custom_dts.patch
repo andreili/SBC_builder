@@ -1,5 +1,5 @@
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:06.613432699 +0200
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-05 13:01:28.812149620 +0200
 @@ -0,0 +1,277 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -279,7 +279,7 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-03-22 17:50:43.699750211 +0100
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-04-05 13:01:53.770559201 +0200
 @@ -0,0 +1,346 @@
 +/dts-v1/;
 +

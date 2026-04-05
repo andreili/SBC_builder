@@ -25,7 +25,7 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-04-04 21:45:19.113292938 +0200
++++ b/dts/upstream/src/arm/st/stm32mp157c-cube-mx.dtsi	2026-04-05 13:00:59.092476353 +0200
 @@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -791,7 +791,7 @@
 +	};
 +};
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/dts/upstream/src/arm/st/stm32mp157c-quark.dts	2026-03-22 17:50:40.386421933 +0100
++++ b/dts/upstream/src/arm/st/stm32mp157c-quark.dts	2026-04-05 13:01:59.760231435 +0200
 @@ -0,0 +1,256 @@
 +/dts-v1/;
 +
