@@ -1,0 +1,12 @@
+diff --git a/arch/arm/boot/dts/st/Makefile b/arch/arm/boot/dts/st/Makefile
+index f4426da153f4..93bd380a7781 100644
+--- a/arch/arm/boot/dts/st/Makefile
++++ b/arch/arm/boot/dts/st/Makefile
+@@ -54,6 +54,7 @@ dtb-$(CONFIG_ARCH_STM32) += \
+ 	stm32mp157a-stinger96.dtb \
+ 	stm32mp157c-dhcom-pdk2.dtb \
+ 	stm32mp157c-dhcom-picoitx.dtb \
++	stm32mp157c-quark.dtb \
+ 	stm32mp157c-dk2.dtb \
+ 	stm32mp157c-dk2-a7-examples.dtb \
+ 	stm32mp157c-dk2-m4-examples.dtb \

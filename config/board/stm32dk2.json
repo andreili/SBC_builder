@@ -12,11 +12,11 @@
         "ATF_PLATFORM:stm32mp1",
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
-        "BOARD:quark",
+        "BOARD:dk2",
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
         "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
-        "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=2",
+        "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=TRACE_ERROR",
         "TEE_DBG:CFG_TEE_CORE_TA_TRACE=n CFG_ENABLE_EMBEDDED_TESTS=n CFG_DEBUG_INFO=n",
         "TEE_MIN:CFG_WITH_PAGER=y CFG_STM32_RTC=n CFG_STM32_TAMP=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_STM32MP15_HUK=n CFG_WITH_USER_TA=n",
         "TEE_OPTS:CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
@@ -108,10 +108,10 @@
         {
             "parent": "kernel",
             "url": "https://github.com/STMicroelectronics/linux.git",
-            "version": "v6.6-stm32mp-r2",
-            "version_type": "tag",
+            "version": "v6.6-stm32mp",
+            "version_type": "branch",
             "bare_dir": "linux_stm",
-            "patch_dir": [],
+            "patch_dir": [ "kernel/stm32mp1" ],
             "config_def": "stm32mp157c-dk2",
             "config_set": "linux_min,system_live,no_snd",
             "is_shared": false,
@@ -119,6 +119,12 @@
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1 LOADADDR=0xC2000040",
             "artifacts":
             [
+                {
+                    "file": "arch/arm/boot/dts/st/%{CHIP}%-%{BOARD}%.dtb",
+                    "store_type": "boot",
+                    "subdir": "",
+                    "destdir": "dtb"
+                },
                 {
                     "file": "arch/arm/boot/uImage",
                     "store_type": "boot"
