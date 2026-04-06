@@ -207,7 +207,7 @@ class Sources:
                 f"--input={file}", "--quiet"], cwd=work_dir)
             p.wait()
             if (p.returncode != 0):
-                Logger.error("Failed to patch!")
+                Logger.error(f"Target '{self.name}' failed to patch!")
 
     def do_patch(self, board_name, dir):
         Logger.build(f"Patch...")
@@ -246,7 +246,7 @@ class Sources:
         p = subprocess.Popen(opts, cwd=self.work_dir)
         p.wait()
         if (p.returncode != 0):
-            Logger.error("Failed to configure!")
+            Logger.error(f"Target '{self.name}' failed to configure!")
 
     def compile(self, opts, cfg_name):
         #print(f"opts:{opts} target:{target}")
@@ -263,7 +263,7 @@ class Sources:
         p = subprocess.Popen(opts, cwd=self.work_dir)
         p.wait()
         if (p.returncode != 0):
-            Logger.error("Failed to compile!")
+            Logger.error(f"Target '{self.name}' failed to compile!")
         if (cfg_name != ""):
             if (cfg_or.is_file()):
                 # backup old configuration
