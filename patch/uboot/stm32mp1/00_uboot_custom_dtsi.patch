@@ -1,5 +1,5 @@
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/arch/arm/dts/stm32mp157c-quark-u-boot.dtsi	2026-03-22 12:29:06.925153291 +0100
++++ b/arch/arm/dts/stm32mp157c-quark-u-boot.dtsi	2026-04-06 00:10:58.538762764 +0200
 @@ -0,0 +1,202 @@
 +
 +#include <dt-bindings/clock/stm32mp1-clksrc.h>
@@ -111,7 +111,7 @@
 +		2 /*APB5*/
 +		23 /*RTC*/
 +		0 /*MCO1*/
-+		5 /*MCO2*/
++		1 /*MCO2*/
 +	>;
 +	st,pll_vco {
 +		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
@@ -162,7 +162,7 @@
 +
 +		pll4_cfg1: pll4_cfg1 {
 +			st,pll_vco = < &pll4_vco_600Mhz >;
-+			st,pll_div_pqr = < 1 6 1 >;
++			st,pll_div_pqr = < 5 6 1 >;
 +		};
 +		/* USER CODE BEGIN pll4 */
 +		/* USER CODE END pll4 */

@@ -33,6 +33,16 @@
         }
     },
     {
+        "uboot_st":
+        {
+            "url": "https://github.com/STMicroelectronics/u-boot.git",
+            "bare_dir": "uboot_st",
+            "config": true,
+            "config_target": "menuconfig",
+            "is_shared": false
+        }
+    },
+    {
         "kernel":
         {
             "type": "kernel",

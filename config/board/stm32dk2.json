@@ -12,7 +12,7 @@
         "ATF_PLATFORM:stm32mp1",
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
-        "BOARD:dk2",
+        "BOARD:quark",
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
         "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",

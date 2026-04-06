@@ -1,5 +1,5 @@
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/arch/arm/boot/dts/st/stm32mp157c-cube-mx.dtsi	2026-04-05 14:16:31.305694190 +0200
++++ b/arch/arm/boot/dts/st/stm32mp157c-cube-mx.dtsi	2026-04-06 10:50:07.027708524 +0200
 @@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -24,8 +24,8 @@
 +/* USER CODE END includes */
 +
 +/ {
-+	model = "STMicroelectronics custom STM32CubeMX board - openstlinux-6.6-yocto-scarthgap-mpu-v25.06.11";
-+	compatible = "st,stm32mp157c-cube-mx", "st,stm32mp157";
++	model = "STMicroelectronics STM32MP157C-DK2 STM32CubeMX board - openstlinux-6.6-yocto-scarthgap-mpu-v25.06.11";
++	compatible = "st,stm32mp157c-cube-mx", "st,stm32mp157c-dk2", "st,stm32mp157";
 +
 +	memory@c0000000 {
 +		device_type = "memory";
@@ -57,48 +57,6 @@
 +
 +&pinctrl {
 +
-+	ltdc_pins_mx: ltdc_mx-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('A', 8, AF14)>, /* LTDC_R6 */
-+					 <STM32_PINMUX('A', 9, AF14)>, /* LTDC_R5 */
-+					 <STM32_PINMUX('B', 9, AF14)>, /* LTDC_B7 */
-+					 <STM32_PINMUX('C', 6, AF14)>, /* LTDC_HSYNC */
-+					 <STM32_PINMUX('C', 7, AF14)>, /* LTDC_G6 */
-+					 <STM32_PINMUX('D', 3, AF14)>, /* LTDC_G7 */
-+					 <STM32_PINMUX('E', 13, AF14)>, /* LTDC_DE */
-+					 <STM32_PINMUX('G', 6, AF14)>, /* LTDC_R7 */
-+					 <STM32_PINMUX('H', 4, AF9)>, /* LTDC_G5 */
-+					 <STM32_PINMUX('I', 6, AF14)>, /* LTDC_B6 */
-+					 <STM32_PINMUX('I', 9, AF14)>; /* LTDC_VSYNC */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('E', 14, AF14)>; /* LTDC_CLK */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <1>;
-+		};
-+	};
-+
-+	ltdc_sleep_pins_mx: ltdc_sleep_mx-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('A', 8, ANALOG)>, /* LTDC_R6 */
-+					 <STM32_PINMUX('A', 9, ANALOG)>, /* LTDC_R5 */
-+					 <STM32_PINMUX('B', 9, ANALOG)>, /* LTDC_B7 */
-+					 <STM32_PINMUX('C', 6, ANALOG)>, /* LTDC_HSYNC */
-+					 <STM32_PINMUX('C', 7, ANALOG)>, /* LTDC_G6 */
-+					 <STM32_PINMUX('D', 3, ANALOG)>, /* LTDC_G7 */
-+					 <STM32_PINMUX('E', 13, ANALOG)>, /* LTDC_DE */
-+					 <STM32_PINMUX('E', 14, ANALOG)>, /* LTDC_CLK */
-+					 <STM32_PINMUX('G', 6, ANALOG)>, /* LTDC_R7 */
-+					 <STM32_PINMUX('H', 4, ANALOG)>, /* LTDC_G5 */
-+					 <STM32_PINMUX('I', 6, ANALOG)>, /* LTDC_B6 */
-+					 <STM32_PINMUX('I', 9, ANALOG)>; /* LTDC_VSYNC */
-+		};
-+	};
-+
 +	sdmmc1_pins_mx: sdmmc1_mx-0 {
 +		pins1 {
 +			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
@@ -114,7 +72,7 @@
 +			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
 +			bias-disable;
 +			drive-push-pull;
-+			slew-rate = <3>;
++			slew-rate = <2>;
 +		};
 +	};
 +
@@ -132,7 +90,7 @@
 +			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
 +			bias-disable;
 +			drive-push-pull;
-+			slew-rate = <3>;
++			slew-rate = <2>;
 +		};
 +		pins3 {
 +			pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
@@ -211,10 +169,34 @@
 +};
 +
 +&m4_rproc{
++	/*Restriction: "memory-region" property is not managed - please to use User-Section if needed*/
++	mboxes = <&ipcc 2>;
++	mbox-names = "shutdown";
 +	status = "okay";
 +
 +	/* USER CODE BEGIN m4_rproc */
 +	/* USER CODE END m4_rproc */
++};
++
++&bsec {
++	status = "okay";
++
++	/* USER CODE BEGIN bsec */
++	/* USER CODE END bsec */
++};
++
++&crc1 {
++	status = "okay";
++
++	/* USER CODE BEGIN crc1 */
++	/* USER CODE END crc1 */
++};
++
++&cryp1 {
++	status = "okay";
++
++	/* USER CODE BEGIN cryp1 */
++	/* USER CODE END cryp1 */
 +};
 +
 +&dma1 {
@@ -241,6 +223,20 @@
 +	/* USER CODE END dmamux1 */
 +};
 +
++&hash1 {
++	status = "okay";
++
++	/* USER CODE BEGIN hash1 */
++	/* USER CODE END hash1 */
++};
++
++&hsem {
++	status = "okay";
++
++	/* USER CODE BEGIN hsem */
++	/* USER CODE END hsem */
++};
++
 +&i2c4 {
 +	pinctrl-names = "default", "sleep";
 +	pinctrl-0 = <&i2c4_pins_z_mx>;
@@ -251,14 +247,11 @@
 +	/* USER CODE END i2c4 */
 +};
 +
-+&ltdc {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&ltdc_pins_mx>;
-+	pinctrl-1 = <&ltdc_sleep_pins_mx>;
++&ipcc {
 +	status = "okay";
 +
-+	/* USER CODE BEGIN ltdc */
-+	/* USER CODE END ltdc */
++	/* USER CODE BEGIN ipcc */
++	/* USER CODE END ipcc */
 +};
 +
 +&mdma1 {
@@ -266,6 +259,13 @@
 +
 +	/* USER CODE BEGIN mdma1 */
 +	/* USER CODE END mdma1 */
++};
++
++&pwr_regulators {
++	status = "okay";
++
++	/* USER CODE BEGIN pwr_regulators */
++	/* USER CODE END pwr_regulators */
 +};
 +
 +&rcc {
@@ -315,8 +315,8 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/arch/arm/boot/dts/st/stm32mp157c-quark.dts	2026-04-05 14:21:27.747850615 +0200
-@@ -0,0 +1,301 @@
++++ b/arch/arm/boot/dts/st/stm32mp157c-quark.dts	2026-04-06 10:17:34.473633775 +0200
+@@ -0,0 +1,286 @@
 +/dts-v1/;
 +
 +#include "stm32mp157c-cube-mx.dtsi"
@@ -411,7 +411,7 @@
 +
 +&arm_wdt {
 +	timeout-sec = <32>;
-+	status = "okay";
++	status = "disabled";
 +};
 +
 +&cpu0 {
@@ -422,21 +422,6 @@
 +	cpu-supply = <&vddcore>;
 +};
 +
-+&crc1 {
-+	status = "okay";
-+};
-+
-+&dts {
-+	status = "okay";
-+};
-+
-+&rtc {
-+	st,lsco = <RTC_OUT2_RMP>;
-+	pinctrl-0 = <&rtc_out2_rmp_pins_a>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
 +&m4_rproc{
 +	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
 +			<&vdev0vring1>, <&vdev0buffer>, <&mcu_rsc_table>;
@@ -445,7 +430,7 @@
 +	interrupt-parent = <&exti>;
 +	interrupts = <68 1>;
 +	wakeup-source;
-+	status = "okay";
++	status = "disabled";
 +};
 +
 +&i2c4 {

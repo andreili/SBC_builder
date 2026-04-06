@@ -1,6 +1,6 @@
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-05 13:01:28.812149620 +0200
-@@ -0,0 +1,277 @@
++++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-06 15:18:09.397845314 +0200
+@@ -0,0 +1,267 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -53,7 +53,6 @@
 +		clk_lse: clk-lse {
 +			clock-frequency = <32768>;
 +			st,drive = < LSEDRV_MEDIUM_HIGH >;
-+			st,css;
 +
 +			/* USER CODE BEGIN clk_lse */
 +			/* USER CODE END clk_lse */
@@ -61,6 +60,7 @@
 +		clk_hse: clk-hse {
 +			clock-frequency = <24000000>;
 +			st,css;
++			st,digbypass;
 +
 +			/* USER CODE BEGIN clk_hse */
 +			/* USER CODE END clk_hse */
@@ -68,36 +68,6 @@
 +	};
 +
 +}; /*root*/
-+
-+/*Warning: the configuration of the secured GPIOs should be added in (addons) User Section*/
-+&pinctrl {
-+	rcc_pins_mx: rcc_mx-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('G', 2, AF1)>; /* RCC_MCO_2 */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	/* USER CODE BEGIN pinctrl */
-+	/* USER CODE END pinctrl */
-+};
-+
-+&pinctrl_z {
-+	i2c4_pins_z_mx: i2c4_mx-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
-+					 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
-+
-+	/* USER CODE BEGIN pinctrl_z */
-+	/* USER CODE END pinctrl_z */
-+};
 +
 +&bsec {
 +	status = "okay";
@@ -109,15 +79,17 @@
 +&etzpc {
 +	status = "okay";
 +	st,decprot = <
-+	/*"NS_R S_W" peripherals*/
-+	DECPROT(STM32MP1_ETZPC_DDRCTRL_ID, DECPROT_NS_R_S_W, DECPROT_LOCK)
-+	DECPROT(STM32MP1_ETZPC_DDRPHYC_ID, DECPROT_NS_R_S_W, DECPROT_LOCK)
 +	/*"Non Secured" peripherals*/
++	DECPROT(STM32MP1_ETZPC_CRYP1_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_DMA1_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_DMA2_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_DMAMUX_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
++	DECPROT(STM32MP1_ETZPC_HASH1_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_I2C4_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_UART4_ID, DECPROT_NS_RW, DECPROT_UNLOCK)
++	/*"NS_R S_W" peripherals*/
++	DECPROT(STM32MP1_ETZPC_DDRCTRL_ID, DECPROT_NS_R_S_W, DECPROT_LOCK)
++	DECPROT(STM32MP1_ETZPC_DDRPHYC_ID, DECPROT_NS_R_S_W, DECPROT_LOCK)
 +	/*"Secured" peripherals*/
 +	DECPROT(STM32MP1_ETZPC_IWDG1_ID, DECPROT_S_RW, DECPROT_UNLOCK)
 +	DECPROT(STM32MP1_ETZPC_RNG1_ID, DECPROT_S_RW, DECPROT_UNLOCK)
@@ -139,7 +111,7 @@
 +
 +&i2c4 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_pins_z_mx>;
++	pinctrl-0 = <&i2c4_pins_a>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN i2c4 */
@@ -154,18 +126,25 @@
 +	/* USER CODE END iwdg1 */
 +};
 +
++&pwr_regulators {
++	status = "okay";
++
++	/* USER CODE BEGIN pwr_regulators */
++	/* USER CODE END pwr_regulators */
++};
++
 +&rcc {
 +	status = "okay";
 +	/* USER CODE BEGIN rcc */
 +	/* USER CODE END rcc */
 +	st,clksrc = <
 +		CLK_CKPER_DISABLED
-+		CLK_SDMMC12_PLL3R
++		CLK_SDMMC12_PLL4P
 +		CLK_STGEN_HSE
 +		CLK_I2C46_HSI
 +		CLK_UART24_HSI
 +		CLK_RNG1_CSI
-+		CLK_MPU_HSI
++		CLK_MPU_PLL1P
 +		CLK_AXI_PLL2P
 +		CLK_MCU_PLL3P
 +		CLK_RTC_LSE
@@ -186,15 +165,19 @@
 +		DIV(DIV_MCO2, 1)
 +	>;
 +	st,pll_vco {
++		pll1_vco_1300Mhz: pll1-vco-1300Mhz {
++			src = < CLK_PLL12_HSE >;
++			divmn = < 2 80 >;
++			frac = < 0x800 >;
++		};
 +		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
 +			src = < CLK_PLL12_HSE >;
 +			divmn = < 2 65 >;
 +			frac = < 0x1400 >;
 +		};
-+		pll3_vco_417Mhz: pll3-vco-417Mhz {
++		pll3_vco_416Mhz: pll3-vco-416Mhz {
 +			src = < CLK_PLL3_HSE >;
-+			divmn = < 1 33 >;
-+			frac = < 0x1a04 >;
++			divmn = < 5 103 >;
 +		};
 +		pll4_vco_600Mhz: pll4-vco-600Mhz {
 +			src = < CLK_PLL4_HSE >;
@@ -202,6 +185,20 @@
 +		};
 +		/* USER CODE BEGIN rcc_st-pll_vco */
 +		/* USER CODE END rcc_st-pll_vco */
++	};
++
++	pll1:st,pll@0 {
++		compatible = "st,stm32mp1-pll";
++		reg = <0>;
++
++		st,pll = < &pll1_cfg1 >;
++
++		pll1_cfg1: pll1_cfg1 {
++			st,pll_vco = < &pll1_vco_1300Mhz >;
++			st,pll_div_pqr = < 0 1 1 >;
++		};
++		/* USER CODE BEGIN pll1 */
++		/* USER CODE END pll1 */
 +	};
 +
 +	pll2:st,pll@1 {
@@ -212,7 +209,7 @@
 +
 +		pll2_cfg1: pll2_cfg1 {
 +			st,pll_vco = < &pll2_vco_1066Mhz >;
-+			st,pll_div_pqr = < 1 1 0 >;
++			st,pll_div_pqr = < 1 0 0 >;
 +		};
 +		/* USER CODE BEGIN pll2 */
 +		/* USER CODE END pll2 */
@@ -225,8 +222,8 @@
 +		st,pll = < &pll3_cfg1 >;
 +
 +		pll3_cfg1: pll3_cfg1 {
-+			st,pll_vco = < &pll3_vco_417Mhz >;
-+			st,pll_div_pqr = < 1 16 36 >;
++			st,pll_vco = < &pll3_vco_416Mhz >;
++			st,pll_div_pqr = < 1 15 31 >;
 +		};
 +		/* USER CODE BEGIN pll3 */
 +		/* USER CODE END pll3 */
@@ -240,17 +237,10 @@
 +
 +		pll4_cfg1: pll4_cfg1 {
 +			st,pll_vco = < &pll4_vco_600Mhz >;
-+			st,pll_div_pqr = < 5 6 1 >;
++			st,pll_div_pqr = < 5 7 7 >;
 +		};
 +		/* USER CODE BEGIN pll4 */
 +		/* USER CODE END pll4 */
-+	};
-+
-+	st,rcc{
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rcc_pins_mx>;
-+		status = "okay";
-+
 +	};
 +};
 +
@@ -279,8 +269,8 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-04-05 13:01:53.770559201 +0200
-@@ -0,0 +1,346 @@
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-04-05 23:56:13.125232562 +0200
+@@ -0,0 +1,347 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/gpio/gpio.h>
@@ -386,6 +376,7 @@
 +
 +&gpu {
 +	contiguous-area = <&gpu_reserved>;
++	status = "disabled";
 +};
 +
 +&hash1 {

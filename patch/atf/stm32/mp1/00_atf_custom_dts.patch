@@ -1,5 +1,5 @@
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-quark-fw-config.dts	2026-03-22 10:42:03.043661182 +0100
++++ a/fdts/stm32mp157c-quark-fw-config.dts	2026-04-05 23:56:13.125232562 +0200
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
@@ -14,7 +14,7 @@
 +#define DDR_SIZE	0x20000000 /* 512MB */
 +#include "stm32mp15-fw-config.dtsi"
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp15-mx.dtsi	2026-04-05 13:01:22.592887770 +0200
++++ a/fdts/stm32mp15-mx.dtsi	2026-04-06 10:50:29.754065080 +0200
 @@ -0,0 +1,107 @@
 +/*
 + * Copyright (C) 2015-2018, STMicroelectronics - All Rights Reserved
@@ -32,7 +32,7 @@
 + * Relaxed Timing Mode: false
 + * Address mapping type: RBC
 + *
-+ * Save Date: 2026.04.04, save Time: 21:05:58
++ * Save Date: 2026.04.06, save Time: 10:13:20
 + */
 +
 +#define DDR_MEM_NAME "DDR3-DDR3L 16bits 533000kHz"
@@ -51,7 +51,7 @@
 +#define DDR_RFSHCTL3 0x00000000
 +#define DDR_RFSHTMG 0x0081008B
 +#define DDR_CRCPARCTL0 0x00000000
-+#define DDR_DRAMTMG0 0x121B2414
++#define DDR_DRAMTMG0 0x0F101B0F
 +#define DDR_DRAMTMG1 0x000A041C
 +#define DDR_DRAMTMG2 0x0608090F
 +#define DDR_DRAMTMG3 0x0050400C
@@ -124,8 +124,8 @@
 +#define DDR_DX2GCR 0x0000CE80
 +#define DDR_DX3GCR 0x0000CE80
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-05 13:01:19.695583344 +0200
-@@ -0,0 +1,267 @@
++++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-06 15:27:33.647528054 +0200
+@@ -0,0 +1,251 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
 + * Copyright (C) 2026, STMicroelectronics - All Rights Reserved
@@ -178,7 +178,6 @@
 +		clk_lse: clk-lse {
 +			clock-frequency = <32768>;
 +			st,drive = < LSEDRV_MEDIUM_HIGH >;
-+			st,css;
 +
 +			/* USER CODE BEGIN clk_lse */
 +			/* USER CODE END clk_lse */
@@ -186,6 +185,7 @@
 +		clk_hse: clk-hse {
 +			clock-frequency = <24000000>;
 +			st,css;
++			st,digbypass;
 +
 +			/* USER CODE BEGIN clk_hse */
 +			/* USER CODE END clk_hse */
@@ -195,37 +195,6 @@
 +}; /*root*/
 +
 +&pinctrl {
-+	sdmmc1_pins_mx: sdmmc1_mx-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDMMC1_D0 */
-+					 <STM32_PINMUX('C', 9, AF12)>, /* SDMMC1_D1 */
-+					 <STM32_PINMUX('C', 10, AF12)>, /* SDMMC1_D2 */
-+					 <STM32_PINMUX('C', 11, AF12)>, /* SDMMC1_D3 */
-+					 <STM32_PINMUX('D', 2, AF12)>; /* SDMMC1_CMD */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <1>;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('C', 12, AF12)>; /* SDMMC1_CK */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <3>;
-+		};
-+	};
-+
-+	uart4_pins_mx: uart4_mx-0 {
-+		pins1 {
-+			pinmux = <STM32_PINMUX('B', 2, AF8)>; /* UART4_RX */
-+			bias-disable;
-+		};
-+		pins2 {
-+			pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
-+			bias-disable;
-+			drive-push-pull;
-+			slew-rate = <0>;
-+		};
-+	};
 +
 +	/* USER CODE BEGIN pinctrl */
 +	rcc_pins_mx: rcc_mx-0 {
@@ -239,24 +208,23 @@
 +	/* USER CODE END pinctrl */
 +};
 +
-+&pinctrl_z {
-+	i2c4_pins_z_mx: i2c4_mx-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
-+					 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
-+			bias-disable;
-+			drive-open-drain;
-+			slew-rate = <0>;
-+		};
-+	};
++&cryp1 {
++	status = "okay";
 +
-+	/* USER CODE BEGIN pinctrl_z */
-+	/* USER CODE END pinctrl_z */
++	/* USER CODE BEGIN cryp1 */
++	/* USER CODE END cryp1 */
++};
++
++&hash1 {
++	status = "okay";
++
++	/* USER CODE BEGIN hash1 */
++	/* USER CODE END hash1 */
 +};
 +
 +&i2c4 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c4_pins_z_mx>;
++	pinctrl-0 = <&i2c4_pins_a>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN i2c4 */
@@ -277,7 +245,7 @@
 +	/* USER CODE END rcc */
 +	st,clksrc = <
 +		CLK_CKPER_DISABLED
-+		CLK_SDMMC12_PLL3R
++		CLK_SDMMC12_PLL4P
 +		CLK_STGEN_HSE
 +		CLK_I2C46_HSI
 +		CLK_UART24_HSI
@@ -302,15 +270,19 @@
 +		DIV(DIV_MCO2, 1)
 +	>;
 +	st,pll_vco {
++		pll1_vco_1300Mhz: pll1-vco-1300Mhz {
++			src = < CLK_PLL12_HSE >;
++			divmn = < 2 80 >;
++			frac = < 0x800 >;
++		};
 +		pll2_vco_1066Mhz: pll2-vco-1066Mhz {
 +			src = < CLK_PLL12_HSE >;
 +			divmn = < 2 65 >;
 +			frac = < 0x1400 >;
 +		};
-+		pll3_vco_417Mhz: pll3-vco-417Mhz {
++		pll3_vco_416Mhz: pll3-vco-416Mhz {
 +			src = < CLK_PLL3_HSE >;
-+			divmn = < 1 33 >;
-+			frac = < 0x1a04 >;
++			divmn = < 5 103 >;
 +		};
 +		pll4_vco_600Mhz: pll4-vco-600Mhz {
 +			src = < CLK_PLL4_HSE >;
@@ -318,6 +290,20 @@
 +		};
 +		/* USER CODE BEGIN rcc_st-pll_vco */
 +		/* USER CODE END rcc_st-pll_vco */
++	};
++
++	pll1:st,pll@0 {
++		compatible = "st,stm32mp1-pll";
++		reg = <0>;
++
++		st,pll = < &pll1_cfg1 >;
++
++		pll1_cfg1: pll1_cfg1 {
++			st,pll_vco = < &pll1_vco_1300Mhz >;
++			st,pll_div_pqr = < 0 1 1 >;
++		};
++		/* USER CODE BEGIN pll1 */
++		/* USER CODE END pll1 */
 +	};
 +
 +	pll2:st,pll@1 {
@@ -328,7 +314,7 @@
 +
 +		pll2_cfg1: pll2_cfg1 {
 +			st,pll_vco = < &pll2_vco_1066Mhz >;
-+			st,pll_div_pqr = < 1 1 0 >;
++			st,pll_div_pqr = < 1 0 0 >;
 +		};
 +		/* USER CODE BEGIN pll2 */
 +		/* USER CODE END pll2 */
@@ -341,8 +327,8 @@
 +		st,pll = < &pll3_cfg1 >;
 +
 +		pll3_cfg1: pll3_cfg1 {
-+			st,pll_vco = < &pll3_vco_417Mhz >;
-+			st,pll_div_pqr = < 1 16 36 >;
++			st,pll_vco = < &pll3_vco_416Mhz >;
++			st,pll_div_pqr = < 1 15 31 >;
 +		};
 +		/* USER CODE BEGIN pll3 */
 +		/* USER CODE END pll3 */
@@ -356,7 +342,7 @@
 +
 +		pll4_cfg1: pll4_cfg1 {
 +			st,pll_vco = < &pll4_vco_600Mhz >;
-+			st,pll_div_pqr = < 5 6 1 >;
++			st,pll_div_pqr = < 5 7 7 >;
 +		};
 +		/* USER CODE BEGIN pll4 */
 +		/* USER CODE END pll4 */
@@ -366,15 +352,13 @@
 +		status = "okay";
 +
 +		/* USER CODE BEGIN rcc_st-rcc */
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&rcc_pins_mx>;
 +		/* USER CODE END rcc_st-rcc */
 +	};
 +};
 +
 +&sdmmc1 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&sdmmc1_pins_mx>;
++	pinctrl-0 = <&sdmmc1_b4_pins_a>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN sdmmc1 */
@@ -383,7 +367,7 @@
 +
 +&uart4 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&uart4_pins_mx>;
++	pinctrl-0 = <&uart4_pins_a>;
 +	status = "okay";
 +
 +	/* USER CODE BEGIN uart4 */
@@ -394,7 +378,7 @@
 +/* USER CODE END addons */
 +
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp15-m4-srm.dtsi	2026-03-22 10:49:56.532077463 +0100
++++ a/fdts/stm32mp15-m4-srm.dtsi	2026-04-05 23:56:13.125232562 +0200
 @@ -0,0 +1,447 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
 +/*
@@ -844,8 +828,8 @@
 +	};
 +};
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-quark.dts	2026-04-05 13:02:09.051031695 +0200
-@@ -0,0 +1,197 @@
++++ a/fdts/stm32mp157c-quark.dts	2026-04-06 15:27:57.600184450 +0200
+@@ -0,0 +1,196 @@
 +/dts-v1/;
 +#include "stm32mp157c-cube-mx.dtsi"
 +#include "stm32mp15-pinctrl.dtsi"
@@ -878,7 +862,6 @@
 +	i2c-scl-rising-time-ns = <185>;
 +	i2c-scl-falling-time-ns = <20>;
 +	clock-frequency = <400000>;
-+	pinctrl-0 = <&i2c4_pins_a>;
 +
 +	pmic: stpmic@33 {
 +		compatible = "st,stpmic1";
@@ -1044,7 +1027,7 @@
 +	};
 +};
 --- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ a/fdts/stm32mp157c-cube-mx-fw-config.dts	2026-03-21 21:23:17.804000000 +0100
++++ a/fdts/stm32mp157c-cube-mx-fw-config.dts	2026-04-05 23:55:54.332000000 +0200
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
 +/*
