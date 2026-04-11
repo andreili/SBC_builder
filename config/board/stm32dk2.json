@@ -12,14 +12,15 @@
         "ATF_PLATFORM:stm32mp1",
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
-        "BOARD:dk2",
+        "BOARD:cube-mx",
+        "DTS_DIR:%{ROOT_DIR}%/%{cfg_dir}%/dts_cube",
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
-        "ATF_OPTS:PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb PSA_FWU_SUPPORT=1 %{ATF_LOG}%",
+        "ATF_OPTS:PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb PSA_FWU_SUPPORT=1 %{ATF_LOG}% TFA_EXTERNAL_DT=%{DTS_DIR}%/tf-a",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
         "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=TRACE_INFO",
         "TEE_DBG:CFG_TEE_CORE_DEBUG=n",
         "TEE_MIN:NOWERROR=1",
-        "TEE_OPTS:PLATFORM=%{ATF_PLATFORM}% ARCH=arm CFG_ARM32_core=y CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
+        "TEE_OPTS:PLATFORM=%{ATF_PLATFORM}% ARCH=arm CFG_ARM32_core=y CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_EXT_DTS=%{DTS_DIR}%/optee-os CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
         "BL32_FN:tee-header_v2.bin",
         "BL32E1_FN:tee-pager_v2.bin",
         "BL32E2_FN:tee-pageable_v2.bin",
@@ -91,7 +92,7 @@
             ],
             "target": [ "clean", "all" ],
             "config_def": "%{CHIP_FAMILY}%_defconfig",
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=%{CHIP}%-%{BOARD}%"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=%{CHIP}%-%{BOARD}% EXT_DTS=%{DTS_DIR}%/u-boot"
         },
         {
             "parent": "fip_st",
@@ -120,7 +121,7 @@
             "config_set": "linux_min,system_live,no_snd",
             "is_shared": false,
             "target": [ "modules_prepare", "uImage", "modules", "dtbs", "modules_install" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1 LOADADDR=0xC2000040",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1 LOADADDR=0xC2000040 KBUILD_EXTDTS=%{DTS_DIR}%/kernel",
             "artifacts":
             [
                 {

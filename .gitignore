@@ -6,3 +6,6 @@ build/*
 *.bak
 root*
 files/initramfs/initramfs.list
+*.tmp
+*.cmd
+*.dtb
