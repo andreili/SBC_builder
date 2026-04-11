@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "atf", "op_tee", "uboot", "fip", "kernel"
+        "atf_st", "op_tee", "uboot_st", "fip", "kernel"
     ],
     "variables":
     [
@@ -12,9 +12,9 @@
         "ATF_PLATFORM:stm32mp1",
         "CHIP:stm32mp157c",
         "CHIP_FAMILY:stm32mp15",
-        "BOARD:quark",
+        "BOARD:dk2",
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
-        "ATF_OPTS:DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb %{ATF_LOG}%",
+        "ATF_OPTS:PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb PSA_FWU_SUPPORT=1 %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
         "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=TRACE_ERROR",
         "TEE_DBG:CFG_TEE_CORE_TA_TRACE=n CFG_ENABLE_EMBEDDED_TESTS=n CFG_DEBUG_INFO=n",
@@ -31,12 +31,12 @@
     "targets":
     [
         {
-            "parent": "atf",
-            "version": "@",
-            "version_type": "head",
+            "parent": "atf_st",
+            "version": "v2.10-stm32mp-r2",
+            "version_type": "tag",
             "patch_dir": "atf/stm32/mp1",
             "target": [ "clean", "all" ],
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}%",
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% %{ATF_OPTS}%",
              "artifacts":
             [
                 {
@@ -50,7 +50,7 @@
             "version": "@",
             "version_type": "head",
             "patch_dir": "op_tee/stm32mp1",
-            "deps": [ "atf" ],
+            "deps": [ "atf_st" ],
             "target": [ "clean", "all" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLATFORM=%{ATF_PLATFORM}% %{TEE_OPTS}% O=build",
              "artifacts":
@@ -83,6 +83,10 @@
                 {
                     "file": "%{BL33_CFG}%",
                     "store_type": "temp"
+                },
+                {
+                    "file": "tools/mkfwumdata",
+                    "store_type": "temp"
                 }
             ],
             "target": [ "clean", "all" ],
@@ -94,7 +98,7 @@
             "version": "@",
             "version_type": "head",
             "patch_dir": "atf/stm32/mp1",
-            "deps": [ "atf", "op_tee", "uboot" ],
+            "deps": [ "atf_st", "op_tee", "uboot" ],
             "target": [ "clean", "fip" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
              "artifacts":
