@@ -114,7 +114,7 @@ class Board:
                 sub_target = targets[1]
         is_finded = self.__build(target_list, sub_target)
         if (not is_finded):
-            Logger.error(f"Don't find target! Available: {self.targets_list()}")
+            Logger.error(f"Don't find target '{target_name}'! Available: {self.targets_list()}")
 
     def scan_kernel(self):
         target = self.get_kernel()

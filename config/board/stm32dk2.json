@@ -1,7 +1,7 @@
 {
     "build":
     [
-        "atf_st", "op_tee", "uboot_st", "fip", "kernel"
+        "fip_st", "kernel"
     ],
     "variables":
     [
@@ -16,10 +16,10 @@
         "ATF_LOG:LOG_LEVEL=LOG_LEVEL_NOTICE",
         "ATF_OPTS:PLAT=%{ATF_PLATFORM}% DEBUG=0 ARCH=aarch32 ARM_ARCH_MAJOR=7 STM32MP_SDMMC=1 STM32MP15=1 AARCH32_SP=optee DTB_FILE_NAME=%{CHIP}%-%{BOARD}%.dtb PSA_FWU_SUPPORT=1 %{ATF_LOG}%",
         "ATF_BIN:tf-a-%{CHIP}%-%{BOARD}%.stm32",
-        "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=TRACE_ERROR",
-        "TEE_DBG:CFG_TEE_CORE_TA_TRACE=n CFG_ENABLE_EMBEDDED_TESTS=n CFG_DEBUG_INFO=n",
-        "TEE_MIN:CFG_STM32MP15=y CFG_STM32_RTC=n CFG_STM32_TAMP=n CFG_REE_FS=n CFG_RPMB_FS=n CFG_STM32MP15_HUK=n",
-        "TEE_OPTS:CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
+        "TEE_LOG:CFG_TEE_CORE_LOG_LEVEL=TRACE_INFO",
+        "TEE_DBG:CFG_TEE_CORE_DEBUG=n",
+        "TEE_MIN:NOWERROR=1",
+        "TEE_OPTS:PLATFORM=%{ATF_PLATFORM}% ARCH=arm CFG_ARM32_core=y CFG_EMBED_DTB_SOURCE_FILE=%{CHIP}%-%{BOARD}%.dts %{TEE_LOG}% CFG_STM32MP_PROFILE=system_services %{TEE_MIN}% %{TEE_DBG}%",
         "BL32_FN:tee-header_v2.bin",
         "BL32E1_FN:tee-pager_v2.bin",
         "BL32E2_FN:tee-pageable_v2.bin",
@@ -32,8 +32,8 @@
     [
         {
             "parent": "atf_st",
-            "version": "v2.10-stm32mp-r2",
-            "version_type": "tag",
+            "version": "v2.10-stm32mp",
+            "version_type": "branch",
             "patch_dir": "atf/stm32/mp1",
             "target": [ "clean", "all" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% %{ATF_OPTS}%",
@@ -46,10 +46,10 @@
             ]
         },
         {
-            "parent": "op_tee",
-            "version": "@",
-            "version_type": "head",
-            "patch_dir": "op_tee/stm32mp1",
+            "parent": "op_tee_st",
+            "version": "4.0.0-stm32mp",
+            "version_type": "branch",
+            "patch_dir": "op_tee_st/stm32mp1",
             "deps": [ "atf_st" ],
             "target": [ "clean", "all" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLATFORM=%{ATF_PLATFORM}% %{TEE_OPTS}% O=build",
@@ -70,10 +70,14 @@
             ]
         },
         {
-            "parent": "uboot",
-            "version": "@",
-            "version_type": "head",
-            "patch_dir": "uboot/stm32mp1",
+            "parent": "uboot_st",
+            "version": "v2023.10-stm32mp",
+            "version_type": "branch",
+            "patch_dir":
+            [
+                "uboot/stm32mp1",
+                "uboot/old"
+            ],
             "artifacts":
             [
                 {
@@ -83,22 +87,18 @@
                 {
                     "file": "%{BL33_CFG}%",
                     "store_type": "temp"
-                },
-                {
-                    "file": "tools/mkfwumdata",
-                    "store_type": "temp"
                 }
             ],
             "target": [ "clean", "all" ],
             "config_def": "%{CHIP_FAMILY}%_defconfig",
-            "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=st/%{CHIP}%-%{BOARD}%"
+            "makeopts": "CROSS_COMPILE=%{CROSS_C}% DEVICE_TREE=%{CHIP}%-%{BOARD}%"
         },
         {
-            "parent": "fip",
+            "parent": "fip_st",
             "version": "@",
             "version_type": "head",
             "patch_dir": "atf/stm32/mp1",
-            "deps": [ "atf_st", "op_tee", "uboot" ],
+            "deps": [ "atf_st", "op_tee_st", "uboot_st" ],
             "target": [ "clean", "fip" ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% PLAT=%{ATF_PLATFORM}% %{ATF_OPTS}% BL32=%{out_dir}%/%{BL32_FN}% BL32_EXTRA1=%{out_dir}%/%{BL32E1_FN}% BL32_EXTRA2=%{out_dir}%/%{BL32E2_FN}% BL33=%{out_dir}%/%{BL33_FN}% BL33_CFG=%{out_dir}%/%{BL33_CFG}%",
              "artifacts":

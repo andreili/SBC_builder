@@ -8,6 +8,15 @@
         }
     },
     {
+        "atf_st":
+        {
+            "url": "https://github.com/STMicroelectronics/arm-trusted-firmware.git",
+            "bare_dir": "atf_st",
+            "config": false,
+            "is_shared": false
+        }
+    },
+    {
         "op_tee":
         {
             "url": "https://github.com/OP-TEE/optee_os.git",
@@ -16,9 +25,19 @@
         }
     },
     {
-        "fip":
+        "op_tee_st":
         {
-            "url": "https://github.com/ARM-software/arm-trusted-firmware.git",
+            "url": "https://github.com/STMicroelectronics/optee_os.git",
+            "bare_dir": "optee_st",
+            "config": false,
+            "is_shared": false
+        }
+    },
+    {
+        "fip_st":
+        {
+            "url": "https://github.com/STMicroelectronics/arm-trusted-firmware.git",
+            "bare_dir": "atf_st",
             "config": false,
             "is_shared": false
         }
