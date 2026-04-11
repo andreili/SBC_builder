@@ -1,4 +1,4 @@
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ b/core/arch/arm/dts/stm32mp157c-cube-mx.dtsi	2026-04-06 15:18:09.397845314 +0200
 @@ -0,0 +1,267 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -268,9 +268,9 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-04-05 23:56:13.125232562 +0200
-@@ -0,0 +1,347 @@
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
++++ b/core/arch/arm/dts/stm32mp157c-quark.dts	2026-04-06 20:56:48.471709116 +0200
+@@ -0,0 +1,343 @@
 +/dts-v1/;
 +
 +#include <dt-bindings/gpio/gpio.h>
@@ -552,7 +552,7 @@
 +	mbox-names = "vq0", "vq1", "shutdown", "detach";
 +	interrupt-parent = <&exti>;
 +	interrupts = <68 1>;
-+	status = "okay";
++	status = "disabled";
 +};
 +
 +&pwr_regulators {
@@ -562,10 +562,6 @@
 +
 +&rcc {
 +	compatible = "st,stm32mp1-rcc";
-+	status = "okay";
-+};
-+
-+&rng1 {
 +	status = "okay";
 +};
 +

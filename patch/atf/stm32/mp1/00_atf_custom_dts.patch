@@ -1,4 +1,4 @@
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp157c-quark-fw-config.dts	2026-04-05 23:56:13.125232562 +0200
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -13,7 +13,7 @@
 +
 +#define DDR_SIZE	0x20000000 /* 512MB */
 +#include "stm32mp15-fw-config.dtsi"
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp15-mx.dtsi	2026-04-06 10:50:29.754065080 +0200
 @@ -0,0 +1,107 @@
 +/*
@@ -123,7 +123,7 @@
 +#define DDR_DX1GCR 0x0000CE81
 +#define DDR_DX2GCR 0x0000CE80
 +#define DDR_DX3GCR 0x0000CE80
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp157c-cube-mx.dtsi	2026-04-06 15:27:33.647528054 +0200
 @@ -0,0 +1,251 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -377,7 +377,7 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp15-m4-srm.dtsi	2026-04-05 23:56:13.125232562 +0200
 @@ -0,0 +1,447 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
@@ -827,7 +827,7 @@
 +		};
 +	};
 +};
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp157c-quark.dts	2026-04-06 15:27:57.600184450 +0200
 @@ -0,0 +1,196 @@
 +/dts-v1/;
@@ -1026,7 +1026,7 @@
 +		st,non-secure-otp;
 +	};
 +};
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ a/fdts/stm32mp157c-cube-mx-fw-config.dts	2026-04-05 23:55:54.332000000 +0200
 @@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)

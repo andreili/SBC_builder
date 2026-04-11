@@ -1,4 +1,4 @@
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
 +++ b/arch/arm/boot/dts/st/stm32mp157c-cube-mx.dtsi	2026-04-06 10:50:07.027708524 +0200
 @@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-3-Clause)
@@ -314,9 +314,9 @@
 +/* USER CODE BEGIN addons */
 +/* USER CODE END addons */
 +
---- /dev/null	2026-04-04 12:40:01.204897313 +0200
-+++ b/arch/arm/boot/dts/st/stm32mp157c-quark.dts	2026-04-06 10:17:34.473633775 +0200
-@@ -0,0 +1,286 @@
+--- /dev/null	2026-04-06 21:46:49.518887239 +0200
++++ b/arch/arm/boot/dts/st/stm32mp157c-quark.dts	2026-04-06 21:03:37.368398530 +0200
+@@ -0,0 +1,306 @@
 +/dts-v1/;
 +
 +#include "stm32mp157c-cube-mx.dtsi"
@@ -414,8 +414,32 @@
 +	status = "disabled";
 +};
 +
++&rng1 {
++	status = "disabled";
++};
++
++&hsem {
++	status = "disabled";
++};
++
++&cryp1 {
++	status = "disabled";
++};
++
++&rtc {
++	status = "disabled";
++};
++
 +&cpu0 {
 +	cpu-supply = <&vddcore>;
++};
++
++&hash1 {
++	status = "disabled";
++};
++
++&crc1 {
++	status = "disabled";
 +};
 +
 +&cpu1 {
@@ -596,10 +620,6 @@
 +&pwr_regulators {
 +	vdd-supply = <&vdd>;
 +	vdd_3v3_usbfs-supply = <&vdd_usb>;
-+};
-+
-+&rng1 {
-+	status = "okay";
 +};
 +
 +/delete-node/ &dsi;
