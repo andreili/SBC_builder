@@ -88,6 +88,10 @@
                 {
                     "file": "%{BL33_CFG}%",
                     "store_type": "temp"
+                },
+                {
+                    "file": "tools/mkfwumdata",
+                    "store_type": "temp"
                 }
             ],
             "target": [ "clean", "all" ],
