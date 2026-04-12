@@ -777,19 +777,6 @@
 	status = "okay";
 
 	/* USER CODE BEGIN sdmmc2 */
-	non-removable;
-	cap-sdio-irq;
-	st,neg-edge;
-	bus-width = <4>;
-	vmmc-supply = <&v3v3>;
-	mmc-pwrseq = <&wifi_pwrseq>;
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	brcmf:bcrmf@1{
-		reg = <1>;
-		compatible = "brcm,bcm4329-fmac";
-	};
 	/* USER CODE END sdmmc2 */
 };
 

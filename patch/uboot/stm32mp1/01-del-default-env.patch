@@ -1,0 +1,29 @@
+diff --git a/include/configs/stm32mp15_common.h b/include/configs/stm32mp15_common.h
+index 19b989cba2c..d3878245c0b 100644
+--- a/include/configs/stm32mp15_common.h
++++ b/include/configs/stm32mp15_common.h
+@@ -120,9 +120,7 @@
+ 
+ #define CFG_EXTRA_ENV_SETTINGS \
+ 	STM32MP_MEM_LAYOUT \
+-	STM32MP_BOOTCMD \
+ 	BOOTENV \
+-	STM32MP_EXTRA \
+ 	STM32MP_BOARD_EXTRA_ENV
+ 
+ #endif /* ifndef CONFIG_SPL_BUILD */
+diff --git a/include/configs/stm32mp15_st_common.h b/include/configs/stm32mp15_st_common.h
+index 7b3b887a2f2..7e13da70b8a 100644
+--- a/include/configs/stm32mp15_st_common.h
++++ b/include/configs/stm32mp15_st_common.h
+@@ -51,10 +51,8 @@
+ #undef CFG_EXTRA_ENV_SETTINGS
+ #define CFG_EXTRA_ENV_SETTINGS \
+ 	STM32MP_MEM_LAYOUT \
+-	ST_STM32MP1_BOOTCMD \
+ 	ST_STM32MP1_ALTBOOTCMD \
+ 	BOOTENV \
+-	STM32MP_EXTRA \
+ 	STM32MP_BOARD_EXTRA_ENV
+ 
+ #endif

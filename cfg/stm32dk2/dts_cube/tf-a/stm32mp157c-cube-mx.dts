@@ -87,6 +87,19 @@
 
 }; /*root*/
 
+&pinctrl {
+	/* USER CODE BEGIN pinctrl */
+	rcc_pins_mx: rcc_mx-0 {
+		pins {
+			pinmux = <STM32_PINMUX('G', 2, AF1)>; /* RCC_MCO_2 */
+			bias-disable;
+			drive-push-pull;
+			slew-rate = <0>;
+		};
+	};
+	/* USER CODE END pinctrl */
+};
+
 &cryp1 {
 	status = "okay";
 
@@ -379,7 +392,7 @@
 
 &sdmmc1 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc1_b4_pins_a>;
+	pinctrl-0 = <&sdmmc1_b4_pins_a &rcc_pins_mx>;
 	status = "okay";
 
 	/* USER CODE BEGIN sdmmc1 */
