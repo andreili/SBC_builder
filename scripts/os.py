@@ -377,6 +377,7 @@ class OS:
             for line in f:
                 path = line.strip()
                 if (path != "") and (not path.startswith("#")):
+                    path = parse_variables(path)
                     print(f"\tRemove '{dir}/{path}'...")
                     self.__sudo(f"rm -rf {dir}/{path}", stdout=subprocess.DEVNULL)
 
@@ -604,7 +605,7 @@ class OS:
         is_blk = False
         dir_ch = Path(dir_or_dev)
         self.__part_prepare()
-        if (not dir_ch.is_dir()) and (stat.S_ISBLK(os.stat(dir_or_dev).st_mode)):
+        if (not dir_ch.is_dir()) and (dir_ch.is_block_device()):
             is_blk = True
             Logger.install(f"\tBlock device, need to use a sudo.")
         if (self.board.installs["target"] == "image"):
