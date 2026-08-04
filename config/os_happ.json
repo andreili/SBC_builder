@@ -1,0 +1,64 @@
+{
+    "variables":
+    [
+        "USER_LOGIN:happ",
+        "USER_ID:1200"
+    ],
+    "install":
+    {
+        "steps":
+        [
+            {
+                "file": "/etc/portage/package.use/happ",
+                "append": false,
+                "lines":
+                [
+                    "app-portage/eix sqlite",
+                    "net-misc/networkmanager modemmanager -ppp wifi -wext bluetooth",
+                    "sys-process/htop lm-sensors",
+                    "net-wireless/wpa_supplicant dbus",
+                    "sys-kernel/genkernel firmware"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.use/zabbix",
+                "append": false,
+                "lines":
+                [
+                    "net-analyzer/zabbix -sqlite curl frontend ldap mysql server snmp ssh -postgres -agent2 agent",
+                    "net-analyzer/fping suid"
+                ]
+            },
+            {
+                "file": "/etc/portage/package.license",
+                "append": false,
+                "lines":
+                [
+                    "app-arch/unrar unRAR",
+                    "app-arch/lha lha",
+                    "net-analyzer/fping fping"
+                ]
+            },
+            {
+                "_soft_inst":
+                [
+                    "virtual/srv_bak"
+                ],
+                "oneshot": false
+            },
+            { "soft_clean": "default" }
+        ]
+    },
+    "finalize":
+    {
+        "steps":
+        [
+            { "soft_clean": "bdeps" },
+            { "chroot": "find /usr/lib -iname '*.a' -exec rm -f {} \\;" },
+            { "chroot": "find /usr/lib64 -iname '*.a' -exec rm -f {} \\;" },
+            { "chroot": "find /usr/libexec -iname '*.a' -exec rm -f {} \\;" },
+            { "cleanup": "excl" },
+            { "cleanup": "no_compiler" }
+        ]
+    }
+}
