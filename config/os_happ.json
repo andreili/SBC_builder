@@ -40,7 +40,7 @@
                 ]
             },
             {
-                "_soft_inst":
+                "soft_inst":
                 [
                     "virtual/srv_bak"
                 ],
