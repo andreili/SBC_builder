@@ -69,7 +69,7 @@
             "config": true,
             "config_target": "menuconfig",
             "is_shared": true,
-            "version": "v7.2-rc6",
+            "version": "v7.2",
             "version_type": "tag",
             "patch_dir": [ "kernel", "kernel/rockchip64-7.2" ],
             "config_def": "printer_defconfig",
@@ -87,7 +87,7 @@
                 }
             ],
             "makeopts": "CROSS_COMPILE=%{CROSS_C}% ARCH=%{KERNEL_ARCH}% INSTALL_MOD_PATH=%{out_dir}%/kmods/usr INSTALL_MOD_STRIP=1",
-            "modules":
+            "_modules":
             [
                 "rtl8189ES_linux"
             ]
