@@ -17,7 +17,8 @@
                     "net-misc/networkmanager modemmanager -ppp wifi -wext bluetooth",
                     "sys-process/htop lm-sensors",
                     "net-wireless/wpa_supplicant dbus",
-                    "sys-kernel/genkernel firmware"
+                    "sys-kernel/genkernel firmware",
+                    "app-misc/mosquitto websocket"
                 ]
             },
             {

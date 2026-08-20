@@ -14,8 +14,9 @@ index 4bf84622db47..b1a8b52d33c9 100644
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-tinker-board-3.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-tinker-board-3s.dtb
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-9tripod-x3568-v4.dtb
-@@ -277,5 +281,25 @@ rk3588-rock-5b-pcie-srns-dtbs := rk3588-rock-5b.dtb \
- 	rk3588-rock-5b-pcie-srns.dtbo
+@@ -277,6 +281,26 @@ rk3588-rock-5b-plus-radxa-4k-cam-dtbs := rk3588-rock-5b-plus.dtb \
+ 	rk3588-rock-5b-plus-radxa-cam4k-cam0.dtbo \
+ 	rk3588-rock-5b-plus-radxa-cam4k-cam1.dtbo
  
  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-haikou-video-demo.dtb
  rk3588-tiger-haikou-haikou-video-demo-dtbs := rk3588-tiger-haikou.dtb \
