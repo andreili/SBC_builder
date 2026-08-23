@@ -125,7 +125,7 @@ class OS:
         is_append = "-a" if step["append"] else ""
         lines = "\n".join(step["lines"])
         lines = parse_variables(lines)
-        path = step["file"]
+        path = parse_variables(step["file"])
         directory = Path(path).parent
         cmd  = f"mkdir -p {dir}{directory} && echo '{lines}'"
         cmd += f" | sudo tee {is_append} {dir}{path} > /dev/null"
