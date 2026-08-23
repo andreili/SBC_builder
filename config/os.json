@@ -2,7 +2,9 @@
     "variables":
     [
         "USER_ID:1010",
-        "TIME_ZONE:Europe/Warsaw"
+        "TIME_ZONE:Europe/Warsaw",
+        "PYTHON_VERSION:3_13",
+        "PYTHON_VERSION_M:3.13"
     ],
     "prepare":
     {
@@ -38,7 +40,7 @@
                     "VIDEO_CARDS=\"panfrost fbdev\"",
                     "INPUT_DEVICES=\"libinput evdev\"",
                     "LLVM_TARGETS=\"\"",
-                    "PYTHON_TARGETS=\"python3_13\"",
+                    "PYTHON_TARGETS=\"python%{PYTHON_VERSION}%\"",
                     "PYTHON_SINGLE_TARGET=\"${PYTHON_TARGETS}\"",
                     "",
                     "LC_MESSAGES=C.utf8"
@@ -56,7 +58,7 @@
             {
                 "file": "/etc/portage/package.mask/python",
                 "append": false,
-                "lines": [ ">dev-lang/python-3.13.999" ]
+                "lines": [ ">dev-lang/python-%{PYTHON_VERSION_M}%.999" ]
             },
             {
                 "file": "/etc/portage/repos.conf/gentoo.conf",
