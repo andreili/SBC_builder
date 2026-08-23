@@ -7,12 +7,21 @@ BUILD_DIR=f"{ROOT_DIR}/build"
 OUT_DIR=f"{ROOT_DIR}/out"
 __variables = []
 
+def print_vars():
+    print("Variables:")
+    for var_d in __variables:
+        print(f"  {var_d[0]}: {var_d[1]}")
+
 def add_var(key, value):
     __variables.append([key, value])
 
 def add_vars(lst):
     for var_def in lst:
-        __variables.append(var_def.split(":"))
+        vars = var_def.split(":")
+        if any(var_d[0] == vars[0] for var_d in __variables):
+            set_var(vars[0], vars[1])
+        else:
+            __variables.append(var_def.split(":"))
 
 def set_var(key, value):
     for var_d in __variables:
