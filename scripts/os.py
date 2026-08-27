@@ -90,7 +90,7 @@ class OS:
                 if (self.board_overlays == None):
                     self.board_installs = self.board.installs
                 else:
-                    self.board_installs = self.board_overlays["installs"]
+                    self.board_installs = self.board_overlays["install"]
         add_var("OS_TARGET", self.os_target)
         add_var("ROOT_FS", self.root_dir)
         #print_vars()
@@ -245,6 +245,7 @@ class OS:
         p = subprocess.Popen(args, cwd=cwd, env=env, stdout=stdout, stderr=stdout, shell=shell)
         p.wait()
         if (p.returncode != 0):
+            Logger.os(f"Command arguments: {args}")
             Logger.error(f"Command '{err_n}' finished with error code {p.returncode}!")
 
     def __prepare(self):
@@ -404,6 +405,7 @@ class OS:
         if (stdin != None):
             p.communicate(input=stdin)
         if (p.wait() != 0):
+            Logger.os(f"Command arguments: {args}")
             Logger.error(f"Command '{args[0]}' finished with error code!")
 
     def __part_prepare(self):

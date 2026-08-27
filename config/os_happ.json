@@ -182,7 +182,7 @@
             { "cleanup": "no_compiler" }
         ]
     },
-    "board_overlay":
+    "board_overlays":
     {
         "install":
         {
