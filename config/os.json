@@ -280,8 +280,8 @@
             { "copy": [ "%{ROOT_DIR}%/files/firmware/usr", "."] },
             { "sudo": "ln -sf /usr/share/zoneinfo/%{TIME_ZONE}% ./etc/localtime" },
             { "chroot": "echo 'root:root' | chpasswd" },
-            { "chroot": "groupadd -g %{USER_ID}% %{USER_LOGIN}%" },
-            { "chroot": "useradd -m -G wheel,video,audio,disk,usb -g %{USER_ID}% -u %{USER_ID}% %{USER_LOGIN}% --password %{USER_LOGIN}%" },
+            { "chroot": "groupadd -f -g %{USER_ID}% %{USER_LOGIN}%" },
+            { "chroot": "id -u %{USER_LOGIN}% &>/dev/null || useradd -m -G wheel,video,audio,disk,usb -g %{USER_ID}% -u %{USER_ID}% %{USER_LOGIN}% --password %{USER_LOGIN}%" },
             { "chroot": "echo '%{USER_LOGIN}%:%{USER_LOGIN}%' | chpasswd" }
         ]
     }
