@@ -1,8 +1,11 @@
 {
     "variables":
     [
-        "USER_LOGIN:happ",
-        "USER_ID:1200"
+        "USER_LOGIN:homeassistant",
+        "USER_ID:1200",
+        "HAPP_VER:2026.8.0",
+        "PYTHON_VERSION:3_14",
+        "PYTHON_VERSION_M:3.14"
     ],
     "install":
     {
@@ -47,19 +50,171 @@
                 ],
                 "oneshot": false
             },
-            { "soft_clean": "default" }
+            { "soft_clean": "default" },
+            { "chroot": "mkdir -p /var/lib/%{USER_LOGIN}%" },
+            {
+                "file": "/var/lib/%{USER_LOGIN}%/update.sh",
+                "append": false,
+                "lines": [ "#!/bin/sh",
+                    "set -e",
+                    "BASEDIR=$(dirname \"$0\")",
+                    "VER=\"%{HAPP_VER}%\"",
+                    "TMP=\"/tmp/happ\"",
+                    "ARCH_FN=\"${VER}.tar.gz\"",
+                    "ARCH_URL=\"https://github.com/home-assistant/core/archive/${ARCH_FN}\"",
+                    "PIP_DIR=\"${BASEDIR}/pip\"",
+                    "VENV_DIR=\"${BASEDIR}/venv\"",
+                    "init_venv() {",
+                    "    echo \"Create Python venv...\"",
+                    "    rm -rf \"${VENV_DIR}\"",
+                    "    sudo -u %{USER_LOGIN}% python -m venv \"${VENV_DIR}\"",
+                    "}",
+                    "load_tar() {",
+                    "    echo \"Download new version...\"",
+                    "    rm -rf \"${TMP}\"",
+                    "    mkdir -p \"${TMP}\"",
+                    "    wget -O \"${TMP}/${ARCH_FN}\" \"${ARCH_URL}\"",
+                    "    tar xf \"${TMP}/${ARCH_FN}\" -C \"${TMP}\"",
+                    "}",
+                    "prepare_pip() {",
+                    "    echo \"Copy PIP files...\"",
+                    "    mkdir -p \"${PIP_DIR}/%{USER_LOGIN}%/\"",
+                    "    touch \"${PIP_DIR}/my.txt\"",
+                    "    cp \"${TMP}/core-${VER}/%{USER_LOGIN}%/package_constraints.txt\" \"${PIP_DIR}/%{USER_LOGIN}%/\"",
+                    "    cp \"${TMP}/core-${VER}/requirements_all.txt\" \"${PIP_DIR}\"",
+                    "    cp \"${TMP}/core-${VER}/requirements.txt\" \"${PIP_DIR}\"",
+                    "    rm -rf \"${TMP}\"",
+                    "}",
+                    "inst_pip() {",
+                    "    echo \"Install Python packages...\"",
+                    "    echo \"zcc-helper\" >> \"${PIP_DIR}/my.txt\"",
+                    "    sudo -u %{USER_LOGIN}% \"${VENV_DIR}/bin/python\" -m pip install --upgrade pip",
+                    "    sed -i -e \"/esphome/ s/^#*/#/\" \"${PIP_DIR}/requirements_all.txt\"",
+                    "    sed -i -e \"/pytradfri/ s/^#*/#/\" \"${PIP_DIR}/requirements_all.txt\"",
+                    "    sudo -u %{USER_LOGIN}% \"${VENV_DIR}/bin/pip\" install -r \"${PIP_DIR}/my.txt\"",
+                    "    sudo -u %{USER_LOGIN}% \"${VENV_DIR}/bin/pip\" install -r \"${PIP_DIR}/requirements_all.txt\"",
+                    "}",
+                    "inst_happ() {",
+                    "    echo \"Install Home Assistant...\"",
+                    "    sudo -u %{USER_LOGIN}% \"${VENV_DIR}/bin/pip\" install homeassistant==%{HAPP_VER}%",
+                    "    rm -rf /home/%{USER_LOGIN}%/.cache",
+                    "}",
+                    "init_venv",
+                    "load_tar",
+                    "prepare_pip",
+                    "inst_pip",
+                    "inst_happ"
+                ]
+            },
+            { "chroot": "chown -R %{USER_ID}%:%{USER_ID}% /var/lib/%{USER_LOGIN}%" },
+            { "chroot": "chmod +x /var/lib/%{USER_LOGIN}%/update.sh" },
+            { "chroot": "/var/lib/%{USER_LOGIN}%/update.sh" },
+            {
+                "file": "/etc/systemd/system/home-assistant.service",
+                "append": false,
+                "lines": [
+                    "[Unit]",
+                    "Description=Home Assistant",
+                    "After=network-online.target mysqld.service",
+                    "",
+                    "[Service]",
+                    "ExecStart=/var/lib/%{USER_LOGIN}%/venv/bin/python /usr/bin/hass --skip-pip --log-no-color --log-rotate-days 9 --log-file /var/log/homeassistant/warnings.log --config /etc/%{USER_LOGIN}%",
+                    "Group=%{USER_LOGIN}%",
+                    "User=%{USER_LOGIN}%",
+                    "AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW",
+                    "CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW",
+                    "",
+                    "[Install]",
+                    "WantedBy=multi-user.target"
+                ]
+            },
+            { "chroot": "mkdir -p /etc/%{USER_LOGIN}%" },
+            {
+                "file": "/etc/%{USER_LOGIN}%/configuration.yaml",
+                "append": false,
+                "lines": [
+                    "# Loads default set of integrations. Do not remove.",
+                    "default_config:",
+                    "",
+                    "# Load frontend themes from the themes folder",
+                    "frontend:",
+                    "  themes: !include_dir_merge_named themes",
+                    "",
+                    "automation: !include automations.yaml",
+                    "script: !include scripts.yaml",
+                    "scene: !include scenes.yaml",
+                    "",
+                    "recorder:",
+                    "  db_url: mysql://<!DB_USER!>:<!DB_PASSWORD!>@<!DB_HOST!>/hass?charset=utf8mb4",
+                    "  purge_keep_days: 120",
+                    "  commit_interval: 120",
+                    "",
+                    "http:",
+                    "#    server_port: 445",
+                    "    use_x_forwarded_for: true",
+                    "    trusted_proxies: <!TRUSTED_PROXIES!>",
+                    "    ssl_certificate: /usr/local/ssl/fullchain.pem",
+                    "    ssl_key: /usr/local/ssl/privkey.pem",
+                    "    ip_ban_enabled: true",
+                    "    login_attempts_threshold: 5",
+                    "",
+                    "homeassistant:",
+                    "  auth_mfa_modules:",
+                    "    - type: totp"
+                ]
+            },
+            { "chroot": "chown -R %{USER_ID}%:%{USER_ID}% /etc/%{USER_LOGIN}%" },
+            { "chroot": "chmod -R 755 /etc/%{USER_LOGIN}%" }
         ]
     },
     "finalize":
     {
         "steps":
         [
+            { "chroot": "systemctl enable home-assistant.service" },
+
             { "soft_clean": "bdeps" },
+            { "chroot": "rm -rf /home/%{USER_LOGIN}%" },
             { "chroot": "find /usr/lib -iname '*.a' -exec rm -f {} \\;" },
             { "chroot": "find /usr/lib64 -iname '*.a' -exec rm -f {} \\;" },
             { "chroot": "find /usr/libexec -iname '*.a' -exec rm -f {} \\;" },
             { "cleanup": "excl" },
             { "cleanup": "no_compiler" }
         ]
+    },
+    "board_overlay":
+    {
+        "install":
+        {
+            "target": "image",
+            "type": "gpt",
+            "block_size": "512b",
+            "partitions":
+            [
+                {
+                    "name": "boot",
+                    "size": "3G",
+                    "first_sector": "32768"
+                },
+                {
+                    "name": "rw",
+                    "size": "3G"
+                }
+            ],
+            "overlays":
+            [
+                "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-happ.dtbo",
+                "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-sfc.dtbo",
+                "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-dsi1.dtbo"
+            ],
+            "files":
+            [
+                {
+                    "src": "files/cb2_install_emmc.sh",
+                    "dest": "boot",
+                    "dir": "/"
+                }
+            ]
+        }
     }
 }
