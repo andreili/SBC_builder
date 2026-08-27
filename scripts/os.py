@@ -57,6 +57,8 @@ class OS:
         Logger.ok_exit("Finished running from 'sudo'")
 
     def load_info(self):
+        self.board_overlays = None
+        self.board_installs = None
         with open(f"{CONFIG_DIR}/os_base_{self.arch}.json") as json_data:
             js_data = json.load(json_data)
             json_data.close()
@@ -83,8 +85,15 @@ class OS:
                     self.finalize["steps"] += js_data["finalize"]["steps"]
                 if ("variables" in js_data):
                     add_vars(js_data["variables"])
+                if ("board_overlays" in js_data):
+                    self.board_overlays = js_data["board_overlays"]
+                if (self.board_overlays == None):
+                    self.board_installs = self.board.installs
+                else:
+                    self.board_installs = self.board_overlays["installs"]
         add_var("OS_TARGET", self.os_target)
         add_var("ROOT_FS", self.root_dir)
+        #print_vars()
 
     def actions_list(self):
         lst = []
@@ -398,9 +407,9 @@ class OS:
             Logger.error(f"Command '{args[0]}' finished with error code!")
 
     def __part_prepare(self):
-        self.block_size = self.__parse_size(self.board.installs["block_size"])
+        self.block_size = self.__parse_size(self.board_installs["block_size"])
         self.partitions = []
-        for part in self.board.installs["partitions"]:
+        for part in self.board_installs["partitions"]:
             part_obj = Partition()
             part_obj.name = part["name"]
             if "first_sector" in part:
@@ -550,8 +559,8 @@ class OS:
         cmd_k += f"\tfdtdir /dtb/\n"
         cmd_k += f"\tdevicetree /dtb/{dtb_file}\n"
         cmd_k += f"\tinitrd /uInitrd\n"
-        if ("overlays" in self.board.installs):
-            overlays = self.board.installs["overlays"]
+        if ("overlays" in self.board_installs):
+            overlays = self.board_installs["overlays"]
             overlays = " ".join(overlays)
             overlays = parse_variables(overlays)
             cmd_k += f"\tfdtoverlays {overlays}\n"
@@ -569,7 +578,7 @@ class OS:
         self.__copy_file(f"{self.board.out_sh}/root_{self.os_target}_{self.arch}.sqh", f"{out_dir}/root.sqh")
         #Logger.install(f"\tCopy kernel modules")
         self.__copy_file(f"{self.board.out_dir}/modules", f"{out_dir}/modules")
-        for ff in self.board.installs["files"]:
+        for ff in self.board_installs["files"]:
             if (ff["dest"] == "boot"):
                 dest_dir = ff["dir"]
                 self.__copy_file(ff["src"], f"{out_dir}/{dest_dir}/")
@@ -608,7 +617,7 @@ class OS:
         if (not dir_ch.is_dir()) and (dir_ch.is_block_device()):
             is_blk = True
             Logger.install(f"\tBlock device, need to use a sudo.")
-        if (self.board.installs["target"] == "image"):
+        if (self.board_installs["target"] == "image"):
             if (not is_blk):
                 dir_or_dev = self.__prepare_img(dir_or_dev)
         else:
