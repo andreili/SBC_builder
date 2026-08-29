@@ -9,7 +9,7 @@
         "KERNEL_ARCH:arm64",
         "CROSS_C:%{CHOST}%-",
         "ATF_PLATFORM:rk3568",
-        "TPL_BIN:rk3566_ddr_1056MHz_v1.23.bin",
+        "TPL_BIN:rk3566_ddr_1056MHz_v1.26.bin",
         "BL31_BIN:bl31.elf",
         "ARCH:aarch64",
         "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb",
