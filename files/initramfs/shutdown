@@ -10,8 +10,11 @@ ln -s /proc/self/mounts /etc/mtab
 ACTION="${1:-halt}"
 
 good_msg "Shutdown ramdisk script. Linux kernel ${KV}"
-log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
-echo "" > /proc/sys/kernel/hotplug
+if [ -f /proc/sys/kernel/hotplug ]
+then
+    log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
+    echo "" > /proc/sys/kernel/hotplug
+fi
 
 good_msg "Move all to temporary..."
 sh_mnt=$(cat /proc/self/mountinfo | cut -d' ' -f5 | grep "^/oldroot/run/shutdown/mounts/")

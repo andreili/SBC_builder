@@ -57,8 +57,11 @@ then
 fi
 
 good_msg "Initial ramdisk script. Linux kernel ${KV}"
-log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
-echo "" > /proc/sys/kernel/hotplug
+if [ -f /proc/sys/kernel/hotplug ]
+then
+    log_msg "COMMAND: 'echo "" > /proc/sys/kernel/hotplug'"
+    echo "" > /proc/sys/kernel/hotplug
+fi
 
 good_msg "Additional wait for all devices is up."
 run sleep 3
