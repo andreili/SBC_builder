@@ -234,3 +234,15 @@ diff '--color=auto' -Naur uboot_btt_pi2_or/configs/btt-pi2_defconfig uboot_btt_p
 +CONFIG_USB_DWC3_GENERIC=y
 +CONFIG_ERRNO_STR=y
 +};
+diff '--color=auto' -Naur uboot_btt_pi2_or/arch/arm/dts/rk3566-btt_pi2_sfc.dtsi uboot_btt_pi2/arch/arm/dts/rk3566-btt_pi2_sfc.dtsi
+--- uboot_btt_pi2_or/arch/arm/dts/rk3566-btt_pi2_sfc.dtsi	1970-01-01 01:00:00.000000000 +0100
++++ uboot_btt_pi2/arch/arm/dts/rk3566-btt_pi2_sfc.dtsi	2024-12-25 13:54:26.633161139 +0100
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++&sfc {
++	flash@0 {
++		spi-max-frequency = <100000000>;
++		spi-rx-bus-width = <1>;
++		spi-tx-bus-width = <1>;
++	};
++};
