@@ -98,8 +98,48 @@ class Target:
         self.sources.sync()
         self.sources.do_patch(self.board_name, self.patch_dir)
 
-    def build(self, sub_target, out_dir):
+    def do_uboot_spi_env(self, env_val):
+        if (env_val == None):
+            return
+        Logger.install(f"\tCreate SPI install files")
+        spi_layout = ""
+        spi_idx_uboot = env_val["u-boot-spi-idx"]
+        spi_idx_kernel = env_val["kernel-spi-idx"]
+        env_fn = f"{self.sources.work_dir}/{parse_variables(env_val["name"])}"
+        idx = 0
+        cmd_sh = "#!/bin/sh\n"
+        cmd_sh += f"FILE_DIR=$(dirname $(readlink -f $0))\n"
+        for part in env_val["partitions"]:
+            spi_layout += f"{part["size"]}({part["name"]}),"
+            cmd_sh += f"dd if=${{FILE_DIR}}/{parse_variables(part["file"])} of=/dev/mtdblock{idx}\n"
+            idx += 1
+        spi_parts_u_boot = f"spi{spi_idx_uboot}.0:{spi_layout[:-1]}"
+        spi_parts_kernel = f"spi{spi_idx_kernel}.0:{spi_layout[:-1]}"
+        cmd  = f"mtdids=nor0=spi{spi_idx_uboot}.0\n"
+        cmd += f"mtdparts={spi_parts_u_boot}\n"
+        cmd += f"bootcmd=bootflow scan -lb\n"
+        cmd += f"bootargs=mtdparts={spi_parts_kernel}\n"
+        cmd += f"preboot=sf probe\n"
+        cmd += f"bootmenu_delay=5\n"
+        cmd += f"bootmenu_0=Default=run bootcmd\n"
+        cmd += f"bootmenu_1=Live=run live\n"
+        cmd += f"bootmenu_3=Recovery=run recovery\n"
+        cmd += f"bootmenu_4=Console=run console\n"
+        cmd +=  "rec_env=setenv bootargs emergency\n"
+        cmd +=  "rec_load=mtd read kernel ${kernel_addr_r}; mtd read initrd ${ramdisk_addr_r}; mtd read dtb ${fdt_addr_r}\n"
+        cmd +=  "rec_boot=booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}\n"
+        cmd +=  "recovery=run rec_load; run rec_env; run rec_boot\n"
+        cmd +=  "live=run rec_load; run rec_boot\n"
+        with open(env_fn, "w") as f:
+            f.write(cmd)
+            f.close()
+        self.spi_install = cmd_sh
+        self.spi_env = cmd
+
+    def build(self, sub_target, out_dir, spi_env_val):
         self.source_sync()
+        self.spi_install = None
+        self.do_uboot_spi_env(spi_env_val)
         if (sub_target != "config"):
             self.sources.prepare_artifacts(self.artifacts, out_dir)
         if (not self.no_build):
@@ -134,6 +174,15 @@ class Target:
                 self.sources.compile(opts_tmp, self.config_name)
         if (not fnmatch.fnmatch(sub_target, "*config")):
             self.sources.copy_artifacts(self.artifacts, out_dir)
+            if (self.spi_install != None):
+                Logger.install(f"\tCreate SPI install files")
+                spi_fn = f"{out_dir}/spi_install.sh"
+                with open(spi_fn, "w") as f:
+                    f.write(self.spi_install)
+                    f.close()
+                with open(f"{out_dir}/spi_env.txt", "w") as f:
+                    f.write(self.spi_env)
+                    f.close()
 
     def install_files(self, dir, tmp_dir, part_name, on_file, on_dd):
         Logger.install(f"'{self.name}': Install artifacts")

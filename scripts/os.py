@@ -549,7 +549,7 @@ class OS:
         self.__sudo(["dd", f"if={src}", f"of={self.out_path}",
             f"bs={blk_sz}", f"seek={offset}", "conv=notrunc"], stdout=subprocess.DEVNULL)
 
-    def __install_boot(self, out_dir):
+    def __make_extlinux(self, out_dir):
         extl_dir = f"{out_dir}/extlinux"
         extl_fn  = f"{extl_dir}/extlinux.conf"
         dtb_file = parse_variables("%{DTB_FILE}%")
@@ -570,6 +570,9 @@ class OS:
         cmd += f"\nlabel Kernel_emergency\n{cmd_k}\tappend emergency"
         cmd += f"' >> {extl_fn}"
         self.__sudo(["sh", "-c", f"{cmd}"], stdout=subprocess.DEVNULL)
+
+    def __install_boot(self, out_dir):
+        self.__make_extlinux(out_dir)
         Logger.install(f"\tCopy target-specific files")
         for target in self.board.targets:
             if (target.is_shared):

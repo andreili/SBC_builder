@@ -34,6 +34,14 @@ class Board:
                 self.targets.append(t)
         self.__scan_deps()
 
+    def load_info(self):
+        self.spi_install  = None
+        if ("spi" in self.installs):
+            self.spi_install = self.installs["spi"]
+            for part in self.spi_install["partitions"]:
+                part["file"] = parse_variables(part["file"])
+                part["size"] = parse_variables(part["size"])
+
     def __scan_deps(self):
         # scan for dependencies
         for target in self.targets:
@@ -94,8 +102,11 @@ class Board:
                     for dep in target.depends:
                         if (sub_target == ""):
                             #when run sub-target - not need to check a deps
-                            dep.build("", out_dir)
-                    target.build(sub_target, out_dir)
+                            dep.build("", out_dir, None)
+                    if (target.name == "uboot"):
+                        target.build(sub_target, out_dir, self.spi_install)
+                    else:
+                        target.build(sub_target, out_dir, None)
                     if (sub_target == ""):
                         #when run sub-target - not need to build a modules
                         for module in target.modules:

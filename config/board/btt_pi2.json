@@ -12,9 +12,10 @@
         "TPL_BIN:rk3566_ddr_1056MHz_v1.26.bin",
         "BL31_BIN:bl31.elf",
         "ARCH:aarch64",
-        "DTB_FILE:rockchip/rk3566-bigtreetech-pi2.dtb",
+        "DTB_FILE:rockchip/rk3566-bigtreetech-pi2-happ.dtb",
         "DTO_FILES:rockchip/rk3566-*.dtbo",
-        "DTO_DIR:rockchip/overlays"
+        "DTO_DIR:rockchip/overlays",
+        "SPI_LOADER:u-boot-rockchip-spi.bin"
     ],
     "targets":
     [
@@ -79,7 +80,7 @@
                     "store_type": "boot"
                 },
                 {
-                    "file": "u-boot-rockchip-spi.bin",
+                    "file": "%{SPI_LOADER}%",
                     "store_type": "boot"
                 }
             ],
@@ -102,7 +103,7 @@
                     "store_type": "boot"
                 },
                 {
-                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2.dtb",
+                    "file": "arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2*.dtb",
                     "store_type": "boot",
                     "subdir": "dtb/rockchip",
                     "destdir": "dtb"
@@ -120,6 +121,40 @@
         "target": "image",
         "type": "gpt",
         "block_size": "512b",
+        "spi":
+        {
+            "name": "board/btt/%{board_name}%/%{board_name}%_nor0.env",
+            "u-boot-spi-idx": 0,
+            "kernel-spi-idx": 4,
+            "partitions":
+            [
+                {
+                    "name": "loader",
+                    "size": "2M",
+                    "file": "%{SPI_LOADER}%"
+                },
+                {
+                    "name": "u-boot-env",
+                    "size": "4K",
+                    "file": "spi_env.txt"
+                },
+                {
+                    "name": "dtb",
+                    "size": "1M",
+                    "file": "dtb/%{DTB_FILE}%"
+                },
+                {
+                    "name": "kernel",
+                    "size": "20M",
+                    "file": "Image"
+                },
+                {
+                    "name": "initrd",
+                    "size": "4M",
+                    "file": "uInitrd"
+                }
+            ]
+        },
         "partitions":
         [
             {
@@ -134,7 +169,7 @@
         ],
         "overlays":
         [
-            "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-printer.dtbo",
+            "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-happ.dtbo",
             "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-sfc.dtbo",
             "/dtb/%{DTO_DIR}%/rk3566-bigtreetech-pi2-dsi1.dtbo"
         ],
