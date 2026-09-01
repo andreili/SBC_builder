@@ -21,7 +21,8 @@
                     "sys-process/htop lm-sensors",
                     "net-wireless/wpa_supplicant dbus",
                     "sys-kernel/genkernel firmware",
-                    "app-misc/mosquitto websockets"
+                    "app-misc/mosquitto websockets",
+                    "media-video/ffmpeg jpeg2k x264 theora vorbis nvenc x265 openh264"
                 ]
             },
             {
