@@ -23,6 +23,7 @@ fi
 
 mkdir -p ${DDIR}/usr/src/linux-${KV}
 mount --bind ${KPATH} ${DDIR}/usr/src/linux-${KV}
+mount --bind ${ROOT_DIR}/files/portage/andreil ${DDIR}/usr/portage/andreil
 
 mount --bind /dev ${DDIR}/dev
 mount --bind /dev/shm ${DDIR}/dev/shm
@@ -38,6 +39,7 @@ else
     ret=$?
 fi
 sleep 1s
+umount ${DDIR}/usr/portage/andreil
 umount ${DDIR}/var/tmp
 umount ${DDIR}/usr/src/linux-${KV}
 umount ${DDIR}/proc

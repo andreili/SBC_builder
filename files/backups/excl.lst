@@ -52,7 +52,7 @@ usr/lib/gcc/arm-none-eabi/15/thumb/v8.1-m.main+pacbti+mve*
 usr/lib/python3.13/test*
 usr/lib64/gconv*
 usr/lib64/perl5*
-./usr/portage/*
+usr/portage/*
 usr/share/binutils-data*
 usr/share/cmake*
 usr/share/doc*
