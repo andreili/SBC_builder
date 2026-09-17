@@ -45,6 +45,14 @@
                 ]
             },
             {
+                "file": "/etc/portage/package.mask/node",
+                "append": false,
+                "lines":
+                [
+                    ">=net-libs/nodejs-24"
+                ]
+            },
+            {
                 "soft_inst":
                 [
                     "virtual/srv_bak"
