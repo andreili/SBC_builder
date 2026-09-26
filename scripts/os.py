@@ -169,7 +169,9 @@ class OS:
         if (clean_type == "default"):
             self.__chroot(f"emerge -ac", dir=dir)
         elif (clean_type == "bdeps"):
-            self.__chroot(f"emerge --depclean --with-bdeps=n && ldconfig", dir=dir)
+            ex_lst = ""
+            ex_lst += " --exclude net-wireless/bluez"
+            self.__chroot(f"emerge --depclean --with-bdeps=n {ex_lst} && ldconfig", dir=dir)
         elif (clean_type == "bdeps_light"):
             ex_lst = ""
             ex_lst += " --exclude sys-devel/gcc"
@@ -177,6 +179,7 @@ class OS:
             ex_lst += " --exclude dev-perl/*"
             ex_lst += " --exclude dev-build/autoconf"
             ex_lst += " --exclude dev-build/automake"
+            ex_lst += " --exclude net-wireless/bluez"
             self.__chroot(f"emerge --depclean --with-bdeps=n {ex_lst} && ldconfig", dir=dir)
 
     def __st3_sudo(self, dir, step):

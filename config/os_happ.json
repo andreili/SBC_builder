@@ -22,7 +22,9 @@
                     "net-wireless/wpa_supplicant dbus",
                     "sys-kernel/genkernel firmware",
                     "app-misc/mosquitto websockets",
-                    "media-video/ffmpeg jpeg2k x264 theora vorbis nvenc x265 openh264"
+                    "media-video/ffmpeg jpeg2k x264 theora vorbis nvenc x265 openh264",
+                    "dev-lang/python bluetooth",
+                    "net-firewall/iptables pcap"
                 ]
             },
             {
