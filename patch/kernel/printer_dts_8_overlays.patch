@@ -329,7 +329,7 @@ new file mode 100644
 index 000000000000..410763276a6b
 --- /dev/null
 +++ b/arch/arm64/boot/dts/rockchip/rk3566-bigtreetech-pi2-happ.dtso
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,39 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +
 +/dts-v1/;
@@ -345,6 +345,19 @@ index 000000000000..410763276a6b
 +
 +&pwm5 {
 +    status = "okay";
++};
++
++&i2c4 {
++	status = "okay";
++	clock-frequency = <100000>;
++	ups_charger@68 {
++		compatible = "lltc,ltc4162-f";
++		reg = <0x68>;
++		status = "okay";
++		lltc,rsnsb-micro-ohms = <10000>;
++		lltc,rsnsi-micro-ohms = <4000>;
++		lltc,cell-count = <4>;
++	};
 +};
 +
 +&{/} {
